@@ -18,6 +18,7 @@ function App() {
         >
           Learn React
         </a>
+        <p className="akitainu">by software akitainu</p>
       </header>
     </div>
   );
