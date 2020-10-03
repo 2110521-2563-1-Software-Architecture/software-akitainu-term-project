@@ -35,7 +35,11 @@ const routesConfig = [
     component: lazy(() => import("views/leadership/SelfScore")),
   },
   //add more path ...
-
+  {
+    exact: true,
+    path: "/gameplay/:roomId",
+    component: lazy(() => import("views/Gameplay")),
+  },
 
   //add more path
   {
