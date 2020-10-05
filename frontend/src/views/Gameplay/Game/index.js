@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Grid, makeStyles, Typography } from "@material-ui/core";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
+import CustomRoom from "../../../components/CustomRoom"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,6 +72,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Game(props) {
   const classes = useStyles();
+  const customRoom = new CustomRoom({userId: 1});
+  console.log(customRoom.getPropsFromUserId(1));
 
   return (
     <div className={classes.root}>

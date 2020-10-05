@@ -14,7 +14,7 @@ class CustomRoom extends React.Component {
       usersName: [props.userId],
       createdTime: new Date(),
       leftCardNumber: -1, // left card number in the card pile
-      usersCard: [], // all user card which same order as usersId
+      userscards: [], // all user cards which same order as usersId
       nextUserId: -1,
       nextTurnLeft: 1,
       discardPile: [], // index 0 is the bottom
@@ -62,11 +62,11 @@ class CustomRoom extends React.Component {
       if (this.state.roomId !== roomId) return;
 
       const idx = this.findUserIdx(userId);
-      const { usersCard } = this.state;
-      usersCard[idx].push(card);
+      const { userscards } = this.state;
+      userscards[idx].push(card);
 
       this.setState({
-        usersCard,
+        userscards,
         leftCardNumber,
         nextUserId,
         nextTurnLeft,
@@ -75,13 +75,13 @@ class CustomRoom extends React.Component {
     this.state.socket.on("new-game", (data) => {
       console.log(data);
 
-      const { roomId, leftCardNumber, usersId, usersCard } = data;
+      const { roomId, leftCardNumber, usersId, userscards } = data;
       if (this.state.roomId !== roomId) return;
 
       this.setState({
         leftCardNumber,
         usersId,
-        usersCard,
+        userscards,
       });
     });
     this.state.socket.on("new-card-use", (data) => {
@@ -91,13 +91,13 @@ class CustomRoom extends React.Component {
       if (this.state.roomId !== roomId) return;
 
       const idx = this.findUserIdx(userId);
-      const { usersCard, discardPile } = this.state;
-      if (usersCard[idx][cardIdx] !== card) return;
+      const { userscards, discardPile } = this.state;
+      if (userscards[idx][cardIdx] !== card) return;
       discardPile.push(card);
-      usersCard[idx].splice(cardIdx, 1);
+      userscards[idx].splice(cardIdx, 1);
 
       this.setState({
-        usersCards,
+        userscards,
         nextUserId,
         nextTurnLeft,
       });
@@ -120,8 +120,8 @@ class CustomRoom extends React.Component {
 
       const cardIdx = this.chooseFavorCard(targetId);
       const targetIdx = this.findUserIdx(targetId);
-      const { usersCard } = this.state.usersCard;
-      const card = usersCard[targetIdx][cardIdx];
+      const { userscards, discardPile } = this.state;
+      const card = userscards[targetIdx][cardIdx];
       discardPile.push(Card.favor);
       this.selectFavorCard(userId, roomId, targetId, card);
     });
@@ -132,14 +132,14 @@ class CustomRoom extends React.Component {
       if (this.state.roomId !== roomId) return;
 
       const userIdx = this.findUserIdx(userId);
-      const { usersCard } = this.state;
-      usersCard[userIdx].push(card);
-      this.setState({ usersCard });
+      const { userscards } = this.state;
+      userscards[userIdx].push(card);
+      this.setState({ userscards });
     });
     this.state.socket.on("new-see-the-future", (data) => {
       console.log(data);
 
-      const { userId, roomId } = data;
+      const { userId, roomId, cards } = data;
       if (this.state.roomId !== roomId) return;
       // todo: check if user use this card?
 
@@ -152,36 +152,36 @@ class CustomRoom extends React.Component {
       if (this.state.roomId !== roomId) return;
       // todo: check if user use this card?
 
-      const { usersCard } = this.state;
+      const { userscards, discardPile } = this.state;
       const userIdx = this.findUserIdx(userId);
-      const userCard = usersCard[userIdx];
+      const userCard = userscards[userIdx];
       const newUserCard = [];
       userCard.forEach((card, idx) => {
         if (cardsIdx.indexOf(idx) === -1) newUserCard.push(card);
         else discardPile.push(card);
       });
-      usersCard[userIdx] = newUserCard;
+      userscards[userIdx] = newUserCard;
 
       const targetId = this.chooseTarget(cards);
       const targetCardIdx = this.chooseTargetCard(targetId);
 
-      this.setState({ usersCard });
+      this.setState({ userscards });
       this.selectCommon2(userId, roomId, targetId, targetCardIdx);
     });
     this.state.socket.on("receive-common-2", (data) => {
       console.log(data);
 
       const { userId, roomId, targetId, targetCard, targetCardIdx } = data;
-      const { usersCard } = this.state;
+      const { userscards } = this.state;
       if (this.state.roomId !== roomId) return;
-      if (usersCard[targetId][targetCardIdx] !== targetCard) return;
+      if (userscards[targetId][targetCardIdx] !== targetCard) return;
       // todo: check if user use this card?
 
       const userIdx = this.findUserIdx(userId);
-      usersCard[userIdx].push(targetCard);
-      usersCard[targetId].splice(targetCardIdx, 1);
+      userscards[userIdx].push(targetCard);
+      userscards[targetId].splice(targetCardIdx, 1);
 
-      this.setState({ usersCard });
+      this.setState({ userscards });
     });
     this.state.socket.on("new-common-3", (data) => {
       console.log(data);
@@ -190,36 +190,38 @@ class CustomRoom extends React.Component {
       if (this.state.roomId !== roomId) return;
       // todo: check if user use this card?
 
-      const { usersCard } = this.state;
+      const { userscards, discardPile } = this.state;
       const userIdx = this.findUserIdx(userId);
-      const userCard = usersCard[userIdx];
+      const userCard = userscards[userIdx];
       const newUserCard = [];
       userCard.forEach((card, idx) => {
         if (cardsIdx.indexOf(idx) === -1) newUserCard.push(card);
         else discardPile.push(card);
       });
-      usersCard[userIdx] = newUserCard;
+      userscards[userIdx] = newUserCard;
 
       const targetId = this.chooseTarget(cards);
       const targetCardIdx = this.chooseAnyCard();
 
-      this.setState({ usersCard });
+      this.setState({ userscards });
       this.selectCommon3(userId, roomId, targetId, targetCardIdx);
     });
     this.state.socket.on("receive-common-3", (data) => {
       console.log(data);
 
       const { userId, roomId, targetId, targetCardIdx } = data;
-      const { usersCard } = this.state;
+      const { userscards } = this.state;
       if (this.state.roomId !== roomId) return;
       if (targetCardIdx === -1) return;
       // todo: check if user use this card?
 
       const userIdx = this.findUserIdx(userId);
-      usersCard[userIdx].push(targetCard);
-      usersCard[targetId].splice(targetCardIdx, 1);
+      const targetIdx = this.findUserIdx(targetId);
+      const targetCard = userscards[targetIdx][targetCardIdx];
+      userscards[userIdx].push(targetCard);
+      userscards[targetIdx].splice(targetCardIdx, 1);
 
-      this.setState({ usersCard });
+      this.setState({ userscards });
     });
     this.state.socket.on("new-common-5", (data) => {
       console.log(data);
@@ -228,36 +230,52 @@ class CustomRoom extends React.Component {
       if (this.state.roomId !== roomId) return;
       // todo: check if user use this card?
 
-      const { usersCard } = this.state;
+      const { userscards, discardPile } = this.state;
       const userIdx = this.findUserIdx(userId);
-      const userCard = usersCard[userIdx];
+      const userCard = userscards[userIdx];
       const newUserCard = [];
       userCard.forEach((card, idx) => {
         if (cardsIdx.indexOf(idx) === -1) newUserCard.push(card);
         discardPile.push(card);
       });
-      usersCard[userIdx] = newUserCard;
+      userscards[userIdx] = newUserCard;
 
       const selectCardIdx = this.chooseAnyCardFromDiscardPile();
 
-      this.setState({ usersCard });
+      this.setState({ userscards });
       this.selectCommon5(userId, roomId, selectCardIdx);
     });
     this.state.socket.on("receive-common-5", (data) => {
       console.log(data);
 
       const { userId, roomId, selectCard, selectCardIdx } = data;
-      const { usersCard } = this.state;
+      const { userscards, discardPile } = this.state;
       if (this.state.roomId !== roomId) return;
       if (discardPile[selectCardIdx] !== selectCard) return;
       // todo: check if user use this card?
 
       const userIdx = this.findUserIdx(userId);
-      usersCard[userIdx].push(targetCard);
+      userscards[userIdx].push(selectCard);
       discardPile.splice(selectCardIdx, 1);
 
-      this.setState({ usersCard, discardPile });
+      this.setState({ userscards, discardPile });
     });
+  }
+
+  getPropsFromUserId = (userId) => {
+      const userIdx = this.findUserIdx(userId);
+      const data = {
+        creatorId: this.state.creatorId,
+        usersId: this.state.usersId,
+        usersName: this.state.usersName,
+        createdTime: this.state.createdTime,
+        leftCardNumber: this.state.leftCardNumber,
+        nextUserId: this.state.nextUserId,
+        nextTurnLeft: this.state.nextTurnLeft,
+        discardPile: this.state.discardPile,
+        userCards: this.state.userscards[userIdx],
+      }
+      return data;
   }
 
   findUserIdx = (userId) => {
@@ -296,8 +314,8 @@ class CustomRoom extends React.Component {
   };
 
   useCard = (userId, roomId, cardIdx) => {
-    const { userId, usersCard } = this.state;
-    const card = usersCard[userId][cardIdx];
+    const { userscards } = this.state;
+    const card = userscards[userId][cardIdx];
     const data = {
       userId,
       roomId,
@@ -348,8 +366,8 @@ class CustomRoom extends React.Component {
   };
 
   useCommon2 = (userId, roomId, cardsIdx) => {
-    const { userId, usersCard } = this.state;
-    const cards = cardsIdx.map((cardIdx) => usersCard[userId][cardIdx]);
+    const { userscards } = this.state;
+    const cards = cardsIdx.map((cardIdx) => userscards[userId][cardIdx]);
 
     if (cardsIdx.length !== 2) return;
     if (cards[0] !== cards[1]) return;
@@ -369,8 +387,8 @@ class CustomRoom extends React.Component {
   };
 
   selectCommon2 = (userId, roomId, targetId, targetCardIdx) => {
-    const { usersCard } = this.state;
-    const targetCard = usersCard[targetId][targetCardIdx];
+    const { userscards } = this.state;
+    const targetCard = userscards[targetId][targetCardIdx];
     const data = {
       userId,
       roomId,
@@ -382,8 +400,8 @@ class CustomRoom extends React.Component {
   };
 
   useCommon3 = (userId, roomId, cardsIdx) => {
-    const { userId, usersCard } = this.state;
-    const cards = cardsIdx.map((cardIdx) => usersCard[userId][cardIdx]);
+    const { userscards } = this.state;
+    const cards = cardsIdx.map((cardIdx) => userscards[userId][cardIdx]);
 
     if (cardsIdx.length !== 3) return;
     if (cards[0] !== cards[1] || cards[0] !== cards[2]) return;
@@ -403,8 +421,8 @@ class CustomRoom extends React.Component {
   };
 
   selectCommon3 = (userId, roomId, targetId, targetCardIdx) => {
-    const { usersCard } = this.state;
-    const targetCard = usersCard[targetId][targetCardIdx];
+    const { userscards } = this.state;
+    const targetCard = userscards[targetId][targetCardIdx];
     const data = {
       userId,
       roomId,
@@ -416,8 +434,8 @@ class CustomRoom extends React.Component {
   };
 
   useCommon5 = (userId, roomId, cardsIdx) => {
-    const { userId, usersCard } = this.state;
-    const cards = cardsIdx.map((cardIdx) => usersCard[userId][cardIdx]);
+    const { userscards } = this.state;
+    const cards = cardsIdx.map((cardIdx) => userscards[userId][cardIdx]);
 
     if (cardsIdx.length !== 5) return;
     const commonCards = [
@@ -447,6 +465,7 @@ class CustomRoom extends React.Component {
   };
 
   selectCommon5 = (userId, roomId, selectCardIdx) => {
+    const { discardPile } = this.state;
     const selectCard = discardPile[selectCardIdx];
     const data = {
       userId,
