@@ -20,6 +20,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "socket.io-client": "^2.3.1",
     "yup": "^0.29.1"
   },
   "scripts": {
