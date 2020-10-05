@@ -68,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "8px",
     height: chatBoxHeight,
     flexDirection: "column",
+    // background:"red",
     // boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
     "& .chatHeader": {
       height: spaceChatBoxHeader,
@@ -85,6 +86,7 @@ const useStyles = makeStyles((theme) => ({
         cursor: "pointer",
         boxShadow:
           "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
+        width: "232px",
       },
       "& .closeButton": {
         margin: "4px 0px 4px auto",
@@ -271,8 +273,8 @@ function Chat() {
                   style={{
                     margin:
                       data.fromUsername === thisUsername
-                        ? "4px 16px 4px auto"
-                        : "4px 0 4px 16px",
+                        ? "8px 16px 4px auto"
+                        : "8px 0 4px 16px",
                   }}
                 >
                   <div style={{ display: "flex", flexDirection: "row" }}>
@@ -281,12 +283,11 @@ function Chat() {
                         width: "24px",
                         height: "24px",
                         fontSize: "12px",
-                        margin: "4px",
                       }}
                     >
                       {data.fromUsername[0]}
                     </Avatar>
-                    <Typography style={{ marginTop: "5px" }}>
+                    <Typography style={{ margin: "2px 0 4px 4px" }}>
                       {data.fromUsername}
                     </Typography>
                   </div>
