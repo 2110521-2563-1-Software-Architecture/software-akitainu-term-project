@@ -1,11 +1,9 @@
-import React from 'react'
+import React from "react";
 import { useParams } from "react-router-dom";
 
 function Helloworld() {
-    let { username } = useParams();
+  let { username } = useParams();
 
-    return(
-        <p>{`hello ${username}`}</p>
-    )
+  return <p>{`hello ${username}`}</p>;
 }
-export default Helloworld
+export default Helloworld;
