@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import {
   Grid,
   makeStyles,
@@ -18,8 +18,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import SendIcon from "@material-ui/icons/Send";
 
 //setting chat size here
-const width = "300px";
-const height = "400px";
+var width = "300px";
+var height = "400px";
 const spaceBetweenBubbleBox = "16px";
 const spaceBubble = "48px";
 const spaceChatBoxHeader = "40px";
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     width: width,
     height: height,
-    // background:"black",
+    // background:"blur(2px)",
     // background:"rgba(255,255,255,0.5)",
     marginLeft: `calc(100vw - ${width} - 16px)`,
     marginTop: `calc(100vh - ${height} - 64px - 24px)`,
@@ -97,6 +97,7 @@ const useStyles = makeStyles((theme) => ({
       "& .closeButton": {
         margin: "4px 0px 4px auto",
         background: Palette.blue300,
+        // backdropFilter:"blur(4px)",
         padding: "4px 4px",
         fontSize: "16px",
         borderRadius: "16px",
@@ -108,18 +109,10 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .chatContainer": {
       height: chatBoxContainer,
-      // background: Palette.red100,
       borderRadius: "8px",
       boxShadow:
         "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
-      border: `2px solid ${Palette.blue300}`,
-      // filter:"blur(4px)",
-      // "-o-filter":"blur(4px)",
-      // "-ms-filter":"blur(4px)",
-      // "-moz-filter":"blur(4px)",
-      // "-webkit-filter":"blur(4px)",
-
-      // background:"red",
+      backdropFilter:"blur(4px)",
       "& .chatbox": {
         overflowY: "scroll",
         zIndex: -1,
@@ -143,6 +136,11 @@ const useStyles = makeStyles((theme) => ({
             "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
           background: Palette.blue300,
         },
+        "& .chatboxUsername" : {
+          margin: "1px 0 4px 4px" ,
+          borderRadius:"16px",
+          color:"black",
+        }
       },
     },
     "& .chatInput": {
@@ -219,6 +217,8 @@ function Chat() {
   const [peopleBubbles, setPeopleBubbles] = useState();
   const [showMessage, setShowMessage] = useState(false);
   const [currentShowMessage, setCurrentShowMessage] = useState("");
+  const [typing,setTyping] = useState("");
+  const chatBoxElement = useRef(0)
 
   const thisUsername = "bump";
   const thisRoomId = 101;
@@ -234,6 +234,12 @@ function Chat() {
     });
   }, []);
 
+  // useEffect(()=>{
+  //   var tf = document.getElementById(`room-${thisRoomId}-chat-box`)
+  //   tf.scrollTop = tf.offsetHeight;
+  //   console.log(tf)
+  // },[messageGroup])
+
   useMemo(() => {
     let peopleData = [];
     let peopleList = [];
@@ -241,7 +247,6 @@ function Chat() {
       messageGroup.private.messages.forEach((message, index) => {
         if (!peopleList.includes(message.fromUsername)) {
           var randomColor = Math.floor(Math.random() * 16777215).toString(16);
-          // peopleList.push(people.fromUsername)
           let data = {
             name: message.fromUsername,
             color: `#${randomColor}`,
@@ -273,13 +278,28 @@ function Chat() {
     clearTimeout(timeout);
   };
 
-  // useEffect(()=>{
-  //   console.log(messageGroup)
-  // },[messageGroup])
+  const handleTyping = (e) => {
+    setTyping(e.target.value)
+  }
 
-  // useEffect(()=>{
-  //   console.log(peopleBubbles)
-  // },[peopleBubbles])
+  const handleEnter = () => {
+    if (typing) {
+      let roomMes = messageGroup.room.messages
+        roomMes.push({
+          fromRoomId: 101,
+          fromUsername: thisUsername,
+          message: typing,
+        })
+      setMessageGroup({...messageGroup,...{room:{messages:roomMes}}})
+      setTyping("")
+    }
+  }
+
+  const AlwaysScrollToBottom = () => {
+    const elementRef = useRef();
+    useEffect(() => elementRef.current.scrollIntoView({ block: 'end',  behavior: 'smooth' }));
+    return <div ref={elementRef} />;
+  };
 
   const chatBox = () => (
     <Grow in={showMessage} {...{ timeout: 250 }}>
@@ -297,7 +317,7 @@ function Chat() {
           </IconButton>
         </div>
         <div className="chatContainer">
-          <div className="chatbox">
+          <div className="chatbox" id={`room-${thisRoomId}-chat-box`} ref={chatBoxElement}>
             {messageGroup.room &&
               messageGroup.room.messages.map((data) => (
                 <div
@@ -312,7 +332,7 @@ function Chat() {
                     <Avatar className="chatboxAvatar">
                       {data.fromUsername[0]}
                     </Avatar>
-                    <Typography style={{ margin: "1px 0 4px 4px" }}>
+                    <Typography className="chatboxUsername">
                       {data.fromUsername}
                     </Typography>
                   </div>
@@ -323,6 +343,7 @@ function Chat() {
                   </div>
                 </div>
               ))}
+              <AlwaysScrollToBottom/>
           </div>
         </div>
         <div className="chatInput">
@@ -330,6 +351,14 @@ function Chat() {
             <TextField
               className="textfield"
               placeholder="Aa..."
+              onChange={handleTyping}
+              value={typing}
+              onKeyPress={(e)=>{
+                console.log(e.key)
+                if (e.key === "Enter") {
+                  handleEnter();
+                }
+              }}
               InputProps={{
                 classes: {
                   input: classes.textfieldInput,
@@ -342,6 +371,7 @@ function Chat() {
                         marginTop: "-3px",
                         cursor: "pointer",
                       }}
+                      onClick={handleEnter}
                     />
                   </InputAdornment>
                 ),
