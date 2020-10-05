@@ -50,10 +50,10 @@ const useStyles = makeStyles((theme)=>({
     display:"flex",
     // background:Palette.blue200,
     "& ::-webkit-scrollbar" : {
-      width: "8px",
+      width: "10px",
     },
     "& ::-webkit-scrollbar-track" : {
-      background: Palette.blue300,
+      background: Palette.red100,
       borderRadius:"8px",
     },
     "& ::-webkit-scrollbar-thumb " : {
@@ -97,13 +97,15 @@ const useStyles = makeStyles((theme)=>({
     },
     "& .chatContainer" : {
       height:chatBoxContainer,
-      background:Palette.blue300,
+      background:Palette.red100,
       borderRadius:"8px",
       boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
       // background:"red",
       "& .chatbox" : {
         overflowY:"scroll",
         height:chatBoxContainer,
+        display:"flex",
+        flexDirection:"column",
       }
     },
     "& .chatInput" : {
@@ -246,8 +248,16 @@ function Chat() {
         </div>
         <div className="chatContainer">
           <div className="chatbox">
-          {messageGroup.room&&messageGroup.room.messages.map((message)=>(
-            <p>asd</p>
+          {messageGroup.room&&messageGroup.room.messages.map((data)=>(
+            <div style={{margin:data.fromUsername===thisUsername?"4px 16px 4px auto":"4px 0 4px 16px"}}>
+              <div style={{display:"flex",flexDirection:"row"}}>
+              <Avatar style={{width:"24px",height:"24px",fontSize:"12px",margin:"4px"}}>{data.fromUsername[0]}</Avatar>
+              <Typography style={{marginTop:"5px"}}>{data.fromUsername}</Typography>
+              </div>
+              <div style={{display:"flex"}}>
+              <Typography align="left" style={{color:"black",background:"white",maxWidth:"100px",padding:"2px 16px",borderRadius:"16px"}}>{data.message}</Typography>
+              </div>
+            </div>
           ))}
           </div>
         </div>
