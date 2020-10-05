@@ -2,20 +2,21 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core'
 import { useParams, useHistory  } from "react-router-dom";
 import Chat from './Chat'
+import {Palette} from 'components'
 
 const useStyles = makeStyles((theme)=>({
     root : {
         height:"100vh",
         width:"100vw",
-        background:"#0088ad",
+        background:Palette.yellow100,
     },
     navbarTop : {
         height:"64px",
-        background:"#020017",
+        background:Palette.blue200,
         width:"100vw",
     },
     welcome : {
-        color:"white",
+        color:Palette.blue100,
         fontSize:"88px",
         textAlign:"center",
         paddingTop:"40vh",
@@ -26,9 +27,10 @@ const useStyles = makeStyles((theme)=>({
         position:"relative",
         top:"12px",
         left:"24px",
-        background:"#0088ad",
+        background:Palette.blue100,
         cursor:"pointer",
-        borderRadius:"18px"
+        borderRadius:"18px",
+        color:"white",
     }
 }))
 
