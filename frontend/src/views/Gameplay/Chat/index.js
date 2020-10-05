@@ -307,7 +307,7 @@ function Chat({roomId:thisRoomId}) {
         if (currentShowMessage==="room") {
           let roomMes = messageGroup.room.messages
           roomMes.push({
-            fromRoomId: 101,
+            fromRoomId: parseInt(thisRoomId),
             fromUsername: thisUsername,
             message: typing,
           })
