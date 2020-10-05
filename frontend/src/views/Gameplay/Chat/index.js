@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme)=>({
     borderRadius:"8px",
     height:chatBoxHeight,
     flexDirection:"column",
+    // background:"red",
     // boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
     "& .chatHeader" : {
       height:spaceChatBoxHeader,
@@ -83,6 +84,7 @@ const useStyles = makeStyles((theme)=>({
         color:Palette.yellow100,
         cursor:"pointer",
         boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
+        width:"232px",
       },
       "& .closeButton" : {
         margin:"4px 0px 4px auto",
@@ -249,10 +251,10 @@ function Chat() {
         <div className="chatContainer">
           <div className="chatbox">
           {messageGroup.room&&messageGroup.room.messages.map((data)=>(
-            <div style={{margin:data.fromUsername===thisUsername?"4px 16px 4px auto":"4px 0 4px 16px"}}>
+            <div style={{margin:data.fromUsername===thisUsername?"8px 16px 4px auto":"8px 0 4px 16px"}}>
               <div style={{display:"flex",flexDirection:"row"}}>
-              <Avatar style={{width:"24px",height:"24px",fontSize:"12px",margin:"4px"}}>{data.fromUsername[0]}</Avatar>
-              <Typography style={{marginTop:"5px"}}>{data.fromUsername}</Typography>
+              <Avatar style={{width:"24px",height:"24px",fontSize:"12px"}}>{data.fromUsername[0]}</Avatar>
+              <Typography style={{margin:"2px 0 4px 4px"}}>{data.fromUsername}</Typography>
               </div>
               <div style={{display:"flex"}}>
               <Typography align="left" style={{color:"black",background:"white",maxWidth:"100px",padding:"2px 16px",borderRadius:"16px"}}>{data.message}</Typography>
