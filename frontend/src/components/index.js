@@ -1,2 +1,2 @@
-export { default as Palette } from './Assets/Palette';
-export * from "./Assets/Palette"
+export { default as Palette } from "./Assets/Palette";
+export * from "./Assets/Palette";

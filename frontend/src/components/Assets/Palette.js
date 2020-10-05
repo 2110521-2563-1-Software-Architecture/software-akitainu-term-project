@@ -12,7 +12,6 @@ class palette {
   grey100 = "#84828f"; //romance silver
 
   green400 = "#1b7450"; //dark spring green
-
 }
 
 const Palette = new palette();

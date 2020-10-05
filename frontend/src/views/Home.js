@@ -1,10 +1,9 @@
-import React from 'react';
-import logo from '../shiba-inu.svg';
+import React from "react";
+import logo from "../shiba-inu.svg";
 // import logo from '../logo.svg'
 
 function Home() {
-
-    return (
+  return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -22,18 +21,15 @@ function Home() {
         <p className="akitainu">by software akitainu</p>
         <a
           className="App-link"
-          href="http://localhost:3002/helloworld/shiba_lover"  
+          href="http://localhost:3002/helloworld/shiba_lover"
         >
           Try Helloworld with shiba_lover
         </a>
-        <a
-          className="App-link"
-          href="http://localhost:3002/gameplay/101"  
-        >
+        <a className="App-link" href="http://localhost:3002/gameplay/101">
           Go to room 101
         </a>
       </header>
     </div>
-    )
+  );
 }
-export default Home
+export default Home;
