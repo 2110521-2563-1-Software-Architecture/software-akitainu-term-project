@@ -58,7 +58,7 @@ function Gameplay() {
   return (
     <div className={classes.root}>
       <Topbar />
-      <Chat />
+      <Chat roomId={roomId}/>
       <Game />
     </div>
   );
