@@ -24,6 +24,16 @@ export const roomMessages = [
     fromUsername:"auu",
     message:"hello",
   },
+  {
+    fromRoomId:101,
+    fromUsername:"miw",
+    message:"how to play",
+  },
+  {
+    fromRoomId:101,
+    fromUsername:"bump",
+    message:"just random card",
+  },
 ]
 
 export const privateMessages = [

@@ -6,12 +6,15 @@ import { Grid,
   Tooltip,
   Grow,
   TextField,
+  IconButton,
+  InputAdornment,
 } from '@material-ui/core'
 import Ripples from 'react-ripples'
 import { roomMessages,privateMessages } from './mock'
 import TouchRipple from '@material-ui/core/ButtonBase/TouchRipple';
 import {Palette} from 'components'
 import CloseIcon from '@material-ui/icons/Close';
+import SendIcon from '@material-ui/icons/Send';
 
 //setting chat size here
 const width = "300px"           
@@ -46,6 +49,21 @@ const useStyles = makeStyles((theme)=>({
   chatBox : {
     display:"flex",
     // background:Palette.blue200,
+    "& ::-webkit-scrollbar" : {
+      width: "8px",
+    },
+    "& ::-webkit-scrollbar-track" : {
+      background: Palette.blue300,
+      borderRadius:"8px",
+    },
+    "& ::-webkit-scrollbar-thumb " : {
+      background: "white",
+      borderRadius:"8px",
+      marginRight:"0 8px 8px 0"
+    },
+    "& ::-webkit-scrollbar-thumb:hover" : {
+      background: "#555",
+    },
     borderRadius:"8px",
     height:chatBoxHeight,
     flexDirection:"column",
@@ -64,6 +82,7 @@ const useStyles = makeStyles((theme)=>({
         borderRadius:"16px",
         color:Palette.yellow100,
         cursor:"pointer",
+        boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
       },
       "& .closeButton" : {
         margin:"4px 0px 4px auto",
@@ -73,15 +92,18 @@ const useStyles = makeStyles((theme)=>({
         borderRadius:"16px",
         color:Palette.yellow100,
         cursor:"pointer",
+        boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
       },
     },
     "& .chatContainer" : {
       height:chatBoxContainer,
-      background:"red",
+      background:Palette.blue300,
       borderRadius:"8px",
+      boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
       // background:"red",
       "& .chatbox" : {
-        
+        overflowY:"scroll",
+        height:chatBoxContainer,
       }
     },
     "& .chatInput" : {
@@ -91,10 +113,11 @@ const useStyles = makeStyles((theme)=>({
       "& .textfieldWrapper" : {
         background:Palette.blue300,
         borderRadius:"8px",
-
+        boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
         margin:"8px 0 0 0px",
         "& .textfield" : {
           marginLeft:"8px",
+          paddingTop:"4px",
           width:`calc(${width} - 16px)`,
         }
       },
@@ -219,18 +242,28 @@ function Chat() {
         {/* <Typography >{`${currentShowMessage}`}</Typography> */}
         <div className="chatHeader">
           <div className="username">{currentShowMessage}</div>
-          <div className="closeButton" onClick={()=>{handleCloseMessage()}}><CloseIcon/></div>
+          <IconButton className="closeButton" onClick={()=>{handleCloseMessage()}}><CloseIcon/></IconButton>
         </div>
         <div className="chatContainer">
-          <div className="chatbox">container</div>
+          <div className="chatbox">
+          {messageGroup.room&&messageGroup.room.messages.map((message)=>(
+            <p>asd</p>
+          ))}
+          </div>
         </div>
         <div className="chatInput">
           <div className="textfieldWrapper">
             <TextField className="textfield" 
+            placeholder="Aa..."
             InputProps={{
               classes: {
                 input: classes.textfieldInput
-              }
+              },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SendIcon style={{color:Palette.yellow100,marginTop:"-3px"}}/>
+                </InputAdornment>
+              ),
             }} 
             size="small"/>
           </div>
@@ -241,14 +274,14 @@ function Chat() {
 
   const chatBubbles = () => (
       <Grid className={classes.chatSelect}>
-        <Ripples className={classes.ripple} onClick={()=>handleshowMessage("room")}><Tooltip title="Room chat" placement="bottom" arrow interactive>
-          <Avatar className={classes.chatBubble}>R</Avatar>
-        </Tooltip></Ripples>
+        <IconButton className={classes.ripple} onClick={()=>handleshowMessage("room")}><Tooltip title="Room chat" placement="bottom" arrow interactive>
+          <Avatar className={classes.chatBubble} style={{background:Palette.blue300}}>R</Avatar>
+        </Tooltip></IconButton>
         <div className={classes.divider}></div>
         {peopleBubbles && peopleBubbles.map((people,index)=>(
-          <Ripples className={classes.ripple} onClick={()=>handleshowMessage(people.name)}><Tooltip title={people.name} placement="bottom" arrow interactive>
-            <Avatar key={`${people.name}-${index}`} className={classes.chatBubble}>{people.name[0]}</Avatar>
-          </Tooltip></Ripples>
+          <IconButton className={classes.ripple} onClick={()=>handleshowMessage(people.name)}><Tooltip title={people.name} placement="bottom" arrow interactive>
+            <Avatar key={`${people.name}-${index}`} className={classes.chatBubble} style={{background:Palette.green400}}>{people.name[0]}</Avatar>
+          </Tooltip></IconButton>
         ))}
       </Grid>
   )

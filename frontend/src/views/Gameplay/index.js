@@ -12,11 +12,11 @@ const useStyles = makeStyles((theme)=>({
     },
     navbarTop : {
         height:"64px",
-        background:Palette.blue200,
+        background:Palette.blue300,
         width:"100vw",
     },
     welcome : {
-        color:Palette.blue100,
+        color:Palette.blue300,
         fontSize:"88px",
         textAlign:"center",
         paddingTop:"40vh",
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme)=>({
         position:"relative",
         top:"12px",
         left:"24px",
-        background:Palette.blue100,
+        background:Palette.green400,
         cursor:"pointer",
         borderRadius:"18px",
         color:"white",
