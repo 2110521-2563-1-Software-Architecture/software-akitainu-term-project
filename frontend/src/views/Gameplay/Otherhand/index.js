@@ -40,7 +40,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Otherhand() {
   const classes = useStyles();
-  // const numberOfCards = cards.length;
+  const name = "Owen"; //mock
+  const numberOfCards = 6; //mock
   function gencard(numberofcards) {
     var tmp = Array();
     for (let i = 0; i < numberofcards; i++) {
@@ -51,16 +52,19 @@ function Otherhand() {
 
   return (
     <Grid container direction="row" className={classes.root}>
-      <Grid item xs="12">
+      <Grid container item xs="12">
         <Avatar
-          alt="dasdasd"
+          alt={name}
           src="/broken-image.jpg"
           style={{ marginLeft: "3px", marginTop: "3px" }}
         ></Avatar>
+        <Grid item style={{ margin: "10px" }}>
+          <span>{name}</span>
+        </Grid>
       </Grid>
       <div className={classes.cardcantainer}>
         <div style={{ width: "5%", visibility: "hidden" }}></div>
-        {gencard(5)}
+        {gencard(numberOfCards)}
         <div style={{ width: "5%", visibility: "hidden" }}></div>
       </div>
     </Grid>
