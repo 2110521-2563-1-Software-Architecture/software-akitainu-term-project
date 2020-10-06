@@ -98,7 +98,12 @@ function Game(props) {
   );
   console.log(customRoom.getPropsFromUserId(1));
 
-  const { playerCards, seeTheFutureCards, latestUsedCard } = gameTestData; //mock data
+  const {
+    playerCards,
+    seeTheFutureCards,
+    latestUsedCard,
+    users,
+  } = gameTestData; //mock data
 
   const hasDefuse = () => {
     for (let i = 0; i < playerCards.length; i++) {

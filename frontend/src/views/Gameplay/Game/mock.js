@@ -20,4 +20,10 @@ export const gameTestData = {
   ],
   seeTheFutureCards: [Card.attack, Card.defuse, Card.nope],
   latestUsedCard: Card.defuse,
+  users: [
+    { name: "Player 2", numberOfCards: 5 },
+    { name: "Player 3", numberOfCards: 7 },
+    { name: "Player 4", numberOfCards: 2 },
+    { name: "Player 5", numberOfCards: 2 },
+  ],
 };
