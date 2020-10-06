@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { Card, getCardImage } from "../../../components/type";
-import { playerHandTestProps } from "./mock.js";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Button from "@material-ui/core/Button";
 
@@ -59,7 +58,9 @@ function getNthCardStyle(n, selectedCards) {
     marginLeft: n === 0 ? "0px" : `-50px`,
     marginTop: selectedCards.includes(n) ? "-40px" : "0px",
     height: "250px",
-    boxShadow: "0 0 8px 2px rgba(0, 0, 0, 0.5)",
+    boxShadow:
+      // equal to theme.shadows[5]
+      "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
     borderRadius: "16px",
     cursor: "pointer",
   };
@@ -94,8 +95,7 @@ function getCards(cards, selectedCards, setSelectedCards, classes) {
 
 function PlayerHand(props) {
   const classes = useStyles();
-  const { cards } = playerHandTestProps;
-  const numberOfCards = cards.length;
+  const { cards } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const canUseSelectedCards = () => {
     if (selectedCards.length === 1) {

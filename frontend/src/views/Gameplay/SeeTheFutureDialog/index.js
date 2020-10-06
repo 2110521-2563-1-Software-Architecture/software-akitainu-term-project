@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     height: "250px",
     borderRadius: "16px",
-    boxShadow: "0 0 4px 2px rgba(0, 0, 0, 0.5)",
+    boxShadow: theme.shadows[5],
   },
 
   labelAndCard: {

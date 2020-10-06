@@ -1,7 +1,7 @@
 import { Card } from "../../../components/type";
 
-export const playerHandTestProps = {
-  cards: [
+export const gameTestData = {
+  playerCards: [
     Card.defuse,
     Card.common1,
     Card.common1,
@@ -18,4 +18,6 @@ export const playerHandTestProps = {
     Card.shuffle,
     Card.skip,
   ],
+  seeTheFutureCards: [Card.attack, Card.defuse, Card.nope],
+  latestUsedCard: Card.defuse,
 };
