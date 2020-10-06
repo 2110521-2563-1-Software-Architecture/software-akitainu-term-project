@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Grid, makeStyles, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
+import { Card } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
+import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import Otherhand from "../Otherhand";
 import CustomRoom from "../../../components/CustomRoom";
 
@@ -76,8 +78,10 @@ const useStyles = makeStyles((theme) => ({
 function Game(props) {
   const classes = useStyles();
   const customRoom = new CustomRoom({ userId: 1 });
+  const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
   console.log(customRoom.getPropsFromUserId(1));
 
+  const seeTheFutureCards = [Card.attack, Card.defuse, Card.nope]; //mock data
   return (
     <div className={classes.root}>
       <div className={classes.topSection}>
@@ -103,30 +107,42 @@ function Game(props) {
             <Otherhand />
           </div>
         </div>
-        <div className={classes.playArea}>
-          <div className={classes.card}>
-            <img
-              src={card_back}
-              className={classes.cardImg}
-              onClick={() => alert("draw card")}
-            />
+        <div className={classes.middleSection}>
+          <div className={classes.middlePlayerSection}>
+            <div className={classes.middlePlayerWrapper}>P2</div>
+            <div style={{ height: "5%" }} />
+            <div className={classes.middlePlayerWrapper}>P3</div>
           </div>
-          <div className={classes.card}>used card</div>
-          <div className={classes.log}>log</div>
+          <div className={classes.playArea}>
+            <div className={classes.card}>
+              <img
+                src={card_back}
+                className={classes.cardImg}
+                onClick={() => alert("draw card")}
+              />
+            </div>
+            <div className={classes.card}>used card</div>
+            <div className={classes.log}>
+              <div onClick={() => setShowSeeTheFutureDialog(true)}>
+                test stf
+              </div>
+            </div>
+          </div>
+          <div className={classes.middlePlayerSection}>
+            <div className={classes.middlePlayerWrapper}>P8</div>
+            <div style={{ height: "5%" }} />
+            <div className={classes.middlePlayerWrapper}>P7</div>
+          </div>
         </div>
-        <div className={classes.middlePlayerSection}>
-          <div className={classes.middlePlayerWrapper}>
-            <Otherhand />
-          </div>
-          <div style={{ height: "5%" }} />
-          <div className={classes.middlePlayerWrapper}>
-            <Otherhand />
-          </div>
+        <div className={classes.bottomSection}>
+          <PlayerHand />
         </div>
       </div>
-      <div className={classes.bottomSection}>
-        <PlayerHand />
-      </div>
+      <SeeTheFutureDialog
+        open={showSeeTheFutureDialog}
+        handleClose={() => setShowSeeTheFutureDialog(false)}
+        seeTheFutureCards={seeTheFutureCards}
+      />
     </div>
   );
 }
