@@ -42,7 +42,7 @@ function Gameplay() {
   const history = useHistory();
 
   const ENDPOINT = "localhost:10001";
-  const socket = socketIOClient(ENDPOINT)
+  const socket = socketIOClient(ENDPOINT);
 
   const backtoHome = () => {
     history.push("/home");
@@ -63,7 +63,7 @@ function Gameplay() {
     <div className={classes.root}>
       <Topbar />
       <Chat roomId={roomId} />
-      <Game socket={socket}/>
+      <Game socket={socket} />
     </div>
   );
 }

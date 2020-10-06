@@ -54,7 +54,11 @@ export default function CardSelectorDialog(props) {
   const classes = useStyles();
   const { cardSelectorCards, open, handleClose } = props;
   return (
-    <TransitionsModal open={open} handleClose={handleClose}>
+    <TransitionsModal
+      open={open}
+      handleClose={handleClose}
+      showCloseButton={false}
+    >
       <div className={classes.root}>
         <p className={classes.title}>CARD SELECTOR</p>
         <ul className={classes.list}>

@@ -21,9 +21,9 @@ class CustomRoom extends React.Component {
 
   componentDidMount() {
     this.state.socket.on("new-custom-room", (data) => {
-      console.log("new-custom-room",data);
+      console.log("new-custom-room", data);
 
-      const {userId, roomId} = data;
+      const { userId, roomId } = data;
       const usersId = [userId];
 
       this.setState({
@@ -34,10 +34,10 @@ class CustomRoom extends React.Component {
     });
     this.state.socket.on("new-join-custom-other", (data) => {
       console.log("new-join-custom-other", data);
-      if(!data) return;
+      if (!data) return;
 
       const { usersId, usersName, roomId } = this.state;
-      if(usersId.indexOf(data.userId) !== -1) return;
+      if (usersId.indexOf(data.userId) !== -1) return;
       usersId.push(data.userId);
       usersName.push(data.userName);
       this.setState({
@@ -48,7 +48,7 @@ class CustomRoom extends React.Component {
     });
     this.state.socket.on("new-join-custom-joiner", (data) => {
       console.log("new-join-custom-joiner", data);
-      if(!data) return;
+      if (!data) return;
 
       this.setState({
         usersId: data.usersId,
@@ -57,7 +57,7 @@ class CustomRoom extends React.Component {
       });
     });
     this.state.socket.on("new-card", (data) => {
-      console.log('new-card', data);
+      console.log("new-card", data);
 
       const {
         userId,
@@ -81,7 +81,7 @@ class CustomRoom extends React.Component {
       });
     });
     this.state.socket.on("new-game", (data) => {
-      console.log('new-game',data);
+      console.log("new-game", data);
 
       const { roomId, leftCardNumber, usersId, usersCard } = data;
       if (this.state.roomId !== roomId) return;
@@ -283,7 +283,8 @@ class CustomRoom extends React.Component {
       discardPile: this.state.discardPile,
       userCards: [],
     };
-    if(this.state.usersCards[userIdx] && userIdx>=0) data.userCards = this.state.usersCards[userIdx];
+    if (this.state.usersCards[userIdx] && userIdx >= 0)
+      data.userCards = this.state.usersCards[userIdx];
     return data;
   };
 
@@ -487,8 +488,8 @@ class CustomRoom extends React.Component {
 
   render() {
     const exampleCard = Card.common1;
-    return <div></div>  
-  };
+    return <div></div>;
+  }
 }
 
 export default CustomRoom;

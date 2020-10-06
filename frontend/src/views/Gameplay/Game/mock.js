@@ -38,4 +38,5 @@ export const gameTestData = {
     Card.defuse,
     Card.nope,
   ],
+  isSelectingPlayer: false,
 };

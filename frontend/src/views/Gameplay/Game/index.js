@@ -54,12 +54,36 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "20%",
     backgroundColor: "lightblue", //tmp
+    position: "relative",
+    zIndex: "101",
   },
 
   middlePlayerWrapper: {
-    height: "45%",
+    height: "40%",
     width: "100%",
     backgroundColor: "lightblue", //tmp
+    position: "relative",
+    zIndex: "101",
+  },
+
+  selectableTopPlayerWrapper: {
+    height: "100%",
+    width: "20%",
+    backgroundColor: "lightblue", //tmp
+    position: "relative",
+    zIndex: "101",
+    "&:hover": { boxShadow: "0px 0px 10px 4px rgba(255,255,255,0.75)" },
+    cursor: "pointer",
+  },
+
+  selectableMiddlePlayerWrapper: {
+    height: "40%",
+    width: "100%",
+    backgroundColor: "lightblue", //tmp
+    position: "relative",
+    zIndex: "101",
+    "&:hover": { boxShadow: "0px 0px 10px 4px rgba(255,255,255,0.75)" },
+    cursor: "pointer",
   },
 
   cardWrapper: {
@@ -71,10 +95,29 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
 
-  log: {
+  logWrapper: {
     width: "50%",
     height: "100%",
     backgroundColor: "green", //tmp
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  log: {
+    width: "75%",
+    height: "50%",
+    position: "relative",
+    zIndex: "101",
+    backgroundColor: "white",
+    borderRadius: "24px",
+    border: "16px double gray",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "500",
+    fontSize: "24px",
+    padding: "16px",
   },
 
   deck: {
@@ -88,6 +131,17 @@ const useStyles = makeStyles((theme) => ({
     height: "250px",
     borderRadius: "16px",
     boxShadow: theme.shadows[5],
+    position: "relative",
+    zIndex: "101",
+  },
+
+  backdrop: {
+    width: "100%",
+    height: "calc(100% - 64px)",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    position: "absolute",
+    top: "64px",
+    zIndex: "100",
   },
 }));
 
@@ -95,22 +149,21 @@ function Game(props) {
   const { socket } = props;
   const classes = useStyles();
 
-  const userId = window.sessionStorage.getItem("userId") // todo:
+  const userId = window.sessionStorage.getItem("userId"); // todo:
   const roomId = "100001"; // todo:
 
-  const [userCards,setUserCards] = useState([]);
+  const [userCards, setUserCards] = useState([]);
   const customRoomRef = useRef();
-  const customRoom = (<CustomRoom socket={socket} ref={customRoomRef} />);
+  const customRoom = <CustomRoom socket={socket} ref={customRoomRef} />;
 
   useEffect(() => {
     const data = customRoomRef.current.getPropsFromUserId(userId);
     setUserCards(data.userCards);
   }, [customRoomRef?.current?.getPropsFromUserId(userId).userCards]);
-  
 
   const _drawCard = () => {
     customRoomRef.current.drawCard(userId, roomId);
-  }
+  };
 
   const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
   const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
@@ -124,41 +177,73 @@ function Game(props) {
     }
     return false;
   };
-
   const {
     numberOfDeckCards,
     seeTheFutureCards,
     latestUsedCard,
     users,
     cardSelectorCards,
+    isSelectingPlayer,
   } = gameTestData; //mock data
+
+  const getTopPlayer = (user) => {
+    return (
+      <div
+        className={
+          isSelectingPlayer
+            ? classes.selectableTopPlayerWrapper
+            : classes.topPlayerWrapper
+        }
+        onClick={
+          isSelectingPlayer
+            ? () => {
+                alert(`select user ${user.name}`);
+              }
+            : undefined
+        }
+      >
+        <Otherhand user={user} />
+      </div>
+    );
+  };
+
+  const getMiddlePlayer = (user) => {
+    return (
+      <div
+        className={
+          isSelectingPlayer
+            ? classes.selectableMiddlePlayerWrapper
+            : classes.middlePlayerWrapper
+        }
+        onClick={
+          isSelectingPlayer
+            ? () => {
+                alert(`select user ${user.name}`);
+              }
+            : undefined
+        }
+      >
+        <Otherhand user={user} />
+      </div>
+    );
+  };
 
   return (
     <>
       {customRoom}
       <div className={classes.root}>
         <div className={classes.topSection}>
-          <div className={classes.topPlayerWrapper}>
-            <Otherhand user={gameTestData.users[0]} />
-          </div>
+          {getTopPlayer(users[0])}
           <div style={{ width: "5%" }} />
-          <div className={classes.topPlayerWrapper}>
-            <Otherhand user={gameTestData.users[1]} />
-          </div>
+          {getTopPlayer(users[1])}
           <div style={{ width: "5%" }} />
-          <div className={classes.topPlayerWrapper}>
-            <Otherhand user={gameTestData.users[2]} />
-          </div>
+          {getTopPlayer(users[2])}
         </div>
         <div className={classes.middleSection}>
           <div className={classes.middlePlayerSection}>
-            <div className={classes.middlePlayerWrapper}>
-              <Otherhand user={gameTestData.users[3]} />
-            </div>
-            <div style={{ height: "5%" }} />
-            <div className={classes.middlePlayerWrapper}>
-              <Otherhand user={gameTestData.users[0]} />
-            </div>
+            {getMiddlePlayer(users[3])}
+            <div style={{ height: "10%" }} />
+            {getMiddlePlayer(users[0])}
           </div>
           <div className={classes.playArea}>
             <div className={classes.cardWrapper}>
@@ -174,7 +259,7 @@ function Game(props) {
                 className={classes.usedCard}
               />
             </div>
-            <div className={classes.log}>
+            <div className={classes.logWrapper}>
               <div onClick={() => setShowSeeTheFutureDialog(true)}>
                 test stf
               </div>
@@ -184,20 +269,17 @@ function Game(props) {
               <div onClick={() => setShowExplodingPuppyDialog(true)}>
                 test exploding
               </div>
+              <div className={classes.log}>log</div>
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
-            <div className={classes.middlePlayerWrapper}>
-              <Otherhand user={gameTestData.users[0]} />
-            </div>
-            <div style={{ height: "5%" }} />
-            <div className={classes.middlePlayerWrapper}>
-              <Otherhand user={gameTestData.users[0]} />
-            </div>
+            {getMiddlePlayer(users[0])}
+            <div style={{ height: "10%" }} />
+            {getMiddlePlayer(users[0])}
           </div>
         </div>
         <div className={classes.bottomSection}>
-          <PlayerHand cards={userCards}/>
+          <PlayerHand cards={userCards} />
         </div>
       </div>
       <SeeTheFutureDialog
@@ -224,17 +306,34 @@ function Game(props) {
           alert(`Hide at idx ${idx}`);
         }}
       />
+      {isSelectingPlayer && <div className={classes.backdrop} />}
       <div>
         <button onClick={() => customRoomRef.current.createCustomRoom(userId)}>
           createCustomRoom
         </button>
-        <button onClick={() => customRoomRef.current.joinCustomRoom(userId, roomId)}>
+        <button
+          onClick={() => customRoomRef.current.joinCustomRoom(userId, roomId)}
+        >
           joinCustomRoom
         </button>
-        <button onClick={() => customRoomRef.current.drawCard(userId, roomId)}>drawCard</button>
-        <button onClick={() => customRoomRef.current.startGame(roomId)}>startGame</button>
-        <button onClick={() => customRoomRef.current.useCard(1, 1, Card.common2)}>useCard</button>
-        <button onClick={() => console.log(customRoomRef.current.getPropsFromUserId(userId))}>getProps</button>
+        <button onClick={() => customRoomRef.current.drawCard(userId, roomId)}>
+          drawCard
+        </button>
+        <button onClick={() => customRoomRef.current.startGame(roomId)}>
+          startGame
+        </button>
+        <button
+          onClick={() => customRoomRef.current.useCard(1, 1, Card.common2)}
+        >
+          useCard
+        </button>
+        <button
+          onClick={() =>
+            console.log(customRoomRef.current.getPropsFromUserId(userId))
+          }
+        >
+          getProps
+        </button>
       </div>
     </>
   );
