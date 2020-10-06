@@ -85,15 +85,23 @@ function Game(props) {
           <Otherhand />
         </div>
         <div style={{ width: "5%" }} />
-        <div className={classes.topPlayerWrapper}>P5</div>
+        <div className={classes.topPlayerWrapper}>
+          <Otherhand />
+        </div>
         <div style={{ width: "5%" }} />
-        <div className={classes.topPlayerWrapper}>P6</div>
+        <div className={classes.topPlayerWrapper}>
+          <Otherhand />
+        </div>
       </div>
       <div className={classes.middleSection}>
         <div className={classes.middlePlayerSection}>
-          <div className={classes.middlePlayerWrapper}>P2</div>
+          <div className={classes.middlePlayerWrapper}>
+            <Otherhand />
+          </div>
           <div style={{ height: "5%" }} />
-          <div className={classes.middlePlayerWrapper}>P3</div>
+          <div className={classes.middlePlayerWrapper}>
+            <Otherhand />
+          </div>
         </div>
         <div className={classes.playArea}>
           <div className={classes.card}>
@@ -107,9 +115,13 @@ function Game(props) {
           <div className={classes.log}>log</div>
         </div>
         <div className={classes.middlePlayerSection}>
-          <div className={classes.middlePlayerWrapper}>P8</div>
+          <div className={classes.middlePlayerWrapper}>
+            <Otherhand />
+          </div>
           <div style={{ height: "5%" }} />
-          <div className={classes.middlePlayerWrapper}>P7</div>
+          <div className={classes.middlePlayerWrapper}>
+            <Otherhand />
+          </div>
         </div>
       </div>
       <div className={classes.bottomSection}>

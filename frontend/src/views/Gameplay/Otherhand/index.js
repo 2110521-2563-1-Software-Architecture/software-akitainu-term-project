@@ -46,7 +46,7 @@ function Otherhand() {
     for (let i = 0; i < numberofcards; i++) {
       tmp += <div className={classes.card}></div>;
     }
-    return tmp;
+    return <div className={classes.card}></div>;
   }
   function rendercard() {
     return <div className={classes.card}></div>;
@@ -61,13 +61,7 @@ function Otherhand() {
           style={{ marginLeft: "3px", marginTop: "3px" }}
         ></Avatar>
       </Grid>
-      <div
-        item
-        container
-        direction="column"
-        xs="12"
-        className={classes.cardcantainer}
-      >
+      <div className={classes.cardcantainer}>
         <div style={{ width: "5%", visibility: "hidden" }}></div>
         {gencard(2)}
         <div style={{ width: "5%", visibility: "hidden" }}></div>
