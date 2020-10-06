@@ -8,12 +8,16 @@ import {
 import { Socket } from 'socket.io';
 import { CreatedIdCustomGameRoomDto } from './custom-game-room.dto';
 import { CustomGameRoomService } from './custom-game-room.service';
+import { ChatService } from './chat.service';
 
 type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 
 @WebSocketGateway(10001)
 export class CustomGameRoomGateway implements OnGatewayInterface {
-  constructor(private readonly customGameRoomService: CustomGameRoomService) {}
+  constructor(
+    private readonly customGameRoomService: CustomGameRoomService,
+    private readonly chatService: ChatService,
+  ) {}
 
   @WebSocketServer() server;
   users = 0;
@@ -158,5 +162,17 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   async onSelectCommon5(socket: Socket, data: any) {
     const { roomId } = data;
     this.server.to(roomId).emit('receive-common-5', data);
+  }
+
+  // chat service
+  @SubscribeMessage('message-send-room')
+  async onSendMessageRoom(socket: Socket, data: any) {
+    const { fromRoomId } = data;
+    this.server.to(fromRoomId).emit('message-get-room', data);
+  }
+
+  @SubscribeMessage('message-send-private')
+  async onSendMessagePrivate(socket: Socket, data: any) {
+    this.server.emit('message-get-private', data);
   }
 }
