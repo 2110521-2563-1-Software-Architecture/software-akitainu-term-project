@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
   bottomSection: {
     width: "100%",
     height: "30%",
+    overflow: "hidden",
   },
 
   middlePlayerSection: {
@@ -131,6 +132,22 @@ function Game(props) {
     return false;
   };
 
+  const {
+    playerCards,
+    numberOfDeckCards,
+    seeTheFutureCards,
+    latestUsedCard,
+    users,
+    cardSelectorCards,
+  } = gameTestData; //mock data
+
+  const hasDefuse = () => {
+    for (let i = 0; i < playerCards.length; i++) {
+      if (playerCards[i] === Card.defuse) return true;
+    }
+    return false;
+  };
+
   return (
     <>
       {customRoom}
@@ -193,8 +210,6 @@ function Game(props) {
               <Otherhand user={gameTestData.users[0]} />
             </div>
           </div>
-          <div className={classes.card}>used card</div>
-          <div className={classes.log}>log</div>
         </div>
         <div className={classes.bottomSection}>
           <PlayerHand cards={userCards}/>
@@ -214,6 +229,15 @@ function Game(props) {
         open={showExplodingPuppyDialog}
         handleClose={() => setShowExplodingPuppyDialog(false)}
         hasDefuse={hasDefuse()}
+        numberOfDeckCards={numberOfDeckCards}
+        onClickSpectate={() => {
+          setShowExplodingPuppyDialog(false);
+          alert("Spectate");
+        }}
+        onClickHideExplodingPuppy={(idx) => {
+          setShowExplodingPuppyDialog(false);
+          alert(`Hide at idx ${idx}`);
+        }}
       />
       <div>
         <button onClick={() => customRoomRef.current.createCustomRoom(userId)}>

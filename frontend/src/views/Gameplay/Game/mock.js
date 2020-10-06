@@ -2,7 +2,7 @@ import { Card } from "../../../components/type";
 
 export const gameTestData = {
   playerCards: [
-    Card.defuse,
+    // Card.defuse,
     Card.common1,
     Card.common1,
     Card.common2,
@@ -26,6 +26,7 @@ export const gameTestData = {
     { name: "Player 4", numberOfCards: 2 },
     { name: "Player 5", numberOfCards: 2 },
   ],
+  numberOfDeckCards: 10,
   cardSelectorCards: [
     Card.attack,
     Card.defuse,

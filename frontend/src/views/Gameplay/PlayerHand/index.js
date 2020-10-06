@@ -8,7 +8,46 @@ const useStyles = makeStyles((theme) => ({
   wrapper: {
     width: "100%",
     height: "100%",
+    display: "flex",
+  },
+
+  cardsWrapper: {
+    width: "70%",
+    height: "100%",
+    paddingTop: "10px",
+    overflow: "hidden",
     backgroundColor: "wheat", //tmp
+  },
+
+  list: {
+    width: "fit-content",
+    height: "100%",
+    display: "flex",
+    padding: "0 16px",
+    margin: "50px 0 0 0",
+  },
+
+  listItem: {
+    listStyle: "none",
+  },
+
+  card: {
+    "&:hover": {
+      marginTop: "-10px !important",
+    },
+  },
+
+  menuWrapper: {
+    width: "10%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  disabledButton: {
+    color: "#494949 !important",
+    backgroundColor: "#9E9E9E !important",
   },
 }));
 
@@ -97,6 +136,35 @@ function PlayerHand(props) {
     }
   };
 
-  return <div className={classes.wrapper}>player hand</div>;
+  return (
+    <div className={classes.wrapper}>
+      <div className={classes.cardsWrapper}>
+        <ScrollContainer className="scroll-container">
+          <ul className={classes.list}>
+            {getCards(cards, selectedCards, setSelectedCards, classes)}
+          </ul>
+        </ScrollContainer>
+      </div>
+      <div className={classes.menuWrapper}>
+        {canUseSelectedCards() ? (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => alert("use crad")}
+          >
+            Use card(s)
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            disabled
+            className={classes.disabledButton}
+          >
+            Use card(s)
+          </Button>
+        )}
+      </div>
+    </div>
+  );
 }
 export default PlayerHand;
