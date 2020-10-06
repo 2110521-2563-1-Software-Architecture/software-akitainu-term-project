@@ -4,6 +4,7 @@ import { Card } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
+import CardSelectorDialog from "../CardSelectorDialog";
 import CustomRoom from "../../../components/CustomRoom";
 
 const useStyles = makeStyles((theme) => ({
@@ -78,9 +79,21 @@ function Game(props) {
   const classes = useStyles();
   const customRoom = new CustomRoom({ userId: 1 });
   const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
+  const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
   console.log(customRoom.getPropsFromUserId(1));
 
   const seeTheFutureCards = [Card.attack, Card.defuse, Card.nope]; //mock data
+  const cardSelectorCards = [
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+  ]; //mock data
   return (
     <>
       <div className={classes.root}>
@@ -110,6 +123,9 @@ function Game(props) {
               <div onClick={() => setShowSeeTheFutureDialog(true)}>
                 test stf
               </div>
+              <div onClick={() => setShowCardSelectorDialog(true)}>
+                test cardSelector
+              </div>
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
@@ -126,6 +142,11 @@ function Game(props) {
         open={showSeeTheFutureDialog}
         handleClose={() => setShowSeeTheFutureDialog(false)}
         seeTheFutureCards={seeTheFutureCards}
+      />
+      <CardSelectorDialog
+        open={showCardSelectorDialog}
+        handleClose={() => setShowCardSelectorDialog(false)}
+        cardSelectorCards={cardSelectorCards}
       />
     </>
   );

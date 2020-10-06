@@ -32,6 +32,7 @@ export const Card = {
   common3: "Common3",
   common4: "Common4",
   common5: "Common5",
+  backCard: "BackCard",
 };
 
 export function getCardImage(card) {
