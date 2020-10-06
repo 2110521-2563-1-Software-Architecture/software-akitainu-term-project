@@ -42,14 +42,11 @@ function Otherhand() {
   const classes = useStyles();
   // const numberOfCards = cards.length;
   function gencard(numberofcards) {
-    var tmp = "";
+    var tmp = Array();
     for (let i = 0; i < numberofcards; i++) {
-      tmp += <div className={classes.card}></div>;
+      tmp.push(<div className={classes.card}></div>);
     }
-    return <div className={classes.card}></div>;
-  }
-  function rendercard() {
-    return <div className={classes.card}></div>;
+    return tmp;
   }
 
   return (
@@ -63,7 +60,7 @@ function Otherhand() {
       </Grid>
       <div className={classes.cardcantainer}>
         <div style={{ width: "5%", visibility: "hidden" }}></div>
-        {gencard(2)}
+        {gencard(5)}
         <div style={{ width: "5%", visibility: "hidden" }}></div>
       </div>
     </Grid>
