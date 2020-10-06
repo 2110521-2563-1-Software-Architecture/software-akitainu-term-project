@@ -1,22 +1,9 @@
 import React, { useState } from "react";
-import { Grid, makeStyles, Typography } from "@material-ui/core";
-import { Card } from "../../../components/type";
-import card_back from "../../../image/card_back.png";
-import common_1 from "../../../image/common_1.png";
-import common_2 from "../../../image/common_2.png";
-import common_3 from "../../../image/common_3.png";
-import common_4 from "../../../image/common_4.png";
-import common_5 from "../../../image/common_5.png";
-import attack from "../../../image/attack.png";
-import skip from "../../../image/skip.png";
-import see_the_future from "../../../image/see_the_future.png";
-import favor from "../../../image/favor.png";
-import defuse from "../../../image/defuse.png";
-import nope from "../../../image/nope.png";
-import shuffle from "../../../image/shuffle.png";
-import bomb from "../../../image/bomb.png";
+import { makeStyles } from "@material-ui/core";
+import { Card, getCardImage } from "../../../components/type";
 import { playerHandTestProps } from "./mock.js";
 import ScrollContainer from "react-indiana-drag-scroll";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -24,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     display: "flex",
   },
+
   cardsWrapper: {
     width: "70%",
     height: "100%",
@@ -31,93 +19,38 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     backgroundColor: "wheat", //tmp
   },
+
   list: {
-    width: "100%",
+    width: "fit-content",
     height: "100%",
     display: "flex",
-    padding: "0",
+    padding: "0 16px",
     margin: "50px 0 0 0",
   },
+
   listItem: {
     listStyle: "none",
   },
+
   card: {
     "&:hover": {
       marginTop: "-10px !important",
     },
   },
+
   menuWrapper: {
     width: "10%",
     height: "100%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "wheat", //tmp
   },
-  useCardButton: {
-    height: "40px",
-    width: "75%",
-    position: "relative",
-    background: "#00A2FF",
-    cursor: "pointer",
-    borderRadius: "18px",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-    "&:hover": {
-      background: "#20ADFF",
-    },
-  },
-  useCardButtonDisabled: {
-    height: "40px",
-    width: "75%",
-    position: "relative",
-    background: "#8F8F8F",
-    cursor: "not-allowed",
-    borderRadius: "18px",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-    "&:hover": {
-      background: "#A7A7A7",
-    },
+
+  disabledButton: {
+    color: "#494949 !important",
+    backgroundColor: "#9E9E9E !important",
   },
 }));
-
-export function getCardImage(card) {
-  switch (card) {
-    case Card.defuse:
-      return defuse;
-    case Card.attack:
-      return attack;
-    case Card.skip:
-      return skip;
-    case Card.shuffle:
-      return shuffle;
-    case Card.seeTheFuture:
-      return see_the_future;
-    case Card.nope:
-      return nope;
-    case Card.favor:
-      return favor;
-    case Card.common1:
-      return common_1;
-    case Card.common2:
-      return common_2;
-    case Card.common3:
-      return common_3;
-    case Card.common4:
-      return common_4;
-    case Card.common5:
-      return common_5;
-    default:
-      return card_back;
-  }
-}
 
 function getNthCardStyle(n, selectedCards) {
   return {
@@ -145,7 +78,6 @@ function selectCard(selectedCards, setSelectedCards, n) {
 
 function getCards(cards, selectedCards, setSelectedCards, classes) {
   const ret = cards.map((card, idx) => {
-    console.log(getNthCardStyle(idx, selectedCards));
     return (
       <li key={`card-${idx}`} className={classes.listItem}>
         <img
@@ -213,16 +145,23 @@ function PlayerHand(props) {
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
-        <div
-          className={
-            canUseSelectedCards()
-              ? classes.useCardButton
-              : classes.useCardButtonDisabled
-          }
-          onClick={() => alert("use crad")}
-        >
-          Use card(s)
-        </div>
+        {canUseSelectedCards() ? (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => alert("use crad")}
+          >
+            Use card(s)
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            disabled
+            className={classes.disabledButton}
+          >
+            Use card(s)
+          </Button>
+        )}
       </div>
     </div>
   );
