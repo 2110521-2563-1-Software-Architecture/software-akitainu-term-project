@@ -396,20 +396,20 @@ class CustomRoom extends React.Component {
   }
 
   getPropsFromUserId = (userId) => {
-      const userIdx = this.findUserIdx(userId);
-      const data = {
-        creatorId: this.state.creatorId,
-        usersId: this.state.usersId,
-        usersName: this.state.usersName,
-        createdTime: this.state.createdTime,
-        leftCardNumber: this.state.leftCardNumber,
-        nextUserId: this.state.nextUserId,
-        nextTurnLeft: this.state.nextTurnLeft,
-        discardPile: this.state.discardPile,
-        userCards: this.state.userscards[userIdx],
-      }
-      return data;
-  }
+    const userIdx = this.findUserIdx(userId);
+    const data = {
+      creatorId: this.state.creatorId,
+      usersId: this.state.usersId,
+      usersName: this.state.usersName,
+      createdTime: this.state.createdTime,
+      leftCardNumber: this.state.leftCardNumber,
+      nextUserId: this.state.nextUserId,
+      nextTurnLeft: this.state.nextTurnLeft,
+      discardPile: this.state.discardPile,
+      userCards: this.state.userscards[userIdx],
+    };
+    return data;
+  };
 
   findUserIdx = (userId) => {
     const { usersId } = this.state;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState,  useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
   makeStyles,
   Typography,
@@ -111,7 +111,7 @@ const useStyles = makeStyles((theme) => ({
       //   "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
       // background:"rgba(244,241,222,0.8)",
       // border:"2px solid black",
-      backdropFilter:"blur(4px)",
+      backdropFilter: "blur(4px)",
       "& .chatbox": {
         overflowY: "scroll",
         zIndex: -1,
@@ -135,12 +135,11 @@ const useStyles = makeStyles((theme) => ({
             "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
           background: Palette.blue300,
         },
-        "& .chatboxUsername" : {
-          margin: "1px 0 4px 4px" ,
-          borderRadius:"16px",
-          color:"black",
-          
-        }
+        "& .chatboxUsername": {
+          margin: "1px 0 4px 4px",
+          borderRadius: "16px",
+          color: "black",
+        },
       },
     },
     "& .chatInput": {
@@ -209,7 +208,7 @@ const chatRootStyle = (isHover) => {
   }
 };
 
-function Chat({roomId:thisRoomId}) {
+function Chat({ roomId: thisRoomId }) {
   const classes = useStyles();
   const [isHover, setIsHover] = useState(false);
   const chatStyle = chatRootStyle(isHover);
@@ -217,8 +216,8 @@ function Chat({roomId:thisRoomId}) {
   const [peopleBubbles, setPeopleBubbles] = useState();
   const [showChatbox, setShowChatbox] = useState(false);
   const [currentShowMessage, setCurrentShowMessage] = useState("");
-  const [typing,setTyping] = useState("");
-  const chatBoxElement = useRef(0)
+  const [typing, setTyping] = useState("");
+  const chatBoxElement = useRef(0);
 
   const thisUsername = "bump";
   // const thisRoomId = 101;
@@ -241,23 +240,28 @@ function Chat({roomId:thisRoomId}) {
   // },[messageGroup])
 
   const getMsgKey = (currentShowMessage) => {
-    if (currentShowMessage === "room") { return "room" }
-    else return "private"
-  }
+    if (currentShowMessage === "room") {
+      return "room";
+    } else return "private";
+  };
 
   const filterMsg = (data) => {
     if (data.fromRoomId) {
-      return data.fromRoomId === parseInt(thisRoomId) ? true:false
-    }
-    else {
-      if (data.fromUsername === thisUsername && data.toUsername === currentShowMessage) {
-        return true
+      return data.fromRoomId === parseInt(thisRoomId) ? true : false;
+    } else {
+      if (
+        data.fromUsername === thisUsername &&
+        data.toUsername === currentShowMessage
+      ) {
+        return true;
+      } else if (
+        data.fromUsername === currentShowMessage &&
+        data.toUsername === thisUsername
+      ) {
+        return true;
       }
-      else if (data.fromUsername === currentShowMessage && data.toUsername === thisUsername) {
-        return true
-      }
     }
-  }
+  };
 
   useMemo(() => {
     let peopleData = [];
@@ -283,7 +287,7 @@ function Chat({roomId:thisRoomId}) {
       currentShowMessage !== username &&
       currentShowMessage !== "" &&
       showChatbox === true
-    ) 
+    )
       return setCurrentShowMessage(username);
     setShowChatbox((status) => !status);
     setCurrentShowMessage(username);
@@ -298,37 +302,43 @@ function Chat({roomId:thisRoomId}) {
   };
 
   const handleTyping = (e) => {
-    setTyping(e.target.value)
-  }
-
+    setTyping(e.target.value);
+  };
 
   const handleEnter = () => {
     if (typing) {
-        if (currentShowMessage==="room") {
-          let roomMes = messageGroup.room.messages
-          roomMes.push({
-            fromRoomId: parseInt(thisRoomId),
-            fromUsername: thisUsername,
-            message: typing,
-          })
-        setMessageGroup({...messageGroup,...{room:{messages:roomMes}}})
-        }
-        else {
-          let privateMes = messageGroup.private.messages
-          privateMes.push({
-            fromUsername: thisUsername,
-            toUsername:currentShowMessage,
-            message: typing,
-          })
-        setMessageGroup({...messageGroup,...{private:{messages:privateMes}}})
-        }
-      setTyping("")
+      if (currentShowMessage === "room") {
+        let roomMes = messageGroup.room.messages;
+        roomMes.push({
+          fromRoomId: parseInt(thisRoomId),
+          fromUsername: thisUsername,
+          message: typing,
+        });
+        setMessageGroup({
+          ...messageGroup,
+          ...{ room: { messages: roomMes } },
+        });
+      } else {
+        let privateMes = messageGroup.private.messages;
+        privateMes.push({
+          fromUsername: thisUsername,
+          toUsername: currentShowMessage,
+          message: typing,
+        });
+        setMessageGroup({
+          ...messageGroup,
+          ...{ private: { messages: privateMes } },
+        });
+      }
+      setTyping("");
     }
-  }
+  };
 
   const AlwaysScrollToBottom = () => {
     const elementRef = useRef();
-    useEffect(() => elementRef.current.scrollIntoView({ block: 'end',  behavior: 'smooth' }));
+    useEffect(() =>
+      elementRef.current.scrollIntoView({ block: "end", behavior: "smooth" })
+    );
     return <div ref={elementRef} />;
   };
 
@@ -348,33 +358,48 @@ function Chat({roomId:thisRoomId}) {
           </IconButton>
         </div>
         <div className="chatContainer">
-          <div className="chatbox" id={`room-${thisRoomId}-chat-box`} ref={chatBoxElement}>
+          <div
+            className="chatbox"
+            id={`room-${thisRoomId}-chat-box`}
+            ref={chatBoxElement}
+          >
             {messageGroup.room &&
-              messageGroup[getMsgKey(currentShowMessage)].messages.map((data) => ( filterMsg(data)&&
-                <div
-                  style={{
-                    margin:
-                      data.fromUsername === thisUsername
-                        ? "8px 16px 4px auto"
-                        : "8px 0 4px 16px",
-                  }}
-                >
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <Avatar className="chatboxAvatar" style={{margin:data.fromUsername===thisUsername?"0 0 0 auto":"0"}}>
-                      {data.fromUsername[0]}
-                    </Avatar>
-                    <Typography className="chatboxUsername">
-                      {data.fromUsername}
-                    </Typography>
-                  </div>
-                  <div style={{ display: "flex" }}>
-                    <Typography align="left" className="chatboxText">
-                      {data.message}
-                    </Typography>
-                  </div>
-                </div>
-              ))}
-              <AlwaysScrollToBottom/>
+              messageGroup[getMsgKey(currentShowMessage)].messages.map(
+                (data) =>
+                  filterMsg(data) && (
+                    <div
+                      style={{
+                        margin:
+                          data.fromUsername === thisUsername
+                            ? "8px 16px 4px auto"
+                            : "8px 0 4px 16px",
+                      }}
+                    >
+                      <div style={{ display: "flex", flexDirection: "row" }}>
+                        <Avatar
+                          className="chatboxAvatar"
+                          style={{
+                            margin:
+                              data.fromUsername === thisUsername
+                                ? "0 0 0 auto"
+                                : "0",
+                          }}
+                        >
+                          {data.fromUsername[0]}
+                        </Avatar>
+                        <Typography className="chatboxUsername">
+                          {data.fromUsername}
+                        </Typography>
+                      </div>
+                      <div style={{ display: "flex" }}>
+                        <Typography align="left" className="chatboxText">
+                          {data.message}
+                        </Typography>
+                      </div>
+                    </div>
+                  )
+              )}
+            <AlwaysScrollToBottom />
           </div>
         </div>
         <div className="chatInput">
@@ -384,8 +409,8 @@ function Chat({roomId:thisRoomId}) {
               placeholder="Aa..."
               onChange={handleTyping}
               value={typing}
-              onKeyPress={(e)=>{
-                console.log(e.key)
+              onKeyPress={(e) => {
+                console.log(e.key);
                 if (e.key === "Enter") {
                   handleEnter();
                 }

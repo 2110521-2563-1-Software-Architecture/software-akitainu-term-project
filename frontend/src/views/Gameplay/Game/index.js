@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Grid, makeStyles, Typography } from "@material-ui/core";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
-import CustomRoom from "../../../components/CustomRoom"
+import CustomRoom from "../../../components/CustomRoom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
   bottomSection: {
     width: "100%",
     height: "30%",
+    overflow: "hidden",
   },
   middlePlayerSection: {
     width: "20%",
@@ -64,15 +65,16 @@ const useStyles = makeStyles((theme) => ({
   cardImg: {
     height: "250px",
     cursor: "pointer",
+    borderRadius: "16px",
     "&:hover": {
-      boxShadow: "0 0 16px 2px rgba(0, 0, 0, 0.5)",
+      boxShadow: "0 0 4px 2px rgba(0, 0, 0, 0.5)",
     },
   },
 }));
 
 function Game(props) {
   const classes = useStyles();
-  const customRoom = new CustomRoom({userId: 1});
+  const customRoom = new CustomRoom({ userId: 1 });
   console.log(customRoom.getPropsFromUserId(1));
 
   return (
