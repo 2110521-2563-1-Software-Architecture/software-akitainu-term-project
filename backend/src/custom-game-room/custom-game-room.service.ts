@@ -77,6 +77,7 @@ export class CustomGameRoomService {
     const allUsersTnRoom = {
       usersId: this.listRoom[roomId]['usersId'],
       usersName,
+      roomId,
     };
 
     console.log('[AllCustomRooms] :\t', this.listRoom);

@@ -105,7 +105,7 @@ function Game(props) {
   useEffect(() => {
     const data = customRoomRef.current.getPropsFromUserId(userId);
     setUserCards(data.userCards);
-  });
+  }, [customRoomRef?.current?.getPropsFromUserId(userId).userCards]);
   
 
   const _drawCard = () => {
