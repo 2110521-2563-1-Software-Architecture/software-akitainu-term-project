@@ -1,3 +1,136 @@
+<<<<<<< HEAD
+import React from "react";
+import socketIOClient from "socket.io-client";
+import {Card} from "./type"
+const ENDPOINT = "localhost:10001";
+
+class CustomRoom extends React.Component {
+    constructor(props) {
+        super();
+        this.state = {
+            socket: socketIOClient(ENDPOINT),
+            roomId: -1, // room Id
+            creatorId: props.creatorId, // creator user Id
+            usersId: [props.creatorId], // all user in the room user ID
+            usersName: [],
+            createdTime: new Date(),
+            leftCardNumber: -1, // left card number in the card pile
+            usersCard: [], // all user card which same order as usersId
+            nextUserId: -1,
+            nextTurnLeft: 1,
+        }
+    }
+
+    componentDidMount() {
+        this.state.socket.on("new-custom-room", data => {
+            console.log(data);
+
+            this.setState({
+                roomId: data.roomId,
+                // todo: username
+            })
+        });
+        this.state.socket.on("new-join-custom-other", data => {
+            console.log(data);
+
+            const {usersId, usersName} = this.state;
+            usersId.push(data.userId);
+            usersName.push(data.userName);
+            this.setState({
+                usersId,
+                usersName,
+            });
+        });
+        this.state.socket.on("new-join-custom-joiner ", data => {
+            console.log(data);
+
+            this.setState({
+                usersId: data.usersId,
+                usersName: data.usersName,
+            });
+        });
+        this.state.socket.on("new-card", data => {
+            console.log(data);
+
+            const {userId, roomId, card, leftCardNumber, nextUserId, nextTurnLeft} = data;
+            if(this.state.roomId != roomId) return;
+
+            const idx = this.findUserIdx(userId);
+            const {usersCard} = this.state;
+            usersCard[idx].push(card);
+
+            this.setState({
+                usersCard,
+                leftCardNumber,
+                nextUserId,
+                nextTurnLeft,
+            });
+        });
+        this.state.socket.on("new-game", data => {console.log(data)});
+        this.state.socket.on("new-nope", data => {console.log(data)});
+    }
+
+    findUserIdx = (userId) => {
+        const {usersId} = this.state;
+        return usersId.indexOf(userId);
+    }
+
+    createCustomRoom = (userId) => {
+        const data = {
+            userId, // Room creator's ID
+        };
+        this.state.socket.emit("create-custom-room", data);
+    }
+
+    joinCustomRoom = (roomId, userId) => {
+        const data = {
+            roomId,
+            userId,
+        }
+        this.state.socket.emit("join-custom-room", data);
+    }
+
+    drawCard = (userId, roomId) => {
+        const data = {
+            userId,
+            roomId,
+        };
+        this.state.socket.emit("draw-card", data);
+    }
+
+    startGame = (roomId) => {
+        const data = {
+            roomId,
+        }
+        this.state.socket.emit("start-game", data);
+    }
+
+    useCard = (userId, roomId, card) => {
+        const data = {
+            userId,
+            roomId,
+            card
+        };
+        this.state.socket.emit("use-card", data);
+    }
+
+    render() {
+        const exampleCard = Card.common1;
+        return (
+            <div>
+                <button onClick={() => this.createCustomRoom(1)}>createCustomRoom</button>
+                <button onClick={() => this.joinCustomRoom(1,1)}>joinCustomRoom</button>
+                <button onClick={() => this.drawCard(1,1)}>drawCard</button>
+                <button onClick={() => this.startGame(1)}>startGame</button>
+                <button onClick={() => this.useCard(1, 1, exampleCard)}>useCard</button>
+            </div>
+        );
+    }
+}
+
+export default CustomRoom;
+||||||| merged common ancestors
+=======
 import React from "react";
 import socketIOClient from "socket.io-client";
 import { Card } from "./type";
@@ -495,3 +628,4 @@ class CustomRoom extends React.Component {
 }
 
 export default CustomRoom;
+>>>>>>> 42518e2f9396bbaf9a3e22b0fd8d0cb6db755595

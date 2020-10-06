@@ -40,6 +40,11 @@ const routesConfig = [
     path: "/gameplay/:roomId",
     component: lazy(() => import("views/Gameplay")),
   },
+  {
+    exact: true,
+    path: "/CustomRoom",
+    component: lazy(() => import("components/CustomRoom")),
+  },
 
   //add more path
   {
