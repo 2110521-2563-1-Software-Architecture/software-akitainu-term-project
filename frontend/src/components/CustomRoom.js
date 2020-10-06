@@ -1,5 +1,4 @@
 import React from "react";
-import socketIOClient from "socket.io-client";
 import { Card } from "./type";
 const ENDPOINT = "localhost:10001";
 
@@ -7,14 +6,13 @@ class CustomRoom extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      socket: socketIOClient(ENDPOINT),
+      socket: props.socket,
       roomId: -1, // room Id
-      creatorId: props.userId, // creator user Id
-      usersId: [props.userId], // all user in the room user ID
-      usersName: [props.userId],
+      usersId: [], // all user in the room user ID
+      usersName: [],
       createdTime: new Date(),
       leftCardNumber: -1, // left card number in the card pile
-      userscards: [], // all user cards which same order as usersId
+      usersCards: [], // all user cards which same order as usersId
       nextUserId: -1,
       nextTurnLeft: 1,
       discardPile: [], // index 0 is the bottom
@@ -23,33 +21,43 @@ class CustomRoom extends React.Component {
 
   componentDidMount() {
     this.state.socket.on("new-custom-room", (data) => {
-      console.log(data);
+      console.log("new-custom-room",data);
+
+      const {userId, roomId} = data;
+      const usersId = [userId];
 
       this.setState({
-        roomId: data.roomId,
+        roomId,
+        usersId,
+        // todo: username
       });
     });
     this.state.socket.on("new-join-custom-other", (data) => {
-      console.log(data);
+      console.log("new-join-custom-other", data);
+      if(!data) return;
 
-      const { usersId, usersName } = this.state;
+      const { usersId, usersName, roomId } = this.state;
+      if(usersId.indexOf(data.userId) !== -1) return;
       usersId.push(data.userId);
       usersName.push(data.userName);
       this.setState({
         usersId,
         usersName,
+        roomId,
       });
     });
-    this.state.socket.on("new-join-custom-joiner ", (data) => {
-      console.log(data);
+    this.state.socket.on("new-join-custom-joiner", (data) => {
+      console.log("new-join-custom-joiner", data);
+      if(!data) return;
 
       this.setState({
         usersId: data.usersId,
         usersName: data.usersName,
+        roomId: data.roomId,
       });
     });
     this.state.socket.on("new-card", (data) => {
-      console.log(data);
+      console.log('new-card', data);
 
       const {
         userId,
@@ -61,9 +69,9 @@ class CustomRoom extends React.Component {
       } = data;
       if (this.state.roomId !== roomId) return;
 
-      const idx = this.findUserIdx(userId);
+      const userIdx = this.findUserIdx(userId);
       const { userscards } = this.state;
-      userscards[idx].push(card);
+      userscards[userIdx].push(card);
 
       this.setState({
         userscards,
@@ -73,15 +81,15 @@ class CustomRoom extends React.Component {
       });
     });
     this.state.socket.on("new-game", (data) => {
-      console.log(data);
+      console.log('new-game',data);
 
-      const { roomId, leftCardNumber, usersId, userscards } = data;
+      const { roomId, leftCardNumber, usersId, usersCard } = data;
       if (this.state.roomId !== roomId) return;
 
       this.setState({
         leftCardNumber,
         usersId,
-        userscards,
+        usersCards: usersCard,
       });
     });
     this.state.socket.on("new-card-use", (data) => {
@@ -263,20 +271,21 @@ class CustomRoom extends React.Component {
   }
 
   getPropsFromUserId = (userId) => {
-      const userIdx = this.findUserIdx(userId);
-      const data = {
-        creatorId: this.state.creatorId,
-        usersId: this.state.usersId,
-        usersName: this.state.usersName,
-        createdTime: this.state.createdTime,
-        leftCardNumber: this.state.leftCardNumber,
-        nextUserId: this.state.nextUserId,
-        nextTurnLeft: this.state.nextTurnLeft,
-        discardPile: this.state.discardPile,
-        userCards: this.state.userscards[userIdx],
-      }
-      return data;
-  }
+    const userIdx = this.findUserIdx(userId);
+    const data = {
+      roomId: this.state.roomId,
+      usersId: this.state.usersId,
+      usersName: this.state.usersName,
+      createdTime: this.state.createdTime,
+      leftCardNumber: this.state.leftCardNumber,
+      nextUserId: this.state.nextUserId,
+      nextTurnLeft: this.state.nextTurnLeft,
+      discardPile: this.state.discardPile,
+      userCards: [],
+    };
+    if(this.state.usersCards[userIdx] && userIdx>=0) data.userCards = this.state.usersCards[userIdx];
+    return data;
+  };
 
   findUserIdx = (userId) => {
     const { usersId } = this.state;
@@ -290,7 +299,7 @@ class CustomRoom extends React.Component {
     this.state.socket.emit("create-custom-room", data);
   };
 
-  joinCustomRoom = (roomId, userId) => {
+  joinCustomRoom = (userId, roomId) => {
     const data = {
       roomId,
       userId,
@@ -478,20 +487,8 @@ class CustomRoom extends React.Component {
 
   render() {
     const exampleCard = Card.common1;
-    return (
-      <div>
-        <button onClick={() => this.createCustomRoom(1)}>
-          createCustomRoom
-        </button>
-        <button onClick={() => this.joinCustomRoom(1, 1)}>
-          joinCustomRoom
-        </button>
-        <button onClick={() => this.drawCard(1, 1)}>drawCard</button>
-        <button onClick={() => this.startGame(1)}>startGame</button>
-        <button onClick={() => this.useCard(1, 1, exampleCard)}>useCard</button>
-      </div>
-    );
-  }
+    return <div></div>  
+  };
 }
 
 export default CustomRoom;

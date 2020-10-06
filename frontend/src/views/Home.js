@@ -3,6 +3,10 @@ import logo from "../shiba-inu.svg";
 // import logo from '../logo.svg'
 
 function Home() {
+  const joinRoom100001 = () => { // todo:
+    const userId = prompt('Please enter your user Id')
+    window.sessionStorage.setItem("userId", userId);
+  }
   return (
     <div className="App">
       <header className="App-header">
@@ -25,8 +29,8 @@ function Home() {
         >
           Try Helloworld with shiba_lover
         </a>
-        <a className="App-link" href="http://localhost:3002/gameplay/101">
-          Go to room 101
+        <a className="App-link" href="http://localhost:3002/gameplay/100001" onClick={() => joinRoom100001()}>
+          Go to room 100001
         </a>
       </header>
     </div>

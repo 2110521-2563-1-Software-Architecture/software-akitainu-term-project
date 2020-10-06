@@ -4,6 +4,7 @@ import { useParams, useHistory } from "react-router-dom";
 import Chat from "./Chat";
 import Game from "./Game";
 import { Palette } from "components";
+import socketIOClient from "socket.io-client";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,6 +41,9 @@ function Gameplay() {
   const { roomId } = useParams();
   const history = useHistory();
 
+  const ENDPOINT = "localhost:10001";
+  const socket = socketIOClient(ENDPOINT)
+
   const backtoHome = () => {
     history.push("/home");
     history.go(0);
@@ -58,8 +62,8 @@ function Gameplay() {
   return (
     <div className={classes.root}>
       <Topbar />
-      <Chat />
-      <Game />
+      <Chat roomId={roomId} />
+      <Game socket={socket}/>
     </div>
   );
 }
