@@ -83,35 +83,30 @@ function Game(props) {
 
   const seeTheFutureCards = [Card.attack, Card.defuse, Card.nope]; //mock data
   return (
-    <div className={classes.root}>
-      <div className={classes.topSection}>
-        <div className={classes.topPlayerWrapper}>
-          <Otherhand />
-        </div>
-        <div style={{ width: "5%" }} />
-        <div className={classes.topPlayerWrapper}>
-          <Otherhand />
-        </div>
-        <div style={{ width: "5%" }} />
-        <div className={classes.topPlayerWrapper}>
-          <Otherhand />
-        </div>
-      </div>
-      <div className={classes.middleSection}>
-        <div className={classes.middlePlayerSection}>
-          <div className={classes.middlePlayerWrapper}>
+    <>
+      <div className={classes.root}>
+        <div className={classes.topSection}>
+          <div className={classes.topPlayerWrapper}>
             <Otherhand />
           </div>
-          <div style={{ height: "5%" }} />
-          <div className={classes.middlePlayerWrapper}>
+          <div style={{ width: "5%" }} />
+          <div className={classes.topPlayerWrapper}>
+            <Otherhand />
+          </div>
+          <div style={{ width: "5%" }} />
+          <div className={classes.topPlayerWrapper}>
             <Otherhand />
           </div>
         </div>
         <div className={classes.middleSection}>
           <div className={classes.middlePlayerSection}>
-            <div className={classes.middlePlayerWrapper}>P2</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
             <div style={{ height: "5%" }} />
-            <div className={classes.middlePlayerWrapper}>P3</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
           </div>
           <div className={classes.playArea}>
             <div className={classes.card}>
@@ -129,9 +124,13 @@ function Game(props) {
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
-            <div className={classes.middlePlayerWrapper}>P8</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
             <div style={{ height: "5%" }} />
-            <div className={classes.middlePlayerWrapper}>P7</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
           </div>
         </div>
         <div className={classes.bottomSection}>
@@ -143,7 +142,7 @@ function Game(props) {
         handleClose={() => setShowSeeTheFutureDialog(false)}
         seeTheFutureCards={seeTheFutureCards}
       />
-    </div>
+    </>
   );
 }
 export default Game;
