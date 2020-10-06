@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     display: "flex",
     flexDirection: "column-reverse",
+    justifyContent: "center",
   },
 
   playArea: {
@@ -117,25 +118,25 @@ function Game(props) {
       <div className={classes.root}>
         <div className={classes.topSection}>
           <div className={classes.topPlayerWrapper}>
-            <Otherhand />
+            <Otherhand user={gameTestData.users[0]} />
           </div>
           <div style={{ width: "5%" }} />
           <div className={classes.topPlayerWrapper}>
-            <Otherhand />
+            <Otherhand user={gameTestData.users[1]} />
           </div>
           <div style={{ width: "5%" }} />
           <div className={classes.topPlayerWrapper}>
-            <Otherhand />
+            <Otherhand user={gameTestData.users[2]} />
           </div>
         </div>
         <div className={classes.middleSection}>
           <div className={classes.middlePlayerSection}>
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[3]} />
             </div>
             <div style={{ height: "5%" }} />
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[0]} />
             </div>
           </div>
           <div className={classes.playArea}>
@@ -163,11 +164,11 @@ function Game(props) {
           </div>
           <div className={classes.middlePlayerSection}>
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[0]} />
             </div>
             <div style={{ height: "5%" }} />
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[0]} />
             </div>
           </div>
         </div>
