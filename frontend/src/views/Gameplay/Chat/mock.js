@@ -39,22 +39,22 @@ export const roomMessages = [
 export const privateMessages = [
   {
     fromUsername: "janejira",
-    toUsername : "bump",
+    toUsername: "bump",
     message: "Hi,Bump how are youuuu",
   },
   {
     fromUsername: "ployjaaa",
-    toUsername : "bump",
+    toUsername: "bump",
     message: "wanna play with ? >_<",
   },
   {
     fromUsername: "ployjaaa",
-    toUsername : "bump",
+    toUsername: "bump",
     message: "401 come onnnnn",
   },
   {
     fromUsername: "new",
-    toUsername : "bump",
+    toUsername: "bump",
     message: "finished assignment ?",
   },
 ];
