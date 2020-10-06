@@ -100,6 +100,7 @@ function Game(props) {
 
   const {
     playerCards,
+    numberOfDeckCards,
     seeTheFutureCards,
     latestUsedCard,
     users,
@@ -184,6 +185,15 @@ function Game(props) {
         open={showExplodingPuppyDialog}
         handleClose={() => setShowExplodingPuppyDialog(false)}
         hasDefuse={hasDefuse()}
+        numberOfDeckCards={numberOfDeckCards}
+        onClickSpectate={() => {
+          setShowExplodingPuppyDialog(false);
+          alert("Spectate");
+        }}
+        onClickHideExplodingPuppy={(idx) => {
+          setShowExplodingPuppyDialog(false);
+          alert(`Hide at idx ${idx}`);
+        }}
       />
     </>
   );
