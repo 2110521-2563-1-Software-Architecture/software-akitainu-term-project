@@ -9211,6 +9211,32 @@ react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.0, react-i
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+<<<<<<< HEAD
+react-live-clock@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/react-live-clock/-/react-live-clock-4.0.5.tgz#d53b16be62be7c4fd9b8183db31f58bffa1c9142"
+  integrity sha512-NsXuUAGrUPAnJJc4RWVNE63hbb9gZNO0gN0bMbI/fMT5Iq8Oc/KmnD1yV6W/7EzhlU4jmErng/tVWmp0pDxYHw==
+  dependencies:
+    moment "2.24.0"
+    moment-timezone "0.5.27"
+    prop-types "15.7.2"
+    react-moment "0.9.7"
+
+react-moment@0.9.7:
+  version "0.9.7"
+  resolved "https://registry.yarnpkg.com/react-moment/-/react-moment-0.9.7.tgz#ca570466595b1aa4f7619e62da18b3bb2de8b6f3"
+  integrity sha512-ifzUrUGF6KRsUN2pRG5k56kO0mJBr8kRkWb0wNvtFIsBIxOuPxhUpL1YlXwpbQCbHq23hUu6A0VEk64HsFxk9g==
+
+react-perfect-scrollbar@^1.5.8:
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/react-perfect-scrollbar/-/react-perfect-scrollbar-1.5.8.tgz#380959387a325c5c9d0268afc08b3f73ed5b3078"
+  integrity sha512-bQ46m70gp/HJtiBOF3gRzBISSZn8FFGNxznTdmTG8AAwpxG1bJCyn7shrgjEvGSQ5FJEafVEiosY+ccER11OSA==
+  dependencies:
+    perfect-scrollbar "^1.5.0"
+    prop-types "^15.6.1"
+
+||||||| merged common ancestors
+=======
 react-live-clock@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/react-live-clock/-/react-live-clock-4.0.5.tgz#d53b16be62be7c4fd9b8183db31f58bffa1c9142"
@@ -9239,6 +9265,7 @@ react-ripples@^2.2.1:
   resolved "https://registry.yarnpkg.com/react-ripples/-/react-ripples-2.2.1.tgz#bab529eb10e06f7e660561d97e2442a38b9f4687"
   integrity sha512-TfLjgZICQlsYCN2iX4fdeZNjoDzhJVC7r+R3irqyaNvCtWezouS9j+sE+nwSk747irtV8RKRDHmwMmsNBOw8Qg==
 
+>>>>>>> 42518e2f9396bbaf9a3e22b0fd8d0cb6db755595
 react-router-dom@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-5.2.0.tgz#9e65a4d0c45e13289e66c7b17c7e175d0ea15662"

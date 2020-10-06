@@ -1,0 +1,81 @@
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
+import { Socket } from 'socket.io';
+import { CreatedIdCustomGameRoomDto } from './custom-game-room.dto';
+import { CustomGameRoomService } from './custom-game-room.service';
+
+type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
+
+@WebSocketGateway(10001)
+export class CustomGameRoomGateway implements OnGatewayInterface {
+  constructor(private readonly customGameRoomService: CustomGameRoomService) {}
+
+  @WebSocketServer() server;
+  users = 0;
+
+  async handleConnection(socket: Socket) {
+    console.log('[New User] :\t', socket.id);
+  }
+
+  async handleDisconnect(socket: Socket) {
+    console.log('[User disconnected]: \t', socket.id);
+  }
+
+  @SubscribeMessage('create-custom-room')
+  async onCreateCustomRoom(socket: Socket, data: any) {
+    const userId = data.userId;
+    console.log('[userId] :\t', userId, 'sent from', socket.id);
+
+    const roomId = await this.customGameRoomService.createCustomRoom(userId);
+    socket.join(roomId);
+
+    const newCustomGameRoom: CreatedIdCustomGameRoomDto = {
+      roomId,
+      userId,
+    };
+
+    console.log('[CustomGameRoomCreated] :\t', roomId);
+    this.server.emit('new-custom-room', newCustomGameRoom);
+  }
+
+  @SubscribeMessage('join-custom-room')
+  async onJoinCustomRoom(socket: Socket, data: any) {
+    const userId = data.userId;
+    const roomId = data.roomId;
+    console.log('[userId] :\t', userId, ' [roomId] :', roomId);
+
+    socket.join(roomId);
+    const allUsersInRoom = await this.customGameRoomService.joinCustomRoom({
+      userId,
+      roomId,
+    });
+
+    const newJoinedUserName = await this.customGameRoomService.getJoinedUserName(
+      userId,
+    );
+
+    const newJoinedUser = {
+      userId,
+      userName: newJoinedUserName,
+    };
+
+    this.server.to(roomId).emit('new-join-custom-other', newJoinedUser);
+
+    this.server.emit('new-join-custom-joiner', allUsersInRoom);
+  }
+
+  @SubscribeMessage('start-game')
+  async onStartGame(socket: Socket, data: any) {
+    const { roomId } = data;
+    const newGame = await this.customGameRoomService.initializeDeck(roomId);
+
+    console.log('newGame: ', newGame);
+
+    this.server.to(roomId).emit('new-game', newGame);
+  }
+}
