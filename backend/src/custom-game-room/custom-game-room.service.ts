@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto } from './custom-game-room.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from 'src/entities/user.entity';
+import { NewUserJoinCustomRoomDto, Card } from './custom-game-room.dto';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
+// import { User } from 'src/entities/user.entity';
 
 const mockUsers = { '1': 'test1', '2': 'test2', '3': 'test3' };
 
@@ -122,7 +122,7 @@ export class CustomGameRoomService {
     };
     let deck = [];
     for (const cardType in this.allCards) {
-      deck.push(...Array(this.allCards[cardType]).fill(cardType));
+      deck.push(...Array(this.allCards[cardType]).fill(Card[cardType]));
     }
 
     deck = await this.shuffle(deck);
@@ -136,6 +136,9 @@ export class CustomGameRoomService {
       }
       this.listRoom[roomId]['usersCard'][j].push('defuse');
     }
+
+    this.listRoom[roomId]['nextUserIndex'] = 0;
+    this.listRoom[roomId]['nextTurnLeft'] = 1;
 
     deck = deck.slice(userNumber * 7);
 
@@ -153,5 +156,53 @@ export class CustomGameRoomService {
     console.log('newGame: ', newGame);
 
     return newGame;
+  }
+
+  async drawCard(userId: string, roomId: string) {
+    const usersId = this.listRoom[roomId]['usersId'];
+    let nextUserIndex = this.listRoom[roomId]['nextUserIndex'];
+    const card = this.listRoom[roomId]['deck'].shift();
+    const leftCardNumber = this.listRoom[roomId]['deck'].length;
+    let nextTurnLeft = this.listRoom[roomId]['nextTurnLeft'] - 1;
+
+    nextUserIndex =
+      nextTurnLeft === 0 ? (nextUserIndex + 1) % usersId.length : nextUserIndex;
+    nextTurnLeft = nextTurnLeft === 0 ? 1 : nextTurnLeft;
+    this.listRoom[roomId]['nextUserIndex'] = nextUserIndex;
+    this.listRoom[roomId]['nextTurnLeft'] = nextTurnLeft;
+
+    const newCard = {
+      userId,
+      roomId,
+      card,
+      leftCardNumber,
+      nextUserId: usersId[nextUserIndex],
+      nextTurnLeft: nextTurnLeft,
+    };
+    return newCard;
+  }
+
+  async useCard(userId: string, roomId: string, card: string, cardIdx: number) {
+    const newCardUse = {
+      userId,
+      roomId,
+      card,
+      cardIdx,
+      nextUserId: this.listRoom[roomId]['usersId'][
+        this.listRoom[roomId]['nextUserIndex']
+      ],
+      nextTurnLeft: this.listRoom[roomId]['nextTurnLeft'],
+    };
+    return newCardUse;
+  }
+
+  async seeTheFuture(userId: string, roomId: string) {
+    const cards = this.listRoom[roomId]['deck'].slice(0, 3);
+    const newSeeTheFuture = {
+      userId,
+      roomId,
+      cards,
+    };
+    return newSeeTheFuture;
   }
 }
