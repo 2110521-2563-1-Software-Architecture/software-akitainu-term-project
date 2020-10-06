@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Grid, makeStyles, Typography } from "@material-ui/core";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
+import Otherhand from "../Otherhand";
 import CustomRoom from "../../../components/CustomRoom";
 
 const useStyles = makeStyles((theme) => ({
@@ -80,7 +81,9 @@ function Game(props) {
   return (
     <div className={classes.root}>
       <div className={classes.topSection}>
-        <div className={classes.topPlayerWrapper}>P4</div>
+        <div className={classes.topPlayerWrapper}>
+          <Otherhand />
+        </div>
         <div style={{ width: "5%" }} />
         <div className={classes.topPlayerWrapper}>P5</div>
         <div style={{ width: "5%" }} />
