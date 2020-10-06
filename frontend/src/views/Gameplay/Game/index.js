@@ -5,6 +5,7 @@ import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
+import Otherhand from "../Otherhand";
 import CustomRoom from "../../../components/CustomRoom";
 import { gameTestData } from "./mock";
 
@@ -110,17 +111,27 @@ function Game(props) {
     <>
       <div className={classes.root}>
         <div className={classes.topSection}>
-          <div className={classes.topPlayerWrapper}>P4</div>
+          <div className={classes.topPlayerWrapper}>
+            <Otherhand />
+          </div>
           <div style={{ width: "5%" }} />
-          <div className={classes.topPlayerWrapper}>P5</div>
+          <div className={classes.topPlayerWrapper}>
+            <Otherhand />
+          </div>
           <div style={{ width: "5%" }} />
-          <div className={classes.topPlayerWrapper}>P6</div>
+          <div className={classes.topPlayerWrapper}>
+            <Otherhand />
+          </div>
         </div>
         <div className={classes.middleSection}>
           <div className={classes.middlePlayerSection}>
-            <div className={classes.middlePlayerWrapper}>P2</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
             <div style={{ height: "5%" }} />
-            <div className={classes.middlePlayerWrapper}>P3</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
           </div>
           <div className={classes.playArea}>
             <div className={classes.cardWrapper}>
@@ -146,9 +157,13 @@ function Game(props) {
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
-            <div className={classes.middlePlayerWrapper}>P8</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
             <div style={{ height: "5%" }} />
-            <div className={classes.middlePlayerWrapper}>P7</div>
+            <div className={classes.middlePlayerWrapper}>
+              <Otherhand />
+            </div>
           </div>
         </div>
         <div className={classes.bottomSection}>
