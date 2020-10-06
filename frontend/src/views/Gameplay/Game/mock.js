@@ -27,4 +27,15 @@ export const gameTestData = {
     { name: "Player 5", numberOfCards: 2 },
   ],
   numberOfDeckCards: 10,
+  cardSelectorCards: [
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+  ],
 };

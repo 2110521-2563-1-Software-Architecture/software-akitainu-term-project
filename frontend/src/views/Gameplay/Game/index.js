@@ -4,6 +4,7 @@ import { Card, getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
+import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
 import Otherhand from "../Otherhand";
 import CustomRoom from "../../../components/CustomRoom";
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     display: "flex",
     flexDirection: "column-reverse",
+    justifyContent: "center",
   },
 
   playArea: {
@@ -93,6 +95,7 @@ function Game(props) {
   const classes = useStyles();
   const customRoom = new CustomRoom({ userId: 1 });
   const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
+  const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
   const [showExplodingPuppyDialog, setShowExplodingPuppyDialog] = useState(
     false
   );
@@ -104,6 +107,7 @@ function Game(props) {
     seeTheFutureCards,
     latestUsedCard,
     users,
+    cardSelectorCards,
   } = gameTestData; //mock data
 
   const hasDefuse = () => {
@@ -118,25 +122,25 @@ function Game(props) {
       <div className={classes.root}>
         <div className={classes.topSection}>
           <div className={classes.topPlayerWrapper}>
-            <Otherhand />
+            <Otherhand user={gameTestData.users[0]} />
           </div>
           <div style={{ width: "5%" }} />
           <div className={classes.topPlayerWrapper}>
-            <Otherhand />
+            <Otherhand user={gameTestData.users[1]} />
           </div>
           <div style={{ width: "5%" }} />
           <div className={classes.topPlayerWrapper}>
-            <Otherhand />
+            <Otherhand user={gameTestData.users[2]} />
           </div>
         </div>
         <div className={classes.middleSection}>
           <div className={classes.middlePlayerSection}>
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[3]} />
             </div>
             <div style={{ height: "5%" }} />
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[0]} />
             </div>
           </div>
           <div className={classes.playArea}>
@@ -157,6 +161,9 @@ function Game(props) {
               <div onClick={() => setShowSeeTheFutureDialog(true)}>
                 test stf
               </div>
+              <div onClick={() => setShowCardSelectorDialog(true)}>
+                test cardSelector
+              </div>
               <div onClick={() => setShowExplodingPuppyDialog(true)}>
                 test exploding
               </div>
@@ -164,11 +171,11 @@ function Game(props) {
           </div>
           <div className={classes.middlePlayerSection}>
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[0]} />
             </div>
             <div style={{ height: "5%" }} />
             <div className={classes.middlePlayerWrapper}>
-              <Otherhand />
+              <Otherhand user={gameTestData.users[0]} />
             </div>
           </div>
         </div>
@@ -180,6 +187,11 @@ function Game(props) {
         open={showSeeTheFutureDialog}
         handleClose={() => setShowSeeTheFutureDialog(false)}
         seeTheFutureCards={seeTheFutureCards}
+      />
+      <CardSelectorDialog
+        open={showCardSelectorDialog}
+        handleClose={() => setShowCardSelectorDialog(false)}
+        cardSelectorCards={cardSelectorCards}
       />
       <ExplodingPuppyDialog
         open={showExplodingPuppyDialog}

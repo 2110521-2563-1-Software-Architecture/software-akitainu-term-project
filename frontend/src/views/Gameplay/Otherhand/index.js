@@ -6,6 +6,7 @@ import {
   Avatar,
   Tooltip,
 } from "@material-ui/core";
+import { Users } from "react-feather";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,10 +39,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Otherhand() {
+function Otherhand(props) {
   const classes = useStyles();
-  const name = "Owen"; //mock
-  const numberOfCards = 6; //mock
+  const { user } = props;
+  const name = user.name; //mock
+  const numberOfCards = user.numberOfCards; //mock
   function gencard(numberofcards) {
     var tmp = Array();
     for (let i = 0; i < numberofcards; i++) {
