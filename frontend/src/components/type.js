@@ -62,7 +62,7 @@ export function getCardImage(card) {
       return common_4;
     case Card.common5:
       return common_5;
-    case Card.bomb:
+    case Card.explodingPuppy:
       return bomb;
     default:
       return card_back;
