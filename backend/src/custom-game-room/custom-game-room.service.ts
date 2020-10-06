@@ -48,7 +48,8 @@ export class CustomGameRoomService {
   deck = [];
 
   async createCustomRoom(userId: string) {
-    const roomId = (Math.random() * 999999).toString().substr(-6);
+    // const roomId = (Math.random() * 999999).toString().substr(-6);
+    const roomId = "100001";
     this.listRoom[roomId] = {};
     const usersId: string[] = [userId];
     this.listRoom[roomId]['usersId'] = usersId;

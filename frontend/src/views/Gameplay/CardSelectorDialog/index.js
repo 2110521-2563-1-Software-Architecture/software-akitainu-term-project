@@ -59,7 +59,7 @@ export default function CardSelectorDialog(props) {
         <p className={classes.title}>CARD SELECTOR</p>
         <ul className={classes.list}>
           {cardSelectorCards.map((card, idx) => {
-            console.log(idx, card);
+            // console.log(idx, card);
             return (
               <li
                 key={`sfc-card-${idx}`}

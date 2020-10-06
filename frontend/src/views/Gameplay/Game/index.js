@@ -118,13 +118,6 @@ function Game(props) {
     false
   );
 
-  const {
-    seeTheFutureCards,
-    latestUsedCard,
-    users,
-    cardSelectorCards,
-  } = gameTestData; //mock data
-
   const hasDefuse = () => {
     for (let i = 0; i < userCards.length; i++) {
       if (userCards[i] === Card.defuse) return true;
@@ -133,20 +126,12 @@ function Game(props) {
   };
 
   const {
-    playerCards,
     numberOfDeckCards,
     seeTheFutureCards,
     latestUsedCard,
     users,
     cardSelectorCards,
   } = gameTestData; //mock data
-
-  const hasDefuse = () => {
-    for (let i = 0; i < playerCards.length; i++) {
-      if (playerCards[i] === Card.defuse) return true;
-    }
-    return false;
-  };
 
   return (
     <>

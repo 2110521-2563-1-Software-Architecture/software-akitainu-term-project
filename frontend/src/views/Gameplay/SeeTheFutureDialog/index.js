@@ -48,7 +48,7 @@ export default function SeeTheFutureDialog(props) {
         <p className={classes.title}>SEE THE FUTURE</p>
         <ul className={classes.list}>
           {seeTheFutureCards.map((card, idx) => {
-            console.log(idx, card);
+            // console.log(idx, card);
             if (idx === 0)
               return (
                 <li key={`sfc-card-${idx}`} className={classes.listItem}>

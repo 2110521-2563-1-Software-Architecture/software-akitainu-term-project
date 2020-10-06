@@ -66,6 +66,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     const newJoinedUser = {
       userId,
       userName: newJoinedUserName,
+      roomId,
     };
 
     this.server.to(roomId).emit('new-join-custom-other', newJoinedUser);
