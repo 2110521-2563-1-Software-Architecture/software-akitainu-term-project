@@ -395,8 +395,7 @@ function Game(props) {
         hasDefuse={hasDefuse(userId)}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          // gameLose(userId)
-          console.log('aaa')
+          gameLose(userId)
         }}
         onClickHideExplodingPuppy={(idx) => {
           insertExplodingPuppy(userId, idx)

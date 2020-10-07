@@ -335,6 +335,7 @@ class Gameplay extends React.Component {
       console.log("finish-exploding-puppy", data);
 
       const { userId, roomId, nextUserId } = data;
+      console.log('userId', nextUserId);
       if (this.state.roomId !== roomId) return;
       this.setState({explodeId: -1, hasDefuse: 0, nextUserId});
     });
@@ -687,6 +688,7 @@ class Gameplay extends React.Component {
   }
 
   hasDefuse = (userId) => {
+    return 0;
     const userIdx = this.findUserIdx(userId);
     const {usersData} = this.state;
     if(userIdx === -1) return 0;

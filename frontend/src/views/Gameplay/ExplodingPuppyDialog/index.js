@@ -92,14 +92,14 @@ export default function ExplodingPuppyDialog(props) {
             className={classes.card}
             style={{ margin: "16px" }}
           />
-          {hasDefuse && (
+          {!!hasDefuse && (
             <img
               src={getCardImage(Card.defuse)}
               className={classes.card}
               style={{ margin: "16px" }}
             />
           )}
-          {hasDefuse && (
+          {!!hasDefuse && (
             <div className={classes.withDefuse}>
               <p className={classes.label}>
                 Luckily, you have Defuse card! Choose where to put the
