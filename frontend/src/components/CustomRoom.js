@@ -70,11 +70,11 @@ class CustomRoom extends React.Component {
       if (this.state.roomId !== roomId) return;
 
       const userIdx = this.findUserIdx(userId);
-      const { userscards } = this.state;
-      userscards[userIdx].push(card);
+      const { usersCards } = this.state;
+      usersCards[userIdx].push(card);
 
       this.setState({
-        userscards,
+        usersCards,
         leftCardNumber,
         nextUserId,
         nextTurnLeft,
@@ -287,6 +287,12 @@ class CustomRoom extends React.Component {
     return data;
   };
 
+  getUserCard = (userId) => {
+    const userIdx = this.findUserIdx(userId);
+    if(this.state.usersCards[userIdx] && userIdx>=0) return this.state.usersCards[userIdx];
+    return [];
+  }
+
   findUserIdx = (userId) => {
     const { usersId } = this.state;
     return usersId.indexOf(userId);
@@ -485,8 +491,15 @@ class CustomRoom extends React.Component {
     this.state.socket.emit("select-common-5", data);
   };
 
+  drawExplodingPuppy = (userId, roomId) => {
+    const data = {
+      userId,
+      roomId,
+    }
+    this.state.socket.emit("draw-exploding-puppy", data);
+  }
+
   render() {
-    const exampleCard = Card.common1;
     return <div></div>  
   };
 }

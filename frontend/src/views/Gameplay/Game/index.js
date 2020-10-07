@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { makeStyles } from "@material-ui/core";
 import { Card, getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
@@ -100,17 +100,25 @@ function Game(props) {
 
   const [userCards,setUserCards] = useState([]);
   const customRoomRef = useRef();
-  const customRoom = (<CustomRoom socket={socket} ref={customRoomRef} />);
+  const customRoom = (
+    <CustomRoom 
+      socket={socket} 
+      ref={customRoomRef} 
+    />
+  );
+
+  let counter = 0;
+  const _drawCard = useCallback(() => {
+    customRoomRef.current.drawCard(userId, roomId);
+    counter++;
+    console.log(counter);
+  });
 
   useEffect(() => {
-    const data = customRoomRef.current.getPropsFromUserId(userId);
-    setUserCards(data.userCards);
-  }, [customRoomRef?.current?.getPropsFromUserId(userId).userCards]);
+    console.log('useEffect');
+    setUserCards(customRoomRef.current.getUserCard(userId));
+  });
   
-
-  const _drawCard = () => {
-    customRoomRef.current.drawCard(userId, roomId);
-  }
 
   const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
   const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
@@ -165,7 +173,7 @@ function Game(props) {
               <img
                 src={card_back}
                 className={classes.deck}
-                onClick={() => alert("draw card")}
+                onClick={() => _drawCard()}
               />
             </div>
             <div className={classes.cardWrapper}>
@@ -232,7 +240,7 @@ function Game(props) {
           joinCustomRoom
         </button>
         <button onClick={() => customRoomRef.current.drawCard(userId, roomId)}>drawCard</button>
-        <button onClick={() => customRoomRef.current.startGame(roomId)}>startGame</button>
+        <button onClick={() => {counter++;customRoomRef.current.startGame(roomId);}}>startGame</button>
         <button onClick={() => customRoomRef.current.useCard(1, 1, Card.common2)}>useCard</button>
         <button onClick={() => console.log(customRoomRef.current.getPropsFromUserId(userId))}>getProps</button>
       </div>

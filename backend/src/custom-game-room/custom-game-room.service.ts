@@ -14,20 +14,6 @@ export class CustomGameRoomService {
   // ) {}
 
   listRoom = {};
-  cardName = {
-    explodingPuppy: 'ExplodingPuppy', // Die if not have defuse
-    defuse: 'defuse', // Use to prevent exploding puppy
-    nope: 'nope', // Use to stop any action except explodingPuppy and defuse
-    attack: 'attack', // Force next player to play 2 turns, can stack e.g. 4, 6, 8, ... turns
-    skip: 'skip', // Immediately end your turn without drawing a card
-    favor: 'favor', // Force any other player to give you 1 card from their hand
-    seeTheFuture: 'seeTheFuture', // Privately view the top 3 cards from the Draw Pile
-    common1: 'Common1',
-    common2: 'Common2',
-    common3: 'Common3',
-    common4: 'Common4',
-    common5: 'Common5',
-  };
 
   allCards = {
     explodingPuppy: 4,
@@ -136,7 +122,7 @@ export class CustomGameRoomService {
       for (let i = 0; i < 7; i++) {
         this.listRoom[roomId]['usersCard'][j].push(deck[userNumber * i + j]);
       }
-      this.listRoom[roomId]['usersCard'][j].push('defuse');
+      this.listRoom[roomId]['usersCard'][j].push(Card.defuse);
     }
 
     this.listRoom[roomId]['nextUserIndex'] = 0;
@@ -144,7 +130,7 @@ export class CustomGameRoomService {
 
     deck = deck.slice(userNumber * 7);
 
-    deck.push(...Array(userNumber === 5 ? 1 : 2).fill('defuse'));
+    deck.push(...Array(userNumber === 5 ? 1 : 2).fill(Card.defuse));
     deck = await this.shuffle(deck);
     this.listRoom[roomId]['deck'] = deck;
 
