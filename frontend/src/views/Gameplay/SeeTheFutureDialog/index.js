@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
   list: {
     display: "flex",
     padding: "0",
+    justifyContent: "center",
   },
 
   listItem: {

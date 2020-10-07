@@ -159,6 +159,10 @@ function Game(props) {
     closeSeeTheFutureDialog,
     gameLose,
     topDiscardPile,
+    isSelectingPlayer,
+    selectPlayer,
+    showCardSelectorDialog,
+    setSelectedCardIdx,
   } = props;
   const classes = useStyles();
 
@@ -167,13 +171,11 @@ function Game(props) {
 
   // const [userCards, setUserCards] = useState([]);
   const { userCards } = props;
-  const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
 
   const {
     numberOfDeckCards,
     users,
     cardSelectorCards,
-    isSelectingPlayer,
   } = gameTestData; //mock data
 
   const getUsersToRender = () => {
@@ -277,6 +279,10 @@ function Game(props) {
     handleUseCard(userId, cardsIdx)
   };
 
+  const _handleCloseCardSelectorDigalog = (selectedCardIdx) => {
+    setSelectedCardIdx(userId, selectedCardIdx);
+  }
+
   const getTopPlayer = (user) => {
     return (
       <div
@@ -288,7 +294,7 @@ function Game(props) {
         onClick={
           isSelectingPlayer
             ? () => {
-                alert(`select user id ${user.userId}`);
+                selectPlayer(userId, user.userId);
               }
             : undefined
         }
@@ -309,7 +315,7 @@ function Game(props) {
         onClick={
           isSelectingPlayer
             ? () => {
-                alert(`select user id ${user.userId}`);
+                selectPlayer(userId, user.userId);
               }
             : undefined
         }
@@ -350,9 +356,6 @@ function Game(props) {
               />
             </div>
             <div className={classes.logWrapper}>
-              <div onClick={() => setShowCardSelectorDialog(true)}>
-                test cardSelector
-              </div>
               <div className={classes.log}>log</div>
             </div>
           </div>
@@ -376,7 +379,7 @@ function Game(props) {
       />
       <CardSelectorDialog
         open={showCardSelectorDialog}
-        handleClose={() => setShowCardSelectorDialog(false)}
+        handleClose={(selelctedCardIdx) => _handleCloseCardSelectorDigalog(selelctedCardIdx)}
         cardSelectorCards={cardSelectorCards}
         showBackCard={false}
       />

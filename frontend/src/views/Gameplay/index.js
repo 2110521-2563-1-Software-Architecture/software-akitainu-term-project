@@ -32,6 +32,8 @@ class Gameplay extends React.Component {
       hasDefuse: 0,
       showSeeTheFutureDialog: 0,
       seeTheFutureCards: [],
+      isSelectingPlayer: 0,
+      showCardSelectorDialog: 0,
     };
   }
 
@@ -174,6 +176,13 @@ class Gameplay extends React.Component {
         nextUserId,
         nextTurnLeft,
       });
+      switch (card) {
+        case Card.favor:
+          this.setState({isSelectingPlayer:1});
+          break;
+        default:
+          this.useEffect(userId, card);
+      };
     });
     this.state.socket.on("new-favor", (data) => {
       console.log(data);
@@ -354,19 +363,23 @@ class Gameplay extends React.Component {
     this.state.socket.on("new-effect", (data) => {
       console.log("new-effect", data);
 
-      const { userId, roomId, card, nextUserId, nextTurnLeft } = data;
+      const { userId, roomId, card} = data;
       if (this.state.roomId !== roomId) return;
       
-      this.setState({nextUserId, nextTurnLeft});
       switch (card) {
-        case Card.favor:
-          const targetId = this.chooseTarget();
-          this.useFavor(userId, roomId, targetId);
-          break;
         case Card.seeTheFuture:
-          this.useSeeTheFuture(userId, roomId);
+          const { seeTheFutureCards } = data;
+          this.setState({seeTheFutureCards, showSeeTheFutureDialog: 1})
           break;
       };
+    });
+    this.state.socket.on("new-select", (data) => {
+      console.log("new-select", data);
+
+      const { userId, roomId, targetId} = data;
+      if (this.state.roomId !== roomId) return;
+
+      this.setState({showCardSelectorDialog:1});
     });
   }
 
@@ -644,7 +657,7 @@ class Gameplay extends React.Component {
   useEffect = (userId, card) => {
     const data = {
       userId,
-      roomid: this.state.roomId,
+      roomId: this.state.roomId,
       card,
     }
     this.state.socket.emit("use-effect", data);
@@ -654,11 +667,25 @@ class Gameplay extends React.Component {
     this.setState({showSeeTheFutureDialog: 0, seeTheFutreCard: []});
   }
 
+  selectPlayer = (userId, selectedPlayerId) => {
+    const data = {
+      userId,
+      roomId: this.state.roomId,
+      targetId: selectedPlayerId,
+    }
+    console.log('select-player',data);
+    this.state.socket.emit("select-player", data);
+  }
+
+  setSelectedCardIdx = (userId, selectedCardIdx) => {
+    this.useEffect(userId, this.state.roomId, Card.favor, selectedCardIdx);
+  }
+
   render() {
     // const classes = useStyles();
     const roomId = "100001";
     
-    const { socket, hasDefuse, isExplode, showSeeTheFutureDialog, seeTheFutureCards, discardPile } = this.state;
+    const { socket, hasDefuse, isExplode, showSeeTheFutureDialog, seeTheFutureCards, discardPile, isSelectingPlayer, showCardSelectorDialog } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
     let userCards = [];
@@ -694,6 +721,10 @@ class Gameplay extends React.Component {
           closeSeeTheFutureDialog={this.closeSeeTheFutureDialog}
           gameLose={this.gameLose}
           topDiscardPile={discardPile[discardPile.length-1]}
+          isSelectingPlayer={isSelectingPlayer}
+          selectPlayer={this.selectPlayer}
+          showCardSelectorDialog={showCardSelectorDialog}
+          setSelectedCardIdx={this.setSelectedCardIdx}
         />
       </div>
     );
