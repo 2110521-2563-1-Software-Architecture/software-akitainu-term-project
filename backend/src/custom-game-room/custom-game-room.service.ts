@@ -200,8 +200,12 @@ export class CustomGameRoomService {
   async insertExplodingPuppy(roomId: string, idx: number) {
     let deck = this.listRoom[roomId]['deck'];
     deck = [...deck.slice(0, idx), Card.explodingPuppy, ...deck.slice(idx)];
-    console.log('deck: ', deck);
-    return true;
+    this.listRoom[roomId]['deck'] = deck;
+    this.listRoom[roomId]['nextUserIndex'] =
+      (this.listRoom[roomId]['nextUserIndex'] + 1) %
+      this.listRoom[roomId]['usersId'].length;
+
+    return this.listRoom[roomId]['nextUserIndex'];
   }
 
   async useEffectCard(roomId: string, card: string) {
@@ -230,8 +234,12 @@ export class CustomGameRoomService {
   }
 
   async loseGame(roomId: string) {
+    this.listRoom[roomId]['nextUserIndex'] =
+      (this.listRoom[roomId]['nextUserIndex'] + 1) %
+      this.listRoom[roomId]['usersId'].length;
+
     return this.listRoom[roomId]['usersId'][
-      ++this.listRoom[roomId]['nextUserIndex']
+      this.listRoom[roomId]['nextUserIndex']
     ];
   }
 }
