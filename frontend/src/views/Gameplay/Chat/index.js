@@ -33,13 +33,14 @@ const useStyles = makeStyles((theme) => ({
     height: height,
     // background:"blur(2px)",
     // background:"rgba(255,255,255,0.5)",
-    marginLeft: `calc(100vw - ${width} - 16px)`,
+    zIndex:200,
+    marginLeft: `calc(100vw - ${width} - 24px)`,
     marginTop: `calc(100vh - ${height} - 64px - 24px)`,
     borderRadius: "8px",
     [theme.breakpoints.up("md")]: {
       width: width,
       height: height,
-      marginLeft: `calc(100vw - ${width} - 16px)`,
+      marginLeft: `calc(100vw - ${width} - 24px)`,
       marginTop: `calc(100vh - ${height} - 64px - 24px)`,
     },
     transition: "background 0.3s ease-in-out",
@@ -109,7 +110,7 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: "8px",
       // boxShadow:
       //   "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
-      // background:"rgba(244,241,222,0.8)",
+      background:"rgba(244,241,222,0.8)",
       // border:"2px solid black",
       backdropFilter: "blur(4px)",
       "& .chatbox": {
@@ -208,7 +209,7 @@ const chatRootStyle = (isHover) => {
   }
 };
 
-function Chat({ roomId: thisRoomId }) {
+function Chat({ roomId: thisRoomId , socket, sendMessageRoom,...rest}) {
   const classes = useStyles();
   const [isHover, setIsHover] = useState(false);
   const chatStyle = chatRootStyle(isHover);
@@ -263,6 +264,42 @@ function Chat({ roomId: thisRoomId }) {
     }
   };
 
+  // const getMessage = () => {
+  //   socket.on("message-get-room", (data) => {
+  //     console.log("message-get-room", data);
+  
+  //   });
+  // }
+
+
+
+  useEffect(()=>{
+    console.log(socket)
+    socket.on("message-get-room", (data) => {
+      console.log("message-get-room", data);
+  
+    });
+  },[])
+
+  // const sendMessageRoom = (fromUserId,fromRoomId,fromUsername,message) => {
+  //   let data = {
+  //     fromUserId : fromUserId,
+  //     fromRoomId : fromRoomId,
+  //     fromUsername : fromUsername,
+  //     message : message,
+  //   }
+  //   console.log("message-send-room")
+  //   socket.emit("message-send-room", data);
+  //   // socket.on("message-send-room", (data) => {
+  //   //   console.log("new-select", data);
+
+  //   //   const { userId, roomId, targetId} = data;
+  //   //   if (this.state.roomId !== roomId) return;
+
+  //   //   this.setState({showCardSelectorDialog:1});
+  //   // });
+  // }
+
   useMemo(() => {
     let peopleData = [];
     let peopleList = [thisUsername];
@@ -309,6 +346,7 @@ function Chat({ roomId: thisRoomId }) {
     if (typing) {
       if (currentShowMessage === "room") {
         let roomMes = messageGroup.room.messages;
+        sendMessageRoom(sessionStorage.getItem("userId"),100001,"bump",typing)
         roomMes.push({
           fromRoomId: parseInt(thisRoomId),
           fromUsername: thisUsername,
@@ -410,7 +448,7 @@ function Chat({ roomId: thisRoomId }) {
               onChange={handleTyping}
               value={typing}
               onKeyPress={(e) => {
-                console.log(e.key);
+                // console.log(e.key);
                 if (e.key === "Enter") {
                   handleEnter();
                 }
@@ -488,6 +526,7 @@ function Chat({ roomId: thisRoomId }) {
     >
       {chatBox()}
       {chatBubbles()}
+      {/* {getMessage()} */}
     </div>
   );
 }
