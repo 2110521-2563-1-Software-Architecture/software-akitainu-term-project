@@ -131,6 +131,7 @@ const useStyles = makeStyles((theme) => ({
           padding: "2px 16px",
           borderRadius: "16px",
           textOverflow: "ellipsis",
+          wordWrap: "break-word",
         },
         "& .chatboxAvatar": {
           width: "24px",
@@ -437,7 +438,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
         <div className="chatHeader">
            {currentShowMessage === "room" ?<div className="username">{isUserJoined? `chat ${currentShowMessage} : ${thisRoomId}`:"PLS JOIN ROOM FIRST"}</div> 
           :
-          <div>{currentShowMessage}</div>}
+          <div className="username">{currentShowMessage}</div>}
           <IconButton
             className="closeButton"
             onClick={() => {
@@ -478,7 +479,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
                                 : "0",
                           }}
                         >
-                          {data.fromUsername[0]}
+                          {data.fromUsername ? data.fromUsername[0] : "?"}
                         </Avatar>
                         <Typography className="chatboxUsername">
                           {data.fromUsername}
