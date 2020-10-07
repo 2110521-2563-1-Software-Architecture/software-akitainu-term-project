@@ -205,7 +205,7 @@ export class CustomGameRoomService {
 
   async insertExplodingPuppy(roomId: string, idx: number) {
     let deck = this.listRoom[roomId]['deck'];
-    deck = [...deck.split(0, idx), Card.explodingPuppy, ...deck.split(idx)];
+    deck = [...deck.slice(0, idx), Card.explodingPuppy, ...deck.slice(idx)];
     console.log('deck: ', deck);
     return true;
   }

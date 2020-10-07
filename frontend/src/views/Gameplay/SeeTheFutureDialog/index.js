@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SeeTheFutureDialog(props) {
   const classes = useStyles();
   const { seeTheFutureCards, open, handleClose } = props;
+  console.log(seeTheFutureCards);
   return (
     <TransitionsModal open={open} handleClose={handleClose}>
       <div className={classes.root}>

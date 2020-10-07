@@ -132,24 +132,10 @@ export default function PlayerHand(props) {
       );
     });
 
-  // const _handleUseCard = () => {
-  //   switch (selectedCards.length) {
-  //     case 1:
-  //       useCard(selectedCards[0]);
-  //       break;
-  //     case 2:
-  //       useCommon2(selectedCards);
-  //       break;
-  //     case 3:
-  //       useCommon3(selectedCards);
-  //       break;
-  //     case 5:
-  //       useCommon5(selectedCards);
-  //       break;
-  //     default:
-  //       return;
-  //   }
-  // };
+  const _handleUseCard = (selectedCards) => {
+    handleUseCard(selectedCards);
+    setSelectedCards([]);
+  } 
 
   return (
     <div className={classes.wrapper}>
@@ -163,7 +149,7 @@ export default function PlayerHand(props) {
           <Button
           variant="contained"
           color="primary"
-          onClick={() => handleUseCard(selectedCards)}
+          onClick={() => _handleUseCard(selectedCards)}
         >
           Use cards
         </Button>

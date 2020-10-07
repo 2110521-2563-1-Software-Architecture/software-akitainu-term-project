@@ -31,7 +31,7 @@ class Gameplay extends React.Component {
       isExplode: 0,
       hasDefuse: 0,
       showSeeTheFutureDialog: 0,
-      seeTheFutreCard: [],
+      seeTheFutureCards: [],
     };
   }
 
@@ -388,7 +388,6 @@ class Gameplay extends React.Component {
 
   getUserCard = (userId) => {
     const userIdx = this.findUserIdx(userId);
-    console.log(this.state.usersData[userIdx]);
     if (this.state.usersData[userIdx]?.userCards && userIdx >= 0)
       return this.state.usersData[userIdx].userCards;
     return [];
@@ -398,7 +397,6 @@ class Gameplay extends React.Component {
     const { usersData } = this.state;
     let idx = -1;
     usersData.forEach((userData, curIdx) => {
-      console.log(userData.userId,userId);
       if(userData.userId === userId) idx = curIdx;
     });
     return idx;
@@ -424,11 +422,7 @@ class Gameplay extends React.Component {
       userId,
       roomId : this.state.roomId,
     };
-    console.log(userId, this.state.nextUserId);
-    if(userId !== this.state.nextUserId) {
-      console.log('ret');
-      return;
-    }
+    if(userId !== this.state.nextUserId) return;
     this.state.socket.emit("draw-card", data);
   };
 
@@ -440,7 +434,6 @@ class Gameplay extends React.Component {
   };
 
   useCard = (userId, cardIdx) => {
-    const { usersData } = this.state;
     const userCards = this.getUserCard(userId);
     const card = userCards[cardIdx];
     const data = {
@@ -665,11 +658,10 @@ class Gameplay extends React.Component {
     // const classes = useStyles();
     const roomId = "100001";
     
-    const { socket, hasDefuse, isExplode, showSeeTheFutureDialog, seeTheFutreCard } = this.state;
+    const { socket, hasDefuse, isExplode, showSeeTheFutureDialog, seeTheFutureCards, discardPile } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
     let userCards = [];
-    console.log('userIdx',userId, this.findUserIdx(userId));
     if(this.state.usersData.length > userIdx && userIdx !== -1 && this.state.usersData[userIdx].userCards) {
       userCards = this.state.usersData[userIdx].userCards;
     }
@@ -698,8 +690,10 @@ class Gameplay extends React.Component {
           insertExplodingPuppy={this.insertExplodingPuppy}
           handleUseCard={this.handleUseCard}
           showSeeTheFutureDialog={showSeeTheFutureDialog}
-          seeTheFutreCard={seeTheFutreCard}
+          seeTheFutureCards={seeTheFutureCards}
           closeSeeTheFutureDialog={this.closeSeeTheFutureDialog}
+          gameLose={this.gameLose}
+          topDiscardPile={discardPile[discardPile.length-1]}
         />
       </div>
     );

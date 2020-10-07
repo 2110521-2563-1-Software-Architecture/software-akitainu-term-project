@@ -157,6 +157,8 @@ function Game(props) {
     showSeeTheFutureDialog,
     seeTheFutureCards,
     closeSeeTheFutureDialog,
+    gameLose,
+    topDiscardPile,
   } = props;
   const classes = useStyles();
 
@@ -169,8 +171,6 @@ function Game(props) {
 
   const {
     numberOfDeckCards,
-    seeTheFutureCards,
-    latestUsedCard,
     users,
     cardSelectorCards,
     isSelectingPlayer,
@@ -345,14 +345,11 @@ function Game(props) {
             </div>
             <div className={classes.cardWrapper}>
               <img
-                src={getCardImage(latestUsedCard)}
+                src={topDiscardPile? getCardImage(topDiscardPile): undefined}
                 className={classes.usedCard}
               />
             </div>
             <div className={classes.logWrapper}>
-              <div onClick={() => setShowSeeTheFutureDialog(true)}>
-                test stf
-              </div>
               <div onClick={() => setShowCardSelectorDialog(true)}>
                 test cardSelector
               </div>
@@ -388,7 +385,7 @@ function Game(props) {
         hasDefuse={hasDefuse}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          alert("Spectate");
+          gameLose(userId)
         }}
         onClickHideExplodingPuppy={(idx) => {
           insertExplodingPuppy(userId, idx)
