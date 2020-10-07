@@ -150,6 +150,14 @@ function Game(props) {
     joinCustomRoom,
     startGame,
     getPropsFromUserId,
+    useCard = (userId, cardIdx) =>
+      alert(`user id ${userId} use card idx ${cardIdx}`),
+    useCommon2 = (userId, cardsIdx) =>
+      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
+    useCommon3 = (userId, cardsIdx) =>
+      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
+    useCommon5 = (userId, cardsIdx) =>
+      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
   } = props;
   const classes = useStyles();
 
@@ -157,7 +165,7 @@ function Game(props) {
   const roomId = "100001"; // todo:
 
   // const [userCards, setUserCards] = useState([]);
-  const { userCards } = props;
+  // const { userCards } = props;
 
   const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
   const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
@@ -178,6 +186,7 @@ function Game(props) {
     users,
     cardSelectorCards,
     isSelectingPlayer,
+    userCards,
   } = gameTestData; //mock data
 
   const getUsersToRender = () => {
@@ -276,7 +285,22 @@ function Game(props) {
   };
 
   const usersToRender = getUsersToRender();
-  console.log(usersToRender);
+
+  const _useCard = (cardIdx) => {
+    useCard(userId, cardIdx);
+  };
+
+  const _useCommon2 = (cardsIdx) => {
+    useCommon2(userId, cardsIdx);
+  };
+
+  const _useCommon3 = (cardsIdx) => {
+    useCommon3(userId, cardsIdx);
+  };
+
+  const _useCommon5 = (cardsIdx) => {
+    useCommon5(userId, cardsIdx);
+  };
 
   const getTopPlayer = (user) => {
     return (
@@ -370,7 +394,13 @@ function Game(props) {
           </div>
         </div>
         <div className={classes.bottomSection}>
-          <PlayerHand cards={userCards} />
+          <PlayerHand
+            cards={userCards}
+            useCard={_useCard}
+            userCommon2={_useCommon2}
+            userCommon3={_useCommon3}
+            userCommon5={_useCommon5}
+          />
         </div>
       </div>
       <SeeTheFutureDialog

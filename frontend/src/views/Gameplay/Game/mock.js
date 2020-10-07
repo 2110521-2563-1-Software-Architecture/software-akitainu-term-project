@@ -1,7 +1,7 @@
 import { Card } from "../../../components/type";
 
 export const gameTestData = {
-  playerCards: [
+  userCards: [
     // Card.defuse,
     Card.common1,
     Card.common1,
