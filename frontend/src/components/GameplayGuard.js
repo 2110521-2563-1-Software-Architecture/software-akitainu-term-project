@@ -6,7 +6,7 @@ function isNumeric(value) {
   return /^-?\d+$/.test(value);
 }
 
-function AuthGuard({ children }) {
+function GameplayGuard({ children }) {
   let userId = sessionStorage.getItem("userId")
   if (!userId) {
     return <Redirect to="/home"/>
@@ -17,4 +17,4 @@ function AuthGuard({ children }) {
 
   return children
 }
-export default AuthGuard
+export default GameplayGuard

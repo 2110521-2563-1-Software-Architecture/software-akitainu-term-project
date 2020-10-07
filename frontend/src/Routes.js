@@ -7,7 +7,7 @@ import Home from "views/Home";
 import NotFound from "views/NotFound";
 import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
-import AuthGuard from 'components/AuthGuard'
+import GameplayGuard from 'components/GameplayGuard'
 
 const ENDPOINT = "localhost:10001";
 const socket = socketIOClient(ENDPOINT);
@@ -43,7 +43,7 @@ const routesConfig = [
   //add more path ...
   {
     exact: true,
-    guard: AuthGuard,
+    guard: GameplayGuard,
     path: "/gameplay/:roomId",
     component: () => <Gameplay socket={socket} />,
   },
