@@ -377,7 +377,15 @@ class Gameplay extends React.Component {
       const targetCards = this.getUserCard(targetId);
       this.setState({cardSelectorId:targetId, cardSelectorCards: targetCards});
     });
+    this.state.socket.on("message-get-room", (data) => {
+      console.log("message-get-room", data);
+  
+    });
+    this.state.socket.emit("message-send-room",{fromRoomId:123});
+    
   }
+
+  // --------- end componentDidMount() ---------
 
   getPropsFromUserId = (userId) => {
     const userIdx = this.findUserIdx(userId);
@@ -650,6 +658,17 @@ class Gameplay extends React.Component {
     }
   }
 
+  sendMessageRoom = (fromUserId,fromRoomId,fromUsername,message) => {
+    let data = {
+      fromUserId : fromUserId,
+      fromRoomId : fromRoomId,
+      fromUsername : fromUsername,
+      message : message,
+    }
+    console.log("message-send-room")
+    this.state.socket.emit("message-send-room", data);
+  }
+
   useEffect = (userId, card) => {
     const data = {
       userId,
@@ -696,6 +715,8 @@ class Gameplay extends React.Component {
     return 0;
   }
 
+
+
   render() {
     // const classes = useStyles();
     const roomId = "100001";
@@ -718,7 +739,7 @@ class Gameplay extends React.Component {
         }}
       >
         <NavBar />
-        <Chat roomId={roomId} />
+        <Chat roomId={roomId} socket={this.state.socket} sendMessageRoom={this.sendMessageRoom}/>
         <Game
           socket={socket}
           createCustomRoom={this.createCustomRoom}
