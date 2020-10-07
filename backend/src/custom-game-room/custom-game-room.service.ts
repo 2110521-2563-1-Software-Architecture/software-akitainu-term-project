@@ -205,7 +205,9 @@ export class CustomGameRoomService {
       (this.listRoom[roomId]['nextUserIndex'] + 1) %
       this.listRoom[roomId]['usersId'].length;
 
-    return this.listRoom[roomId]['nextUserIndex'];
+    return this.listRoom[roomId]['usersId'][
+      this.listRoom[roomId]['nextUserIndex']
+    ];
   }
 
   async useEffectCard(roomId: string, card: string) {
