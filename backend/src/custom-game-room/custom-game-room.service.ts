@@ -116,13 +116,13 @@ export class CustomGameRoomService {
     deck = await this.shuffle(deck);
     console.log('after deck: ', deck);
 
-    this.listRoom[roomId]['usersCard'] = {};
+    const usersCard = {};
     for (let j = 0; j < userNumber; j++) {
-      this.listRoom[roomId]['usersCard'][j] = [];
+      usersCard[j] = [];
       for (let i = 0; i < 7; i++) {
-        this.listRoom[roomId]['usersCard'][j].push(deck[userNumber * i + j]);
+        usersCard[j].push(deck[userNumber * i + j]);
       }
-      this.listRoom[roomId]['usersCard'][j].push(Card.defuse);
+      usersCard[j].push(Card.defuse);
     }
 
     // determine first turn and turn left
@@ -140,7 +140,7 @@ export class CustomGameRoomService {
       roomId,
       leftCardNumber: deck.length,
       usersId: this.listRoom[roomId]['usersId'],
-      usersCard: this.listRoom[roomId]['usersCard'],
+      usersCard: usersCard,
       nextUserId: this.listRoom[roomId]['usersId'][
         this.listRoom[roomId]['nextUserIndex']
       ],
@@ -209,6 +209,17 @@ export class CustomGameRoomService {
     switch (card) {
       case Card.seeTheFuture: {
         newEffectCard = await this.seeTheFuture(roomId);
+        break;
+      }
+      case Card.shuffle: {
+        this.listRoom[roomId]['deck'] = await this.shuffle(
+          this.listRoom[roomId]['deck'],
+        );
+        newEffectCard = true;
+        break;
+      }
+      case Card.favor: {
+        newEffectCard = true;
         break;
       }
       default: {
