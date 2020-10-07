@@ -127,7 +127,9 @@ export class CustomGameRoomService {
 
     // determine first turn and turn left
     this.listRoom[roomId]['nextUserIndex'] = 0;
+    this.listRoom[roomId]['lastUserIndex'] = 0;
     this.listRoom[roomId]['nextTurnLeft'] = 1;
+    this.listRoom[roomId]['dead'] = new Set();
 
     deck = deck.slice(userNumber * 7);
 
@@ -161,6 +163,8 @@ export class CustomGameRoomService {
     const card = this.listRoom[roomId]['deck'].shift();
     const leftCardNumber = this.listRoom[roomId]['deck'].length;
     let nextTurnLeft = this.listRoom[roomId]['nextTurnLeft'] - 1;
+
+    this.listRoom[roomId]['lastUserIndex'] = nextUserIndex;
 
     nextUserIndex =
       nextTurnLeft === 0 ? (nextUserIndex + 1) % usersId.length : nextUserIndex;
@@ -201,9 +205,6 @@ export class CustomGameRoomService {
     let deck = this.listRoom[roomId]['deck'];
     deck = [...deck.slice(0, idx), Card.explodingPuppy, ...deck.slice(idx)];
     this.listRoom[roomId]['deck'] = deck;
-    this.listRoom[roomId]['nextUserIndex'] =
-      (this.listRoom[roomId]['nextUserIndex'] + 1) %
-      this.listRoom[roomId]['usersId'].length;
 
     return this.listRoom[roomId]['usersId'][
       this.listRoom[roomId]['nextUserIndex']
@@ -236,12 +237,13 @@ export class CustomGameRoomService {
   }
 
   async loseGame(roomId: string) {
-    this.listRoom[roomId]['nextUserIndex'] =
-      (this.listRoom[roomId]['nextUserIndex'] + 1) %
-      this.listRoom[roomId]['usersId'].length;
-
-    return this.listRoom[roomId]['usersId'][
-      this.listRoom[roomId]['nextUserIndex']
-    ];
+    const usersId = this.listRoom[roomId]['usersId'];
+    const lastUserIndex = this.listRoom[roomId]['lastUserIndex'];
+    const nextUserIndex = this.listRoom[roomId]['nextUserIndex'];
+    this.listRoom[roomId]['dead'].add(usersId[lastUserIndex]);
+    while (this.listRoom[roomId]['dead'].has(usersId[nextUserIndex])) {
+      this.listRoom[roomId]['nextUserIndex']++;
+    }
+    return usersId[this.listRoom[roomId]['nextUserIndex']];
   }
 }
