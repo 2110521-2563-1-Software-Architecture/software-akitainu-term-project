@@ -6,7 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { CreatedIdCustomGameRoomDto } from './custom-game-room.dto';
+import { Card, CreatedIdCustomGameRoomDto } from './custom-game-room.dto';
 import { CustomGameRoomService } from './custom-game-room.service';
 import { ChatService } from './chat.service';
 
@@ -107,16 +107,16 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     this.server.to(roomId).emit('new-card-use', newCardUse);
   }
 
-  @SubscribeMessage('use-favor')
-  async onUseFavor(socket: Socket, data: any) {
-    const { roomId } = data;
-    this.server.to(roomId).emit('new-favor', data);
-  }
+  // @SubscribeMessage('use-favor')
+  // async onUseFavor(socket: Socket, data: any) {
+  //   const { roomId } = data;
+  //   this.server.to(roomId).emit('new-favor', data);
+  // }
 
-  @SubscribeMessage('select-favor-card')
-  async onSelectFavor(socket: Socket, data: any) {
-    const { roomId, userId, card } = data;
-    this.server.to(roomId).emit('receive-favor-card', { roomId, userId, card });
+  @SubscribeMessage('select-player')
+  async onSelectPlayer(socket: Socket, data: any) {
+    const { roomId } = data;
+    this.server.to(roomId).emit('new-select', data);
   }
 
   // @SubscribeMessage('use-see-the-future')
@@ -191,13 +191,29 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
 
   @SubscribeMessage('use-effect')
   async onUseEffect(socket: Socket, data: any) {
-    const { roomId, userId, card } = data;
+    const { roomId, card } = data;
+    let effectCard;
+    switch (card) {
+      case Card.seeTheFuture: {
+        effectCard = 'seeTheFutureCards';
+        break;
+      }
+      case Card.shuffle: {
+        effectCard = 'shuffleCards';
+        break;
+      }
+      case Card.favor: {
+        effectCard = 'favorCard';
+        break;
+      }
+      default: {
+        effectCard = '';
+      }
+    }
     const result = await this.customGameRoomService.useEffectCard(roomId, card);
     const newEffect = {
-      userId,
-      roomId,
-      card,
-      seeTheFutureCards: result,
+      ...data,
+      [effectCard]: result,
     };
     this.server.to(roomId).emit('new-effect', newEffect);
   }
