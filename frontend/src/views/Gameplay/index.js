@@ -28,12 +28,12 @@ class Gameplay extends React.Component {
       nextUserId: -1,
       nextTurnLeft: 1,
       discardPile: [], // index 0 is the bottom,
-      isExplode: 0,
-      hasDefuse: 0,
-      showSeeTheFutureDialog: 0,
+      explodeId: -1,
+      seeTheFutureId: -1,
       seeTheFutureCards: [],
-      isSelectingPlayer: 0,
-      showCardSelectorDialog: 0,
+      isSelectingPlayerId: -1,
+      cardSelectorId: -1,
+      cardSelectorCards: [],
     };
   }
 
@@ -111,8 +111,6 @@ class Gameplay extends React.Component {
         this.drawExplodingPuppy(userId, roomId);
         this.setState({
           leftCardNumber,
-          nextUserId,
-          nextTurnLeft,
         })
         return;
       }
@@ -178,7 +176,7 @@ class Gameplay extends React.Component {
       });
       switch (card) {
         case Card.favor:
-          this.setState({isSelectingPlayer:1});
+          this.setState({isSelectingPlayerId:userId});
           break;
         default:
           this.useEffect(userId, card);
@@ -208,15 +206,6 @@ class Gameplay extends React.Component {
       const { usersData } = this.state;
       usersData[userIdx].userCards.push(card);
       this.setState({ usersData });
-    });
-    this.state.socket.on("new-see-the-future", (data) => {
-      console.log(data);
-
-      const { userId, roomId, cards } = data;
-      if (this.state.roomId !== roomId) return;
-      // todo: check if user use this card?
-
-      this.setState({showSeeTheFutureDialog: 1, seeTheFutreCard: cards});
     });
     this.state.socket.on("new-common-2", (data) => {
       console.log(data);
@@ -340,25 +329,21 @@ class Gameplay extends React.Component {
       const { usersData } = this.state;
       if (this.state.roomId !== roomId) return;
       const userIdx = this.findUserIdx(userId);
-      const defuseIdx = usersData[userIdx].userCards.indexOf(Card.defuse);
-      if(defuseIdx !== -1) {
-        usersData[userIdx].userCards.splice(defuseIdx,1); 
-      }
-      this.setState({usersData,isExplode: 1, hasDefuse: defuseIdx!==-1});
+      this.setState({usersData,explodeId: userId});
     });
     this.state.socket.on("finish-exploding-puppy", (data) => {
       console.log("finish-exploding-puppy", data);
 
-      const { userId, roomId } = data;
+      const { userId, roomId, nextUserId } = data;
       if (this.state.roomId !== roomId) return;
-      this.setState({isExplode: 0, hasDefuse: 0});
+      this.setState({explodeId: -1, hasDefuse: 0, nextUserId});
     });
     this.state.socket.on("new-lose", (data) => {
       console.log("new-lose", data);
 
-      const { userId, roomId } = data;
+      const { userId, roomId, nextUserId } = data;
       if (this.state.roomId !== roomId) return;
-      this.setState({isExplode: 0, hasDefuse: 0});
+      this.setState({explodeId: -1, hasDefuse: 0, nextUserId});
     });
     this.state.socket.on("new-effect", (data) => {
       console.log("new-effect", data);
@@ -369,8 +354,18 @@ class Gameplay extends React.Component {
       switch (card) {
         case Card.seeTheFuture:
           const { seeTheFutureCards } = data;
-          this.setState({seeTheFutureCards, showSeeTheFutureDialog: 1})
+          this.setState({seeTheFutureCards, seeTheFutureId: userId})
           break;
+        case Card.favor:
+          const { targetId, favorCardIdx } = data;
+          const { usersData } = this.state;
+          const userIdx = this.findUserIdx(userId);
+          const targetIdx = this.findUserIdx(targetId);
+          console.log(targetId,targetIdx);
+          const favorCard = usersData[targetIdx].userCards[favorCardIdx];
+          usersData[userIdx].userCards.push(favorCard);
+          usersData[targetIdx].userCards.splice(favorCardIdx,1);
+          this.setState({usersData});
       };
     });
     this.state.socket.on("new-select", (data) => {
@@ -379,7 +374,8 @@ class Gameplay extends React.Component {
       const { userId, roomId, targetId} = data;
       if (this.state.roomId !== roomId) return;
 
-      this.setState({showCardSelectorDialog:1});
+      const targetCards = this.getUserCard(targetId);
+      this.setState({cardSelectorId:targetId, cardSelectorCards: targetCards});
     });
     this.state.socket.on("message-get-room", (data) => {
       console.log("message-get-room", data);
@@ -683,7 +679,7 @@ class Gameplay extends React.Component {
   }
 
   closeSeeTheFutureDialog = () => {
-    this.setState({showSeeTheFutureDialog: 0, seeTheFutreCard: []});
+    this.setState({seeTheFutureId: -1, seeTheFutreCard: []});
   }
 
   selectPlayer = (userId, selectedPlayerId) => {
@@ -692,12 +688,31 @@ class Gameplay extends React.Component {
       roomId: this.state.roomId,
       targetId: selectedPlayerId,
     }
-    console.log('select-player',data);
+    this.setState({isSelectingPlayerId: -1});
     this.state.socket.emit("select-player", data);
   }
 
-  setSelectedCardIdx = (userId, selectedCardIdx) => {
-    this.useEffect(userId, this.state.roomId, Card.favor, selectedCardIdx);
+  setSelectedCardIdx = (userId, targetId, selectedCardIdx) => {
+    this.setState({cardSelectorId: -1})
+    // this.useEffect(userId, this.state.roomId, Card.favor, selectedCardIdx);
+    const data = {
+      userId,
+      roomId: this.state.roomId,
+      card: Card.favor,
+      targetId: targetId,
+      favorCardIdx: selectedCardIdx,
+    }
+    this.state.socket.emit("use-effect", data);
+  }
+
+  hasDefuse = (userId) => {
+    const userIdx = this.findUserIdx(userId);
+    const {usersData} = this.state;
+    if(userIdx === -1) return 0;
+    if(!usersData[userIdx].userCards) return 0;
+    const defuseIdx = usersData[userIdx].userCards.indexOf(Card.defuse);
+    if(defuseIdx !== -1) return 1;
+    return 0;
   }
 
 
@@ -706,7 +721,7 @@ class Gameplay extends React.Component {
     // const classes = useStyles();
     const roomId = "100001";
     
-    const { socket, hasDefuse, isExplode, showSeeTheFutureDialog, seeTheFutureCards, discardPile, isSelectingPlayer, showCardSelectorDialog } = this.state;
+    const { socket, explodeId, seeTheFutureId, seeTheFutureCards, discardPile, isSelectingPlayerId, cardSelectorId, cardSelectorCards, usersData, leftCardNumber } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
     let userCards = [];
@@ -733,19 +748,22 @@ class Gameplay extends React.Component {
           getPropsFromUserId={this.getPropsFromUserId}
           userCards={userCards}
           drawCard={this.drawCard}
-          hasDefuse={hasDefuse}
-          isExplode={isExplode}
+          hasDefuse={this.hasDefuse}
+          explodeId={explodeId}
           insertExplodingPuppy={this.insertExplodingPuppy}
           handleUseCard={this.handleUseCard}
-          showSeeTheFutureDialog={showSeeTheFutureDialog}
+          seeTheFutureId={seeTheFutureId}
           seeTheFutureCards={seeTheFutureCards}
           closeSeeTheFutureDialog={this.closeSeeTheFutureDialog}
           gameLose={this.gameLose}
           topDiscardPile={discardPile[discardPile.length-1]}
-          isSelectingPlayer={isSelectingPlayer}
+          isSelectingPlayerId={isSelectingPlayerId}
           selectPlayer={this.selectPlayer}
-          showCardSelectorDialog={showCardSelectorDialog}
+          cardSelectorId={cardSelectorId}
           setSelectedCardIdx={this.setSelectedCardIdx}
+          cardSelectorCards={cardSelectorCards}
+          usersData={usersData}
+          numberOfDeckCards={leftCardNumber}
         />
       </div>
     );

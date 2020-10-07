@@ -174,19 +174,20 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   @SubscribeMessage('insert-exploding-puppy')
   async onInsertExplodingPuppy(socket: Socket, data: any) {
     const { roomId, userId, idx } = data;
-    const insertExploding = await this.customGameRoomService.insertExplodingPuppy(
+    const nextUserId = await this.customGameRoomService.insertExplodingPuppy(
       roomId,
       idx,
     );
-    if (insertExploding) {
-      this.server.to(roomId).emit('finish-exploding-puppy', { roomId, userId });
-    }
+    this.server
+      .to(roomId)
+      .emit('finish-exploding-puppy', { roomId, userId, nextUserId });
   }
 
   @SubscribeMessage('game-lose')
   async onGameLose(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-lose', data);
+    const nextUserId = await this.customGameRoomService.loseGame(roomId);
+    this.server.to(roomId).emit('new-lose', { ...data, nextUserId });
   }
 
   @SubscribeMessage('use-effect')
