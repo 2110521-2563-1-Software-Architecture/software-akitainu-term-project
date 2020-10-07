@@ -5,6 +5,11 @@ import LoadingScreen from "components/LoadingScreen";
 import Redirect from "components/Redirect";
 import Home from "views/Home";
 import NotFound from "views/NotFound";
+import Gameplay from "views/Gameplay";
+import socketIOClient from "socket.io-client";
+
+const ENDPOINT = "localhost:10001";
+const socket = socketIOClient(ENDPOINT);
 
 const routesConfig = [
   {
@@ -38,14 +43,8 @@ const routesConfig = [
   {
     exact: true,
     path: "/gameplay/:roomId",
-    component: lazy(() => import("views/Gameplay")),
+    component: () => <Gameplay socket={socket} />,
   },
-  {
-    exact: true,
-    path: "/CustomRoom",
-    component: lazy(() => import("components/CustomRoom")),
-  },
-
   //add more path
   {
     path: "*",

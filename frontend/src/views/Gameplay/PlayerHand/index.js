@@ -96,7 +96,7 @@ function getCards(cards, selectedCards, setSelectedCards, classes) {
 function PlayerHand(props) {
   const classes = useStyles();
   const { cards } = props;
-  console.log('cards',cards);
+  console.log("cards", cards);
   const numberOfCards = cards.length;
   const [selectedCards, setSelectedCards] = useState([]);
   const canUseSelectedCards = () => {

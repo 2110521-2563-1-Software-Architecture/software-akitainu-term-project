@@ -7,7 +7,6 @@ import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
 import Otherhand from "../Otherhand";
-import CustomRoom from "../../../components/CustomRoom";
 import { gameTestData } from "./mock";
 
 const useStyles = makeStyles((theme) => ({
@@ -146,24 +145,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Game(props) {
-  const { socket } = props;
+  const {
+    socket,
+    drawCard,
+    createCustomRoom,
+    joinCustomRoom,
+    startGame,
+    getPropsFromUserId,
+  } = props;
   const classes = useStyles();
 
   const userId = window.sessionStorage.getItem("userId"); // todo:
   const roomId = "100001"; // todo:
 
-  const [userCards, setUserCards] = useState([]);
-  const customRoomRef = useRef();
-  const customRoom = <CustomRoom socket={socket} ref={customRoomRef} />;
-
-  useEffect(() => {
-    const data = customRoomRef.current.getPropsFromUserId(userId);
-    setUserCards(data.userCards);
-  }, [customRoomRef?.current?.getPropsFromUserId(userId).userCards]);
-
-  const _drawCard = () => {
-    customRoomRef.current.drawCard(userId, roomId);
-  };
+  // const [userCards, setUserCards] = useState([]);
+  const { userCards } = props;
 
   const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
   const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
@@ -230,7 +226,6 @@ function Game(props) {
 
   return (
     <>
-      {customRoom}
       <div className={classes.root}>
         <div className={classes.topSection}>
           {getTopPlayer(users[0])}
@@ -250,7 +245,7 @@ function Game(props) {
               <img
                 src={card_back}
                 className={classes.deck}
-                onClick={() => _drawCard()}
+                onClick={() => drawCard(userId, roomId)}
               />
             </div>
             <div className={classes.cardWrapper}>
@@ -308,30 +303,14 @@ function Game(props) {
       />
       {isSelectingPlayer && <div className={classes.backdrop} />}
       <div>
-        <button onClick={() => customRoomRef.current.createCustomRoom(userId)}>
+        <button onClick={() => createCustomRoom(userId)}>
           createCustomRoom
         </button>
-        <button
-          onClick={() => customRoomRef.current.joinCustomRoom(userId, roomId)}
-        >
+        <button onClick={() => joinCustomRoom(userId, roomId)}>
           joinCustomRoom
         </button>
-        <button onClick={() => customRoomRef.current.drawCard(userId, roomId)}>
-          drawCard
-        </button>
-        <button onClick={() => customRoomRef.current.startGame(roomId)}>
-          startGame
-        </button>
-        <button
-          onClick={() => customRoomRef.current.useCard(1, 1, Card.common2)}
-        >
-          useCard
-        </button>
-        <button
-          onClick={() =>
-            console.log(customRoomRef.current.getPropsFromUserId(userId))
-          }
-        >
+        <button onClick={() => startGame(roomId)}>startGame</button>
+        <button onClick={() => console.log(getPropsFromUserId(userId))}>
           getProps
         </button>
       </div>
