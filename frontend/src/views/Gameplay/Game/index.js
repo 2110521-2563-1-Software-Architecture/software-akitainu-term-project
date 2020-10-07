@@ -151,18 +151,21 @@ function Game(props) {
     startGame,
     getPropsFromUserId,
     hasDefuse,
-    isExplode,
+    explodeId,
     insertExplodingPuppy,
     handleUseCard,
-    showSeeTheFutureDialog,
+    seeTheFutureId,
     seeTheFutureCards,
     closeSeeTheFutureDialog,
     gameLose,
     topDiscardPile,
-    isSelectingPlayer,
+    isSelectingPlayerId,
     selectPlayer,
-    showCardSelectorDialog,
+    cardSelectorId,
     setSelectedCardIdx,
+    cardSelectorCards,
+    usersData,
+    numberOfDeckCards,
   } = props;
   const classes = useStyles();
 
@@ -171,13 +174,17 @@ function Game(props) {
 
   // const [userCards, setUserCards] = useState([]);
   const { userCards } = props;
+  const isSelectingPlayer = isSelectingPlayerId === userId
 
-  const {
-    numberOfDeckCards,
-    users,
-    cardSelectorCards,
-  } = gameTestData; //mock data
-
+  let users = usersData;
+  
+  for(let i=0;i<users.length;i++) {
+    const firstUser = users[0];
+    if(firstUser.userId === userId) break;
+    users.splice(0,1);
+    users.push(firstUser);
+  }
+  
   const getUsersToRender = () => {
     switch (users.length) {
       case 1:
@@ -279,8 +286,8 @@ function Game(props) {
     handleUseCard(userId, cardsIdx)
   };
 
-  const _handleCloseCardSelectorDigalog = (selectedCardIdx) => {
-    setSelectedCardIdx(userId, selectedCardIdx);
+  const _handleCloseCardSelectorDialog = (selectedCardIdx) => {
+    setSelectedCardIdx(isSelectingPlayerId, cardSelectorId, selectedCardIdx);
   }
 
   const getTopPlayer = (user) => {
@@ -329,17 +336,17 @@ function Game(props) {
     <>
       <div className={classes.root}>
         <div className={classes.topSection}>
-          {getTopPlayer(usersToRender[0])}
-          <div style={{ width: "5%" }} />
-          {getTopPlayer(usersToRender[1])}
-          <div style={{ width: "5%" }} />
           {getTopPlayer(usersToRender[2])}
+          <div style={{ width: "5%" }} />
+          {getTopPlayer(usersToRender[3])}
+          <div style={{ width: "5%" }} />
+          {getTopPlayer(usersToRender[4])}
         </div>
         <div className={classes.middleSection}>
           <div className={classes.middlePlayerSection}>
-            {getMiddlePlayer(usersToRender[3])}
+            {getMiddlePlayer(usersToRender[0])}
             <div style={{ height: "10%" }} />
-            {getMiddlePlayer(usersToRender[4])}
+            {getMiddlePlayer(usersToRender[1])}
           </div>
           <div className={classes.playArea}>
             <div className={classes.cardWrapper}>
@@ -360,9 +367,9 @@ function Game(props) {
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
-            {getMiddlePlayer(usersToRender[5])}
-            <div style={{ height: "10%" }} />
             {getMiddlePlayer(usersToRender[6])}
+            <div style={{ height: "10%" }} />
+            {getMiddlePlayer(usersToRender[5])}
           </div>
         </div>
         <div className={classes.bottomSection}>
@@ -373,22 +380,23 @@ function Game(props) {
         </div>
       </div>
       <SeeTheFutureDialog
-        open={showSeeTheFutureDialog}
+        open={seeTheFutureId===userId}
         handleClose={() => closeSeeTheFutureDialog()}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog
-        open={showCardSelectorDialog}
-        handleClose={(selelctedCardIdx) => _handleCloseCardSelectorDigalog(selelctedCardIdx)}
+        open={cardSelectorId===userId}
+        handleClose={(selelctedCardIdx) => _handleCloseCardSelectorDialog(selelctedCardIdx)}
         cardSelectorCards={cardSelectorCards}
         showBackCard={false}
       />
       <ExplodingPuppyDialog
-        open={isExplode}
-        hasDefuse={hasDefuse}
+        open={explodeId === userId}
+        hasDefuse={hasDefuse(userId)}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          gameLose(userId)
+          // gameLose(userId)
+          console.log('aaa')
         }}
         onClickHideExplodingPuppy={(idx) => {
           insertExplodingPuppy(userId, idx)

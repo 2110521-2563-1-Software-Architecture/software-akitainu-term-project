@@ -171,7 +171,7 @@ export class CustomGameRoomService {
     const newCard = {
       userId,
       roomId,
-      card,
+      card: Card.explodingPuppy,
       leftCardNumber,
       nextUserId: usersId[nextUserIndex],
       nextTurnLeft: nextTurnLeft,
