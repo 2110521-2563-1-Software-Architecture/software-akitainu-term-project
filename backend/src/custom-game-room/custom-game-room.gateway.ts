@@ -89,7 +89,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     const { roomId, userId } = data;
     const newCard = await this.customGameRoomService.drawCard(userId, roomId);
     console.log('newCard: ', newCard);
-    if (newCard !== 'no-card') {
+    if (newCard !== false) {
       this.server.to(roomId).emit('new-card', newCard);
     }
   }
@@ -169,6 +169,18 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   async onDrawExplodingPuppy(socket: Socket, data: any) {
     const { roomId } = data;
     this.server.to(roomId).emit('new-exploding-puppy', data);
+  }
+
+  @SubscribeMessage('insert-exploding-puppy')
+  async onInsertExplodingPuppy(socket: Socket, data: any) {
+    const { roomId, userId, idx } = data;
+    const insertExploding = await this.customGameRoomService.insertExplodingPuppy(
+      roomId,
+      idx,
+    );
+    if (insertExploding) {
+      this.server.to(roomId).emit('finish-exploding-puppy', { roomId, userId });
+    }
   }
 
   // chat service
