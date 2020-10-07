@@ -127,6 +127,7 @@ const useStyles = makeStyles((theme) => ({
           maxWidth: "100px",
           padding: "2px 16px",
           borderRadius: "16px",
+          textOverflow: "ellipsis",
         },
         "& .chatboxAvatar": {
           width: "24px",
@@ -455,7 +456,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom,...rest}) {
                         </Typography>
                       </div>
                       <div style={{ display: "flex" }}>
-                        <Typography align="left" className="chatboxText">
+                        <Typography  align="left" className="chatboxText">
                           {data.message}
                         </Typography>
                       </div>
