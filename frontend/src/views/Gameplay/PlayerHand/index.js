@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 5,
   },
 
   disabledButton: {

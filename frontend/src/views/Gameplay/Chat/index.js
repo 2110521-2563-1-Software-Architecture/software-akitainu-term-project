@@ -573,6 +573,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
   return (
     <div
       className={classes.root}
+      style={{zIndex:showChatbox?"":4}}
       onMouseEnter={() => {
         setIsHover(true);
       }}
