@@ -239,11 +239,13 @@ export class CustomGameRoomService {
   async loseGame(roomId: string) {
     const usersId = this.listRoom[roomId]['usersId'];
     const lastUserIndex = this.listRoom[roomId]['lastUserIndex'];
-    const nextUserIndex = this.listRoom[roomId]['nextUserIndex'];
+    let nextUserIndex = this.listRoom[roomId]['nextUserIndex'];
     this.listRoom[roomId]['dead'].add(usersId[lastUserIndex]);
     while (this.listRoom[roomId]['dead'].has(usersId[nextUserIndex])) {
-      this.listRoom[roomId]['nextUserIndex']++;
+      nextUserIndex = (nextUserIndex + 1) % usersId.length;
     }
+    this.listRoom[roomId]['nextUserIndex'] = nextUserIndex;
+    this.listRoom[roomId]['lastUserIndex'] = nextUserIndex;
     return usersId[this.listRoom[roomId]['nextUserIndex']];
   }
 }
