@@ -51,53 +51,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getNthCardStyle(n, selectedCards) {
-  return {
-    position: "relative",
-    zIndex: `${n + 1}`,
-    marginLeft: n === 0 ? "0px" : `-50px`,
-    marginTop: selectedCards.includes(n) ? "-40px" : "0px",
-    height: "250px",
-    boxShadow:
-      // equal to theme.shadows[5]
-      "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
-    borderRadius: "16px",
-    cursor: "pointer",
-  };
-}
-
-function selectCard(selectedCards, setSelectedCards, n) {
-  let currentSelected;
-  if (selectedCards.includes(n)) {
-    currentSelected = selectedCards.filter((item) => item !== n);
-  } else {
-    currentSelected = [...selectedCards];
-    currentSelected.push(n);
-  }
-  setSelectedCards(currentSelected);
-}
-
-function getCards(cards, selectedCards, setSelectedCards, classes) {
-  const ret = cards.map((card, idx) => {
-    return (
-      <li key={`card-${idx}`} className={classes.listItem}>
-        <img
-          src={getCardImage(card)}
-          style={getNthCardStyle(idx, selectedCards)}
-          onClick={() => selectCard(selectedCards, setSelectedCards, idx)}
-          className={selectedCards.includes(idx) ? undefined : classes.card}
-        />
-      </li>
-    );
-  });
-  return ret;
-}
-
-function PlayerHand(props) {
+export default function PlayerHand(props) {
   const classes = useStyles();
-  const { cards } = props;
+  const { cards, useCard, useCommon2, useCommon3, useCommon5 } = props;
   console.log("cards", cards);
-  const numberOfCards = cards.length;
   const [selectedCards, setSelectedCards] = useState([]);
   const canUseSelectedCards = () => {
     if (selectedCards.length === 1) {
@@ -137,24 +94,116 @@ function PlayerHand(props) {
     }
   };
 
+  const getNthCardStyle = (n) => ({
+    position: "relative",
+    zIndex: `${n + 1}`,
+    marginLeft: n === 0 ? "0px" : `-50px`,
+    marginTop: selectedCards.includes(n) ? "-40px" : "0px",
+    height: "250px",
+    boxShadow:
+      // equal to theme.shadows[5]
+      "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
+    borderRadius: "16px",
+    cursor: "pointer",
+  });
+
+  const selectCard = (n) => {
+    let currentSelected;
+    if (selectedCards.includes(n)) {
+      currentSelected = selectedCards.filter((item) => item !== n);
+    } else {
+      currentSelected = [...selectedCards];
+      currentSelected.push(n);
+    }
+    setSelectedCards(currentSelected);
+  };
+
+  const getCardsToRender = () =>
+    cards.map((card, idx) => {
+      return (
+        <li key={`card-${idx}`} className={classes.listItem}>
+          <img
+            src={getCardImage(card)}
+            style={getNthCardStyle(idx)}
+            onClick={() => selectCard(idx)}
+            className={selectedCards.includes(idx) ? undefined : classes.card}
+          />
+        </li>
+      );
+    });
+
+  // const _handleUseCard = () => {
+  //   switch (selectedCards.length) {
+  //     case 1:
+  //       useCard(selectedCards[0]);
+  //       break;
+  //     case 2:
+  //       useCommon2(selectedCards);
+  //       break;
+  //     case 3:
+  //       useCommon3(selectedCards);
+  //       break;
+  //     case 5:
+  //       useCommon5(selectedCards);
+  //       break;
+  //     default:
+  //       return;
+  //   }
+  // };
+
+  const getUseCardButton = () => {
+    switch (selectedCards.length) {
+      case 1:
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => useCard(selectedCards[0])}
+        >
+          Use cards
+        </Button>;
+        break;
+      case 2:
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => useCommon2(selectedCards)}
+        >
+          Use cards
+        </Button>;
+        break;
+      case 3:
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => useCommon3(selectedCards)}
+        >
+          Use cards
+        </Button>;
+        break;
+      case 5:
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => useCommon5(selectedCards)}
+        >
+          Use cards
+        </Button>;
+        break;
+      default:
+        return;
+    }
+  };
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.cardsWrapper}>
         <ScrollContainer className="scroll-container">
-          <ul className={classes.list}>
-            {getCards(cards, selectedCards, setSelectedCards, classes)}
-          </ul>
+          <ul className={classes.list}>{getCardsToRender(cards)}</ul>
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
         {canUseSelectedCards() ? (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => alert("use crad")}
-          >
-            Use card(s)
-          </Button>
+          getUseCardButton()
         ) : (
           <Button
             variant="contained"
@@ -168,4 +217,3 @@ function PlayerHand(props) {
     </div>
   );
 }
-export default PlayerHand;

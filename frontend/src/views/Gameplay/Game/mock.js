@@ -1,7 +1,7 @@
 import { Card } from "../../../components/type";
 
 export const gameTestData = {
-  playerCards: [
+  userCards: [
     // Card.defuse,
     Card.common1,
     Card.common1,
@@ -21,10 +21,10 @@ export const gameTestData = {
   seeTheFutureCards: [Card.attack, Card.defuse, Card.nope],
   latestUsedCard: Card.defuse,
   users: [
-    { name: "Player 2", numberOfCards: 5 },
-    { name: "Player 3", numberOfCards: 7 },
-    { name: "Player 4", numberOfCards: 2 },
-    { name: "Player 5", numberOfCards: 2 },
+    { userId: "1", userName: "Player 1", numberOfCards: 5 },
+    { userId: "2", userName: "Player 2", numberOfCards: 7 },
+    { userId: "3", userName: "Player 3", numberOfCards: 2 },
+    { userId: "4", userName: "Player 4", numberOfCards: 2 },
   ],
   numberOfDeckCards: 10,
   cardSelectorCards: [
