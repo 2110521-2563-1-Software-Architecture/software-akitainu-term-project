@@ -153,8 +153,8 @@ export class CustomGameRoomService {
   }
 
   async drawCard(userId: string, roomId: string) {
-    if (this.listRoom[roomId]['deck'].length <= 0 ) {
-      return 'no-card';
+    if (this.listRoom[roomId]['deck'].length <= 0) {
+      return false;
     }
     const usersId = this.listRoom[roomId]['usersId'];
     let nextUserIndex = this.listRoom[roomId]['nextUserIndex'];
@@ -201,5 +201,12 @@ export class CustomGameRoomService {
       cards,
     };
     return newSeeTheFuture;
+  }
+
+  async insertExplodingPuppy(roomId: string, idx: number) {
+    let deck = this.listRoom[roomId]['deck'];
+    deck = [...deck.split(0, idx), Card.explodingPuppy, ...deck.split(idx)];
+    console.log('deck: ', deck);
+    return true;
   }
 }
