@@ -153,7 +153,7 @@ export class CustomGameRoomService {
   }
 
   async drawCard(userId: string, roomId: string) {
-    if (this.listRoom[roomId]['deck']) {
+    if (this.listRoom[roomId]['deck'].length <= 0 ) {
       return 'no-card';
     }
     const usersId = this.listRoom[roomId]['usersId'];

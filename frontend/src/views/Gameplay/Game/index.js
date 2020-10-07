@@ -152,6 +152,9 @@ function Game(props) {
     joinCustomRoom,
     startGame,
     getPropsFromUserId,
+    hasDefuse,
+    isExplode,
+    insertExplodingPuppy,
   } = props;
   const classes = useStyles();
 
@@ -163,16 +166,7 @@ function Game(props) {
 
   const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
   const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
-  const [showExplodingPuppyDialog, setShowExplodingPuppyDialog] = useState(
-    false
-  );
 
-  const hasDefuse = () => {
-    for (let i = 0; i < userCards.length; i++) {
-      if (userCards[i] === Card.defuse) return true;
-    }
-    return false;
-  };
   const {
     numberOfDeckCards,
     seeTheFutureCards,
@@ -261,9 +255,6 @@ function Game(props) {
               <div onClick={() => setShowCardSelectorDialog(true)}>
                 test cardSelector
               </div>
-              <div onClick={() => setShowExplodingPuppyDialog(true)}>
-                test exploding
-              </div>
               <div className={classes.log}>log</div>
             </div>
           </div>
@@ -289,17 +280,14 @@ function Game(props) {
         showBackCard={false}
       />
       <ExplodingPuppyDialog
-        open={showExplodingPuppyDialog}
-        handleClose={() => setShowExplodingPuppyDialog(false)}
-        hasDefuse={hasDefuse()}
+        open={isExplode}
+        hasDefuse={hasDefuse}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          setShowExplodingPuppyDialog(false);
           alert("Spectate");
         }}
         onClickHideExplodingPuppy={(idx) => {
-          setShowExplodingPuppyDialog(false);
-          alert(`Hide at idx ${idx}`);
+          insertExplodingPuppy(userId, idx)
         }}
       />
       {isSelectingPlayer && <div className={classes.backdrop} />}
