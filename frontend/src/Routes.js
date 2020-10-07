@@ -1,22 +1,27 @@
 /* eslint-disable react/no-array-index-key */
 import React, { lazy, Suspense, Fragment } from "react";
-import { Switch ,Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import LoadingScreen from "components/LoadingScreen";
 import Redirect from "components/Redirect";
-import Home from 'views/Home'
-import NotFound from 'views/NotFound'
+import Home from "views/Home";
+import NotFound from "views/NotFound";
+import Gameplay from "views/Gameplay";
+import socketIOClient from "socket.io-client";
+
+const ENDPOINT = "localhost:10001";
+const socket = socketIOClient(ENDPOINT);
 
 const routesConfig = [
   {
-    //auto forward localhost:3002 to localhost:3002/home 
+    //auto forward localhost:3002 to localhost:3002/home
     exact: true,
     path: "/",
-    component: ()=><Redirect to="/home"/>,
+    component: () => <Redirect to="/home" />,
   },
   {
     exact: true,
     path: "/leadership",
-    component: ()=><Redirect to="/leadership/top"/>,
+    component: () => <Redirect to="/leadership/top" />,
   },
   {
     //try "http://localhost:3002/helloworld/123"
@@ -38,9 +43,8 @@ const routesConfig = [
   {
     exact: true,
     path: "/gameplay/:roomId",
-    component: lazy(() => import("views/Gameplay")),
+    component: () => <Gameplay socket={socket} />,
   },
-
   //add more path
   {
     path: "*",
@@ -56,14 +60,13 @@ const routesConfig = [
         component: NotFound,
       },
       {
-        //anything that not match from "path" above will be route to "/404" 
-        exact:true,
-        path:"*",
-        component: ()=><Redirect to="/404"/>,
+        //anything that not match from "path" above will be route to "/404"
+        exact: true,
+        path: "*",
+        component: () => <Redirect to="/404" />,
       },
     ],
   },
-  
 ];
 
 const renderRoutes = (routes) =>

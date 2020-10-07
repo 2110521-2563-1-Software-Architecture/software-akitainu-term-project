@@ -1,0 +1,42 @@
+import { Card } from "../../../components/type";
+
+export const gameTestData = {
+  userCards: [
+    // Card.defuse,
+    Card.common1,
+    Card.common1,
+    Card.common2,
+    Card.common2,
+    Card.common2,
+    Card.common3,
+    Card.common4,
+    Card.common5,
+    Card.attack,
+    Card.favor,
+    Card.nope,
+    Card.seeTheFuture,
+    Card.shuffle,
+    Card.skip,
+  ],
+  seeTheFutureCards: [Card.attack, Card.defuse, Card.nope],
+  latestUsedCard: Card.defuse,
+  users: [
+    { userId: "1", userName: "Player 1", numberOfCards: 5 },
+    { userId: "2", userName: "Player 2", numberOfCards: 7 },
+    { userId: "3", userName: "Player 3", numberOfCards: 2 },
+    { userId: "4", userName: "Player 4", numberOfCards: 2 },
+  ],
+  numberOfDeckCards: 10,
+  cardSelectorCards: [
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+    Card.attack,
+    Card.defuse,
+    Card.nope,
+  ],
+  isSelectingPlayer: false,
+};

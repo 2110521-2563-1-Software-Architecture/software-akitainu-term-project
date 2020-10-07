@@ -1,22 +1,10 @@
-import React, {
-  forwardRef,
-  useEffect, useCallback
-} from 'react';
-import { Helmet } from 'react-helmet';
-import PropTypes from 'prop-types';
+import React, { forwardRef, useEffect, useCallback } from "react";
+import { Helmet } from "react-helmet";
+import PropTypes from "prop-types";
 
-const Page = forwardRef(({
-  title,
-  children,
-  ...rest
-}, ref) => {
-
-
+const Page = forwardRef(({ title, children, ...rest }, ref) => {
   return (
-    <div
-      ref={ref}
-      {...rest}
-    >
+    <div ref={ref} {...rest}>
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -27,7 +15,7 @@ const Page = forwardRef(({
 
 Page.propTypes = {
   children: PropTypes.node,
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 export default Page;

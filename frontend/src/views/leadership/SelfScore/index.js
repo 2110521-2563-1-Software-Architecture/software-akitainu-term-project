@@ -1,8 +1,6 @@
-import React from 'react'
+import React from "react";
 
 function SelfScore() {
-    return (
-        <p>my score</p>
-    )
+  return <p>my score</p>;
 }
-export default SelfScore
+export default SelfScore;
