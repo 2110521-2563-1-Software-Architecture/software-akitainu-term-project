@@ -153,14 +153,10 @@ function Game(props) {
     hasDefuse,
     isExplode,
     insertExplodingPuppy,
-    useCard = (userId, cardIdx) =>
-      alert(`user id ${userId} use card idx ${cardIdx}`),
-    useCommon2 = (userId, cardsIdx) =>
-      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
-    useCommon3 = (userId, cardsIdx) =>
-      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
-    useCommon5 = (userId, cardsIdx) =>
-      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
+    handleUseCard,
+    showSeeTheFutureDialog,
+    seeTheFutureCards,
+    closeSeeTheFutureDialog,
   } = props;
   const classes = useStyles();
 
@@ -168,9 +164,7 @@ function Game(props) {
   const roomId = "100001"; // todo:
 
   // const [userCards, setUserCards] = useState([]);
-  // const { userCards } = props;
-
-  const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
+  const { userCards } = props;
   const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
 
   const {
@@ -180,7 +174,6 @@ function Game(props) {
     users,
     cardSelectorCards,
     isSelectingPlayer,
-    userCards,
   } = gameTestData; //mock data
 
   const getUsersToRender = () => {
@@ -280,20 +273,8 @@ function Game(props) {
 
   const usersToRender = getUsersToRender();
 
-  const _useCard = (cardIdx) => {
-    useCard(userId, cardIdx);
-  };
-
-  const _useCommon2 = (cardsIdx) => {
-    useCommon2(userId, cardsIdx);
-  };
-
-  const _useCommon3 = (cardsIdx) => {
-    useCommon3(userId, cardsIdx);
-  };
-
-  const _useCommon5 = (cardsIdx) => {
-    useCommon5(userId, cardsIdx);
+  const _handleUseCard = (cardsIdx) => {
+    handleUseCard(userId, cardsIdx)
   };
 
   const getTopPlayer = (user) => {
@@ -387,16 +368,13 @@ function Game(props) {
         <div className={classes.bottomSection}>
           <PlayerHand
             cards={userCards}
-            useCard={_useCard}
-            userCommon2={_useCommon2}
-            userCommon3={_useCommon3}
-            userCommon5={_useCommon5}
+            handleUseCard={_handleUseCard}
           />
         </div>
       </div>
       <SeeTheFutureDialog
         open={showSeeTheFutureDialog}
-        handleClose={() => setShowSeeTheFutureDialog(false)}
+        handleClose={() => closeSeeTheFutureDialog()}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog

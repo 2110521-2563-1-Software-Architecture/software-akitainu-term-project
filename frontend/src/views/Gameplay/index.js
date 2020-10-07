@@ -30,6 +30,8 @@ class Gameplay extends React.Component {
       discardPile: [], // index 0 is the bottom,
       isExplode: 0,
       hasDefuse: 0,
+      showSeeTheFutureDialog: 0,
+      seeTheFutreCard: [],
     };
   }
 
@@ -172,15 +174,6 @@ class Gameplay extends React.Component {
         nextUserId,
         nextTurnLeft,
       });
-      switch (card) {
-        case Card.favor:
-          const targetId = this.chooseTarget();
-          this.useFavor(userId, roomId, targetId);
-          break;
-        case Card.seeTheFuture:
-          this.useSeeTheFuture(userId, roomId);
-          break;
-      }
     });
     this.state.socket.on("new-favor", (data) => {
       console.log(data);
@@ -214,7 +207,7 @@ class Gameplay extends React.Component {
       if (this.state.roomId !== roomId) return;
       // todo: check if user use this card?
 
-      this.showSeeTheFuture(cards);
+      this.setState({showSeeTheFutureDialog: 1, seeTheFutreCard: cards});
     });
     this.state.socket.on("new-common-2", (data) => {
       console.log(data);
@@ -358,6 +351,23 @@ class Gameplay extends React.Component {
       if (this.state.roomId !== roomId) return;
       this.setState({isExplode: 0, hasDefuse: 0});
     });
+    this.state.socket.on("new-effect", (data) => {
+      console.log("new-effect", data);
+
+      const { userId, roomId, card, nextUserId, nextTurnLeft } = data;
+      if (this.state.roomId !== roomId) return;
+      
+      this.setState({nextUserId, nextTurnLeft});
+      switch (card) {
+        case Card.favor:
+          const targetId = this.chooseTarget();
+          this.useFavor(userId, roomId, targetId);
+          break;
+        case Card.seeTheFuture:
+          this.useSeeTheFuture(userId, roomId);
+          break;
+      };
+    });
   }
 
   getPropsFromUserId = (userId) => {
@@ -431,7 +441,8 @@ class Gameplay extends React.Component {
 
   useCard = (userId, cardIdx) => {
     const { usersData } = this.state;
-    const card = usersData[userId].userCards[cardIdx];
+    const userCards = this.getUserCard(userId);
+    const card = userCards[cardIdx];
     const data = {
       userId,
       roomId : this.state.roomId,
@@ -618,11 +629,43 @@ class Gameplay extends React.Component {
     this.state.socket.emit("game-lose", data);
   }
 
+  handleUseCard = (userId, cardsIdx) => {
+    switch (cardsIdx.length) {
+      case 1:
+        this.useCard(userId, cardsIdx[0])
+        break;
+      case 2:
+        this.useCommon2(userId, cardsIdx);
+        break;
+      case 3:
+        this.useCommon3(userId, cardsIdx);
+        break;
+      case 5:
+        this.useCommon5(userId, cardsIdx);
+        break;
+      default:
+        return;
+    }
+  }
+
+  useEffect = (userId, card) => {
+    const data = {
+      userId,
+      roomid: this.state.roomId,
+      card,
+    }
+    this.state.socket.emit("use-effect", data);
+  }
+
+  closeSeeTheFutureDialog = () => {
+    this.setState({showSeeTheFutureDialog: 0, seeTheFutreCard: []});
+  }
+
   render() {
     // const classes = useStyles();
     const roomId = "100001";
     
-    const { socket, hasDefuse, isExplode } = this.state;
+    const { socket, hasDefuse, isExplode, showSeeTheFutureDialog, seeTheFutreCard } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
     let userCards = [];
@@ -653,6 +696,10 @@ class Gameplay extends React.Component {
           hasDefuse={hasDefuse}
           isExplode={isExplode}
           insertExplodingPuppy={this.insertExplodingPuppy}
+          handleUseCard={this.handleUseCard}
+          showSeeTheFutureDialog={showSeeTheFutureDialog}
+          seeTheFutreCard={seeTheFutreCard}
+          closeSeeTheFutureDialog={this.closeSeeTheFutureDialog}
         />
       </div>
     );
