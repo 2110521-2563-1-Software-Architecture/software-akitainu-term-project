@@ -35,7 +35,7 @@ export class CustomGameRoomService {
 
   async createCustomRoom(userId: string) {
     // const roomId = (Math.random() * 999999).toString().substr(-6);
-    const roomId = "100001";
+    const roomId = '100001';
     this.listRoom[roomId] = {};
     const usersId: string[] = [userId];
     this.listRoom[roomId]['usersId'] = usersId;
@@ -94,7 +94,7 @@ export class CustomGameRoomService {
     const userNumber = this.listRoom[roomId]['usersId'].length;
 
     this.allCards = {
-      explodingPuppy: userNumber - 1,
+      explodingPuppy: 0,
       defuse: 0,
       nope: 5,
       attack: 4,
@@ -125,12 +125,14 @@ export class CustomGameRoomService {
       this.listRoom[roomId]['usersCard'][j].push(Card.defuse);
     }
 
+    // determine first turn and turn left
     this.listRoom[roomId]['nextUserIndex'] = 0;
     this.listRoom[roomId]['nextTurnLeft'] = 1;
 
     deck = deck.slice(userNumber * 7);
 
     deck.push(...Array(userNumber === 5 ? 1 : 2).fill(Card.defuse));
+    deck.push(...Array(userNumber - 1).fill(Card.explodingPuppy));
     deck = await this.shuffle(deck);
     this.listRoom[roomId]['deck'] = deck;
 
@@ -139,6 +141,10 @@ export class CustomGameRoomService {
       leftCardNumber: deck.length,
       usersId: this.listRoom[roomId]['usersId'],
       usersCard: this.listRoom[roomId]['usersCard'],
+      nextUserId: this.listRoom[roomId]['usersId'][
+        this.listRoom[roomId]['nextUserIndex']
+      ],
+      nextTurnLeft: this.listRoom[roomId]['nextTurnLeft'],
     };
 
     console.log('newGame: ', newGame);
@@ -147,6 +153,9 @@ export class CustomGameRoomService {
   }
 
   async drawCard(userId: string, roomId: string) {
+    if (this.listRoom[roomId]['deck']) {
+      return 'no-card';
+    }
     const usersId = this.listRoom[roomId]['usersId'];
     let nextUserIndex = this.listRoom[roomId]['nextUserIndex'];
     const card = this.listRoom[roomId]['deck'].shift();

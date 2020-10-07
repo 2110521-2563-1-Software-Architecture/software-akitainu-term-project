@@ -88,10 +88,10 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   async onDrawCard(socket: Socket, data: any) {
     const { roomId, userId } = data;
     const newCard = await this.customGameRoomService.drawCard(userId, roomId);
-
     console.log('newCard: ', newCard);
-
-    this.server.to(roomId).emit('new-card', newCard);
+    if (newCard !== 'no-card') {
+      this.server.to(roomId).emit('new-card', newCard);
+    }
   }
 
   @SubscribeMessage('use-card')
@@ -163,6 +163,12 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   async onSelectCommon5(socket: Socket, data: any) {
     const { roomId } = data;
     this.server.to(roomId).emit('receive-common-5', data);
+  }
+
+  @SubscribeMessage('draw-exploding-puppy')
+  async onDrawExplodingPuppy(socket: Socket, data: any) {
+    const { roomId } = data;
+    this.server.to(roomId).emit('new-exploding-puppy', data);
   }
 
   // chat service

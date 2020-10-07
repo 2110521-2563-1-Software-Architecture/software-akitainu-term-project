@@ -286,6 +286,7 @@ function Game(props) {
         open={showCardSelectorDialog}
         handleClose={() => setShowCardSelectorDialog(false)}
         cardSelectorCards={cardSelectorCards}
+        showBackCard={false}
       />
       <ExplodingPuppyDialog
         open={showExplodingPuppyDialog}

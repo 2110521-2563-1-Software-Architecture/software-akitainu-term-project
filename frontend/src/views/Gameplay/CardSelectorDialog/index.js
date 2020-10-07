@@ -52,13 +52,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CardSelectorDialog(props) {
   const classes = useStyles();
-  const { cardSelectorCards, open, handleClose } = props;
+  const { cardSelectorCards, open, handleClose, showBackCard = false } = props;
   return (
-    <TransitionsModal
-      open={open}
-      handleClose={handleClose}
-      showCloseButton={false}
-    >
+    <TransitionsModal open={open} showCloseButton={false}>
       <div className={classes.root}>
         <p className={classes.title}>CARD SELECTOR</p>
         <ul className={classes.list}>
@@ -76,7 +72,7 @@ export default function CardSelectorDialog(props) {
                 <div className={classes.labelAndCard}>
                   {"Card " + (idx + 1).toString()}
                   <img
-                    src={getCardImage(Card.backCard)}
+                    src={getCardImage(showBackCard ? Card.backCard : card)}
                     className={classes.card}
                     style={{ margin: "16px" }}
                   />
