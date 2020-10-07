@@ -745,7 +745,7 @@ class Gameplay extends React.Component {
         }}
       >
         <NavBar />
-        <Chat roomId={roomId} socket={this.state.socket} sendMessageRoom={this.sendMessageRoom}/>
+        <Chat roomId={roomId} socket={this.state.socket} sendMessageRoom={this.sendMessageRoom} usersData={usersData}/>
         <Game
           socket={socket}
           createCustomRoom={this.createCustomRoom}

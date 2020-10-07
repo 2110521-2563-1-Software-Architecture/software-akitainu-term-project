@@ -2,10 +2,16 @@ import React from 'react'
 import Redirect from './Redirect'
 import { useHistory } from "react-router";
 
-function AuthGuard({ children }) {
-  const history = useHistory()
+function isNumeric(value) {
+  return /^-?\d+$/.test(value);
+}
 
-  if (!sessionStorage.getItem("userId")) {
+function AuthGuard({ children }) {
+  let userId = sessionStorage.getItem("userId")
+  if (!userId) {
+    return <Redirect to="/home"/>
+  }
+  if (!isNumeric(userId)) {
     return <Redirect to="/home"/>
   }
 
