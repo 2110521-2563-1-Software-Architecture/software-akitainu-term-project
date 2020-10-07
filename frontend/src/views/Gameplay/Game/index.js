@@ -54,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
     width: "20%",
     backgroundColor: "lightblue", //tmp
     position: "relative",
-    zIndex: "101",
   },
 
   middlePlayerWrapper: {
@@ -62,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     backgroundColor: "lightblue", //tmp
     position: "relative",
-    zIndex: "101",
   },
 
   selectableTopPlayerWrapper: {
@@ -182,23 +180,121 @@ function Game(props) {
     isSelectingPlayer,
   } = gameTestData; //mock data
 
+  const getUsersToRender = () => {
+    switch (users.length) {
+      case 1:
+        return [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ];
+      case 2:
+        return [
+          undefined,
+          undefined,
+          undefined,
+          users[1],
+          undefined,
+          undefined,
+          undefined,
+        ];
+      case 3:
+        return [
+          undefined,
+          undefined,
+          users[1],
+          undefined,
+          users[2],
+          undefined,
+          undefined,
+        ];
+      case 4:
+        return [
+          undefined,
+          users[1],
+          undefined,
+          users[2],
+          undefined,
+          users[3],
+          undefined,
+        ];
+      case 5:
+        return [
+          undefined,
+          users[1],
+          users[2],
+          undefined,
+          users[3],
+          users[4],
+          undefined,
+        ];
+      case 6:
+        return [
+          undefined,
+          users[1],
+          users[2],
+          users[3],
+          users[4],
+          users[5],
+          undefined,
+        ];
+      case 7:
+        return [
+          users[1],
+          users[2],
+          users[3],
+          undefined,
+          users[4],
+          users[5],
+          users[6],
+        ];
+      case 8:
+        return [
+          users[1],
+          users[2],
+          users[3],
+          users[4],
+          users[5],
+          users[6],
+          users[7],
+        ];
+      default:
+        return [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ];
+    }
+  };
+
+  const usersToRender = getUsersToRender();
+  console.log(usersToRender);
+
   const getTopPlayer = (user) => {
     return (
       <div
         className={
-          isSelectingPlayer
+          isSelectingPlayer && user
             ? classes.selectableTopPlayerWrapper
             : classes.topPlayerWrapper
         }
         onClick={
           isSelectingPlayer
             ? () => {
-                alert(`select user ${user.name}`);
+                alert(`select user id ${user.userId}`);
               }
             : undefined
         }
       >
-        <Otherhand user={user} />
+        {user && <Otherhand user={user} />}
       </div>
     );
   };
@@ -207,19 +303,19 @@ function Game(props) {
     return (
       <div
         className={
-          isSelectingPlayer
+          isSelectingPlayer && user
             ? classes.selectableMiddlePlayerWrapper
             : classes.middlePlayerWrapper
         }
         onClick={
           isSelectingPlayer
             ? () => {
-                alert(`select user ${user.name}`);
+                alert(`select user id ${user.userId}`);
               }
             : undefined
         }
       >
-        <Otherhand user={user} />
+        {user && <Otherhand user={user} />}
       </div>
     );
   };
@@ -228,17 +324,17 @@ function Game(props) {
     <>
       <div className={classes.root}>
         <div className={classes.topSection}>
-          {getTopPlayer(users[0])}
+          {getTopPlayer(usersToRender[0])}
           <div style={{ width: "5%" }} />
-          {getTopPlayer(users[1])}
+          {getTopPlayer(usersToRender[1])}
           <div style={{ width: "5%" }} />
-          {getTopPlayer(users[2])}
+          {getTopPlayer(usersToRender[2])}
         </div>
         <div className={classes.middleSection}>
           <div className={classes.middlePlayerSection}>
-            {getMiddlePlayer(users[3])}
+            {getMiddlePlayer(usersToRender[3])}
             <div style={{ height: "10%" }} />
-            {getMiddlePlayer(users[0])}
+            {getMiddlePlayer(usersToRender[4])}
           </div>
           <div className={classes.playArea}>
             <div className={classes.cardWrapper}>
@@ -268,9 +364,9 @@ function Game(props) {
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
-            {getMiddlePlayer(users[0])}
+            {getMiddlePlayer(usersToRender[5])}
             <div style={{ height: "10%" }} />
-            {getMiddlePlayer(users[0])}
+            {getMiddlePlayer(usersToRender[6])}
           </div>
         </div>
         <div className={classes.bottomSection}>
