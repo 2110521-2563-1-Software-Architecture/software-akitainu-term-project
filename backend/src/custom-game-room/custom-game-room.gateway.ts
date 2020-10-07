@@ -186,7 +186,8 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   @SubscribeMessage('game-lose')
   async onGameLose(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-lose', data);
+    const nextUserId = await this.customGameRoomService.loseGame(roomId);
+    this.server.to(roomId).emit('new-lose', { ...data, nextUserId });
   }
 
   @SubscribeMessage('use-effect')

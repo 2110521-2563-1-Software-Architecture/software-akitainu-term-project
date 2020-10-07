@@ -228,4 +228,10 @@ export class CustomGameRoomService {
     }
     return newEffectCard;
   }
+
+  async loseGame(roomId: string) {
+    return this.listRoom[roomId]['usersId'][
+      ++this.listRoom[roomId]['nextUserIndex']
+    ];
+  }
 }
