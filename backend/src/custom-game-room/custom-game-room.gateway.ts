@@ -222,8 +222,8 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   // chat service
   @SubscribeMessage('message-send-room')
   async onSendMessageRoom(socket: Socket, data: any) {
-    console.log(data)
-    console.log("message-send-room");
+    // console.log(data)
+    // console.log("message-send-room");
     const { fromRoomId } = data;
     console.log('message send room');
     this.server.to(fromRoomId).emit('message-get-room', data);

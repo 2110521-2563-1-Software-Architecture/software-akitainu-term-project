@@ -213,26 +213,34 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom,...rest}) {
   const classes = useStyles();
   const [isHover, setIsHover] = useState(false);
   const chatStyle = chatRootStyle(isHover);
-  const [messageGroup, setMessageGroup] = useState({});
+  const [messageGroup, setMessageGroup] = useState({
+      room: {
+        messages: [],
+      },
+      private: {
+        messages: privateMessages,
+      },
+  });
   const [peopleBubbles, setPeopleBubbles] = useState();
   const [showChatbox, setShowChatbox] = useState(false);
   const [currentShowMessage, setCurrentShowMessage] = useState("");
   const [typing, setTyping] = useState("");
   const chatBoxElement = useRef(0);
+  const [thisUsername,setUsername] = useState("");
 
-  const thisUsername = "bump";
+  // const thisUsername = "bump";
   // const thisRoomId = 101;
 
-  useEffect(() => {
-    setMessageGroup({
-      room: {
-        messages: roomMessages,
-      },
-      private: {
-        messages: privateMessages,
-      },
-    });
-  }, []);
+  // useEffect(() => {
+  //   setMessageGroup({
+  //     room: {
+  //       messages: roomMessages,
+  //     },
+  //     private: {
+  //       messages: privateMessages,
+  //     },
+  //   });
+  // }, []);
 
   // useEffect(()=>{
   //   var tf = document.getElementById(`room-${thisRoomId}-chat-box`)
@@ -271,12 +279,29 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom,...rest}) {
   //   });
   // }
 
-
+  const updateRoom = (data) => {
+    let roomMes = messageGroup.room.messages;
+    console.log(roomMes)
+    // sendMessageRoom(sessionStorage.getItem("userId"),100001,thisUsername,typing)
+    roomMes.push({
+      fromRoomId: parseInt(100001),
+      fromUsername: data.fromUsername,
+      message: data.message,
+      fromUserId:data.fromUserId,
+    });
+    setMessageGroup({
+      ...messageGroup,
+      ...{ room: { messages: roomMes } },
+    });
+  }
 
   useEffect(()=>{
     console.log(socket)
+    var person = prompt("Please enter your name:", "wannakan");
+    setUsername(person);
     socket.on("message-get-room", (data) => {
-      console.log("message-get-room", data);
+      console.log("message-get-room-hook", data);
+      updateRoom(data)
   
     });
   },[])
@@ -345,17 +370,17 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom,...rest}) {
   const handleEnter = () => {
     if (typing) {
       if (currentShowMessage === "room") {
-        let roomMes = messageGroup.room.messages;
-        sendMessageRoom(sessionStorage.getItem("userId"),100001,"bump",typing)
-        roomMes.push({
-          fromRoomId: parseInt(thisRoomId),
-          fromUsername: thisUsername,
-          message: typing,
-        });
-        setMessageGroup({
-          ...messageGroup,
-          ...{ room: { messages: roomMes } },
-        });
+        // let roomMes = messageGroup.room.messages;
+        sendMessageRoom(sessionStorage.getItem("userId"),100001,thisUsername,typing)
+        // roomMes.push({
+        //   fromRoomId: parseInt(thisRoomId),
+        //   fromUsername: thisUsername,
+        //   message: typing,
+        // });
+        // setMessageGroup({
+        //   ...messageGroup,
+        //   ...{ room: { messages: roomMes } },
+        // });
       } else {
         let privateMes = messageGroup.private.messages;
         privateMes.push({
