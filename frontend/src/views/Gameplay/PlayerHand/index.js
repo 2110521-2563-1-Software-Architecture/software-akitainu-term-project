@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PlayerHand(props) {
   const classes = useStyles();
-  const { cards, useCard, useCommon2, useCommon3, useCommon5 } = props;
+  const { cards, handleUseCard } = props;
   console.log("cards", cards);
   const [selectedCards, setSelectedCards] = useState([]);
   const canUseSelectedCards = () => {
@@ -132,67 +132,10 @@ export default function PlayerHand(props) {
       );
     });
 
-  // const _handleUseCard = () => {
-  //   switch (selectedCards.length) {
-  //     case 1:
-  //       useCard(selectedCards[0]);
-  //       break;
-  //     case 2:
-  //       useCommon2(selectedCards);
-  //       break;
-  //     case 3:
-  //       useCommon3(selectedCards);
-  //       break;
-  //     case 5:
-  //       useCommon5(selectedCards);
-  //       break;
-  //     default:
-  //       return;
-  //   }
-  // };
-
-  const getUseCardButton = () => {
-    switch (selectedCards.length) {
-      case 1:
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => useCard(selectedCards[0])}
-        >
-          Use cards
-        </Button>;
-        break;
-      case 2:
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => useCommon2(selectedCards)}
-        >
-          Use cards
-        </Button>;
-        break;
-      case 3:
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => useCommon3(selectedCards)}
-        >
-          Use cards
-        </Button>;
-        break;
-      case 5:
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => useCommon5(selectedCards)}
-        >
-          Use cards
-        </Button>;
-        break;
-      default:
-        return;
-    }
-  };
+  const _handleUseCard = (selectedCards) => {
+    handleUseCard(selectedCards);
+    setSelectedCards([]);
+  } 
 
   return (
     <div className={classes.wrapper}>
@@ -203,7 +146,13 @@ export default function PlayerHand(props) {
       </div>
       <div className={classes.menuWrapper}>
         {canUseSelectedCards() ? (
-          getUseCardButton()
+          <Button
+          variant="contained"
+          color="primary"
+          onClick={() => _handleUseCard(selectedCards)}
+        >
+          Use cards
+        </Button>
         ) : (
           <Button
             variant="contained"

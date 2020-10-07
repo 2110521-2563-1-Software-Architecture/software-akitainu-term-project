@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
   list: {
     display: "flex",
     padding: "0",
+    justifyContent: "center",
   },
 
   listItem: {
@@ -42,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SeeTheFutureDialog(props) {
   const classes = useStyles();
   const { seeTheFutureCards, open, handleClose } = props;
+  console.log(seeTheFutureCards);
   return (
     <TransitionsModal open={open} handleClose={handleClose}>
       <div className={classes.root}>

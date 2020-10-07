@@ -153,14 +153,16 @@ function Game(props) {
     hasDefuse,
     isExplode,
     insertExplodingPuppy,
-    useCard = (userId, cardIdx) =>
-      alert(`user id ${userId} use card idx ${cardIdx}`),
-    useCommon2 = (userId, cardsIdx) =>
-      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
-    useCommon3 = (userId, cardsIdx) =>
-      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
-    useCommon5 = (userId, cardsIdx) =>
-      alert(`user id ${userId} use card idx(s) ${cardsIdx}`),
+    handleUseCard,
+    showSeeTheFutureDialog,
+    seeTheFutureCards,
+    closeSeeTheFutureDialog,
+    gameLose,
+    topDiscardPile,
+    isSelectingPlayer,
+    selectPlayer,
+    showCardSelectorDialog,
+    setSelectedCardIdx,
   } = props;
   const classes = useStyles();
 
@@ -168,19 +170,12 @@ function Game(props) {
   const roomId = "100001"; // todo:
 
   // const [userCards, setUserCards] = useState([]);
-  // const { userCards } = props;
-
-  const [showSeeTheFutureDialog, setShowSeeTheFutureDialog] = useState(false);
-  const [showCardSelectorDialog, setShowCardSelectorDialog] = useState(false);
+  const { userCards } = props;
 
   const {
     numberOfDeckCards,
-    seeTheFutureCards,
-    latestUsedCard,
     users,
     cardSelectorCards,
-    isSelectingPlayer,
-    userCards,
   } = gameTestData; //mock data
 
   const getUsersToRender = () => {
@@ -280,21 +275,13 @@ function Game(props) {
 
   const usersToRender = getUsersToRender();
 
-  const _useCard = (cardIdx) => {
-    useCard(userId, cardIdx);
+  const _handleUseCard = (cardsIdx) => {
+    handleUseCard(userId, cardsIdx)
   };
 
-  const _useCommon2 = (cardsIdx) => {
-    useCommon2(userId, cardsIdx);
-  };
-
-  const _useCommon3 = (cardsIdx) => {
-    useCommon3(userId, cardsIdx);
-  };
-
-  const _useCommon5 = (cardsIdx) => {
-    useCommon5(userId, cardsIdx);
-  };
+  const _handleCloseCardSelectorDigalog = (selectedCardIdx) => {
+    setSelectedCardIdx(userId, selectedCardIdx);
+  }
 
   const getTopPlayer = (user) => {
     return (
@@ -307,7 +294,7 @@ function Game(props) {
         onClick={
           isSelectingPlayer
             ? () => {
-                alert(`select user id ${user.userId}`);
+                selectPlayer(userId, user.userId);
               }
             : undefined
         }
@@ -328,7 +315,7 @@ function Game(props) {
         onClick={
           isSelectingPlayer
             ? () => {
-                alert(`select user id ${user.userId}`);
+                selectPlayer(userId, user.userId);
               }
             : undefined
         }
@@ -364,17 +351,11 @@ function Game(props) {
             </div>
             <div className={classes.cardWrapper}>
               <img
-                src={getCardImage(latestUsedCard)}
+                src={topDiscardPile? getCardImage(topDiscardPile): undefined}
                 className={classes.usedCard}
               />
             </div>
             <div className={classes.logWrapper}>
-              <div onClick={() => setShowSeeTheFutureDialog(true)}>
-                test stf
-              </div>
-              <div onClick={() => setShowCardSelectorDialog(true)}>
-                test cardSelector
-              </div>
               <div className={classes.log}>log</div>
             </div>
           </div>
@@ -387,21 +368,18 @@ function Game(props) {
         <div className={classes.bottomSection}>
           <PlayerHand
             cards={userCards}
-            useCard={_useCard}
-            userCommon2={_useCommon2}
-            userCommon3={_useCommon3}
-            userCommon5={_useCommon5}
+            handleUseCard={_handleUseCard}
           />
         </div>
       </div>
       <SeeTheFutureDialog
         open={showSeeTheFutureDialog}
-        handleClose={() => setShowSeeTheFutureDialog(false)}
+        handleClose={() => closeSeeTheFutureDialog()}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog
         open={showCardSelectorDialog}
-        handleClose={() => setShowCardSelectorDialog(false)}
+        handleClose={(selelctedCardIdx) => _handleCloseCardSelectorDigalog(selelctedCardIdx)}
         cardSelectorCards={cardSelectorCards}
         showBackCard={false}
       />
@@ -410,7 +388,7 @@ function Game(props) {
         hasDefuse={hasDefuse}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          alert("Spectate");
+          gameLose(userId)
         }}
         onClickHideExplodingPuppy={(idx) => {
           insertExplodingPuppy(userId, idx)
