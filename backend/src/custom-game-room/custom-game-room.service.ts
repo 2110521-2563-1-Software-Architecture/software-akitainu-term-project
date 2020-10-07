@@ -193,20 +193,28 @@ export class CustomGameRoomService {
     return newCardUse;
   }
 
-  async seeTheFuture(userId: string, roomId: string) {
-    const cards = this.listRoom[roomId]['deck'].slice(0, 3);
-    const newSeeTheFuture = {
-      userId,
-      roomId,
-      cards,
-    };
-    return newSeeTheFuture;
+  async seeTheFuture(roomId: string) {
+    return this.listRoom[roomId]['deck'].slice(0, 3);
   }
 
   async insertExplodingPuppy(roomId: string, idx: number) {
     let deck = this.listRoom[roomId]['deck'];
-    deck = [...deck.split(0, idx), Card.explodingPuppy, ...deck.split(idx)];
+    deck = [...deck.slice(0, idx), Card.explodingPuppy, ...deck.slice(idx)];
     console.log('deck: ', deck);
     return true;
+  }
+
+  async useEffectCard(roomId: string, card: string) {
+    let newEffectCard;
+    switch (card) {
+      case Card.seeTheFuture: {
+        newEffectCard = await this.seeTheFuture(roomId);
+        break;
+      }
+      default: {
+        console.log('card: ', card);
+      }
+    }
+    return newEffectCard;
   }
 }

@@ -119,15 +119,15 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     this.server.to(roomId).emit('receive-favor-card', { roomId, userId, card });
   }
 
-  @SubscribeMessage('use-see-the-future')
-  async onSeeTheFuture(socket: Socket, data: any) {
-    const { roomId, userId } = data;
-    const newSeeTheFuture = await this.customGameRoomService.seeTheFuture(
-      userId,
-      roomId,
-    );
-    this.server.to(roomId).emit('new-see-the-future', newSeeTheFuture);
-  }
+  // @SubscribeMessage('use-see-the-future')
+  // async onSeeTheFuture(socket: Socket, data: any) {
+  //   const { roomId, userId } = data;
+  //   const newSeeTheFuture = await this.customGameRoomService.seeTheFuture(
+  //     userId,
+  //     roomId,
+  //   );
+  //   this.server.to(roomId).emit('new-see-the-future', newSeeTheFuture);
+  // }
 
   @SubscribeMessage('use-common-2')
   async onUseCommon2(socket: Socket, data: any) {
@@ -181,6 +181,25 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     if (insertExploding) {
       this.server.to(roomId).emit('finish-exploding-puppy', { roomId, userId });
     }
+  }
+
+  @SubscribeMessage('game-lose')
+  async onGameLose(socket: Socket, data: any) {
+    const { roomId } = data;
+    this.server.to(roomId).emit('new-lose', data);
+  }
+
+  @SubscribeMessage('use-effect')
+  async onUseEffect(socket: Socket, data: any) {
+    const { roomId, userId, card } = data;
+    const result = await this.customGameRoomService.useEffectCard(roomId, card);
+    const newEffect = {
+      userId,
+      roomId,
+      card,
+      seeTheFutureCards: result,
+    };
+    this.server.to(roomId).emit('new-effect', newEffect);
   }
 
   // chat service
