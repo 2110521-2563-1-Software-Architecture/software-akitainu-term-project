@@ -225,6 +225,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     console.log(data)
     console.log("message-send-room");
     const { fromRoomId } = data;
+    console.log('message send room');
     this.server.to(fromRoomId).emit('message-get-room', data);
   }
 
