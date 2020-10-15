@@ -207,6 +207,14 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
         effectCard = 'favorCard';
         break;
       }
+      case Card.attack: {
+        effectCard = 'attackCard';
+        break;
+      }
+      case Card.skip: {
+        effectCard = 'skipCard';
+        break;
+      }
       default: {
         effectCard = '';
       }
