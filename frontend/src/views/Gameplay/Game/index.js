@@ -7,7 +7,6 @@ import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
 import Otherhand from "../Otherhand";
-import { gameTestData } from "./mock";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -166,6 +165,7 @@ function Game(props) {
     cardSelectorCards,
     usersData,
     numberOfDeckCards,
+    nextUserId,
   } = props;
   const classes = useStyles();
 
@@ -174,17 +174,17 @@ function Game(props) {
 
   // const [userCards, setUserCards] = useState([]);
   const { userCards } = props;
-  const isSelectingPlayer = isSelectingPlayerId === userId
+  const isSelectingPlayer = isSelectingPlayerId === userId;
 
   let users = usersData;
-  
-  for(let i=0;i<users.length;i++) {
+
+  for (let i = 0; i < users.length; i++) {
     const firstUser = users[0];
-    if(firstUser.userId === userId) break;
-    users.splice(0,1);
+    if (firstUser.userId === userId) break;
+    users.splice(0, 1);
     users.push(firstUser);
   }
-  
+
   const getUsersToRender = () => {
     switch (users.length) {
       case 1:
@@ -283,12 +283,12 @@ function Game(props) {
   const usersToRender = getUsersToRender();
 
   const _handleUseCard = (cardsIdx) => {
-    handleUseCard(userId, cardsIdx)
+    handleUseCard(userId, cardsIdx);
   };
 
   const _handleCloseCardSelectorDialog = (selectedCardIdx) => {
     setSelectedCardIdx(isSelectingPlayerId, cardSelectorId, selectedCardIdx);
-  }
+  };
 
   const getTopPlayer = (user) => {
     return (
@@ -358,7 +358,7 @@ function Game(props) {
             </div>
             <div className={classes.cardWrapper}>
               <img
-                src={topDiscardPile? getCardImage(topDiscardPile): undefined}
+                src={topDiscardPile ? getCardImage(topDiscardPile) : undefined}
                 className={classes.usedCard}
               />
             </div>
@@ -376,17 +376,20 @@ function Game(props) {
           <PlayerHand
             cards={userCards}
             handleUseCard={_handleUseCard}
+            nextUserId={nextUserId}
           />
         </div>
       </div>
       <SeeTheFutureDialog
-        open={seeTheFutureId===userId}
+        open={seeTheFutureId === userId}
         handleClose={() => closeSeeTheFutureDialog()}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog
-        open={cardSelectorId===userId}
-        handleClose={(selelctedCardIdx) => _handleCloseCardSelectorDialog(selelctedCardIdx)}
+        open={cardSelectorId === userId}
+        handleClose={(selelctedCardIdx) =>
+          _handleCloseCardSelectorDialog(selelctedCardIdx)
+        }
         cardSelectorCards={cardSelectorCards}
         showBackCard={false}
       />
@@ -395,10 +398,10 @@ function Game(props) {
         hasDefuse={hasDefuse(userId)}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          gameLose(userId)
+          gameLose(userId);
         }}
         onClickHideExplodingPuppy={(idx) => {
-          insertExplodingPuppy(userId, idx)
+          insertExplodingPuppy(userId, idx);
         }}
       />
       {isSelectingPlayer && <div className={classes.backdrop} />}

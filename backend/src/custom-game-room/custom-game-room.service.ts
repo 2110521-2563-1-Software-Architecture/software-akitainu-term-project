@@ -230,7 +230,8 @@ export class CustomGameRoomService {
         break;
       }
       case Card.attack: {
-        this.listRoom[roomId]['nextTurnLeft'] += 2;
+        const nextTurnLeft = this.listRoom[roomId]['nextTurnLeft'];
+        this.listRoom[roomId]['nextTurnLeft'] = nextTurnLeft===1 ? 2: nextTurnLeft+2;
         this.listRoom[roomId]['lastUserIndex'] = this.listRoom[roomId][
           'nextUserIndex'
         ];
@@ -239,8 +240,11 @@ export class CustomGameRoomService {
           this.listRoom[roomId]['usersId'].length;
         newEffectCard = {
           nextTurnLeft: this.listRoom[roomId]['nextTurnLeft'],
-          nextUserId: this.listRoom[roomId]['nextUserIndex'],
+          nextUserId: this.listRoom[roomId]['usersId'][
+            this.listRoom[roomId]['nextUserIndex']
+          ],
         };
+        break;
       }
       case Card.skip: {
         this.listRoom[roomId]['nextTurnLeft']--;
@@ -251,11 +255,15 @@ export class CustomGameRoomService {
           this.listRoom[roomId]['nextUserIndex'] =
             (this.listRoom[roomId]['nextUserIndex'] + 1) %
             this.listRoom[roomId]['usersId'].length;
+          this.listRoom[roomId]['nextTurnLeft'] = 1;
         }
         newEffectCard = {
           nextTurnLeft: this.listRoom[roomId]['nextTurnLeft'],
-          nextUserId: this.listRoom[roomId]['nextUserIndex'],
+          nextUserId: this.listRoom[roomId]['usersId'][
+            this.listRoom[roomId]['nextUserIndex']
+          ],
         };
+        break;
       }
       default: {
         console.log('card: ', card);

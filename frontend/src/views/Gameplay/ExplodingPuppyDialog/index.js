@@ -76,7 +76,6 @@ export default function ExplodingPuppyDialog(props) {
     handleClose,
   } = props;
   const [selectedIdx, setSelectedIdx] = useState(0);
-  console.log('exploding',open,hasDefuse);
 
   return (
     <TransitionsModal

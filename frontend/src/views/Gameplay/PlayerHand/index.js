@@ -54,10 +54,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PlayerHand(props) {
   const classes = useStyles();
-  const { cards, handleUseCard } = props;
-  console.log("cards", cards);
+  const { cards, handleUseCard, nextUserId } = props;
   const [selectedCards, setSelectedCards] = useState([]);
+  const userId = window.sessionStorage.getItem("userId");
+
   const canUseSelectedCards = () => {
+    if (nextUserId !== userId) return false;
     if (selectedCards.length === 1) {
       const card = cards[selectedCards[0]];
       if (card === Card.common1) return false;
@@ -136,7 +138,7 @@ export default function PlayerHand(props) {
   const _handleUseCard = (selectedCards) => {
     handleUseCard(selectedCards);
     setSelectedCards([]);
-  } 
+  };
 
   return (
     <div className={classes.wrapper}>
@@ -148,12 +150,12 @@ export default function PlayerHand(props) {
       <div className={classes.menuWrapper}>
         {canUseSelectedCards() ? (
           <Button
-          variant="contained"
-          color="primary"
-          onClick={() => _handleUseCard(selectedCards)}
-        >
-          Use cards
-        </Button>
+            variant="contained"
+            color="primary"
+            onClick={() => _handleUseCard(selectedCards)}
+          >
+            Use cards
+          </Button>
         ) : (
           <Button
             variant="contained"

@@ -14,7 +14,7 @@ import { Palette } from "components";
 import CloseIcon from "@material-ui/icons/Close";
 import SendIcon from "@material-ui/icons/Send";
 import { Type } from "react-feather";
-import Redirect from 'components/Redirect'
+import Redirect from "components/Redirect";
 
 //setting chat size here
 var width = "300px";
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     height: height,
     // background:"blur(2px)",
     // background:"rgba(255,255,255,0.5)",
-    zIndex:200,
+    zIndex: 200,
     marginLeft: `calc(100vw - ${width} - 24px)`,
     marginTop: `calc(100vh - ${height} - 64px - 24px)`,
     borderRadius: "8px",
@@ -113,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
       // display:"none",
       // boxShadow:
       //   "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px",
-      background:"rgba(244,241,222,0.8)",
+      background: "rgba(244,241,222,0.8)",
       // border:"2px solid black",
       backdropFilter: "blur(4px)",
       "& .chatbox": {
@@ -213,29 +213,33 @@ const chatRootStyle = (isHover) => {
     };
   }
 };
-var thisUserId
+var thisUserId;
 
-function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest}) {
+function Chat({
+  roomId: thisRoomId,
+  socket,
+  sendMessageRoom,
+  usersData,
+  ...rest
+}) {
   const classes = useStyles();
   const [isHover, setIsHover] = useState(false);
   const chatStyle = chatRootStyle(isHover);
   const [messageGroup, setMessageGroup] = useState({
-      room: {
-        messages: [],
-      },
-      private: {
-        messages: privateMessages,
-      },
+    room: {
+      messages: [],
+    },
+    private: {
+      messages: privateMessages,
+    },
   });
   const [peopleBubbles, setPeopleBubbles] = useState();
   const [showChatbox, setShowChatbox] = useState(false);
   const [currentShowMessage, setCurrentShowMessage] = useState("");
   const [typing, setTyping] = useState("");
   const chatBoxElement = useRef(0);
-  const [thisUsername,setUsername] = useState("");
-  const [isUserJoined,setIsUserJoined] = useState(false);
-
-
+  const [thisUsername, setUsername] = useState("");
+  const [isUserJoined, setIsUserJoined] = useState(false);
 
   // const thisUsername = "bump";
   // const thisRoomId = 101;
@@ -252,9 +256,9 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
   // }, []);
 
   // useEffect(()=>{
-    // var tf = document.getElementById(`room-${thisRoomId}-chat-box`)
-    // tf.scrollTop = tf.offsetHeight;
-    // console.log(tf)
+  // var tf = document.getElementById(`room-${thisRoomId}-chat-box`)
+  // tf.scrollTop = tf.offsetHeight;
+  // console.log(tf)
   //   console.log(messageGroup)
   // },[messageGroup])
 
@@ -265,20 +269,19 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
       fromRoomId: thisRoomId,
       fromUsername: data.fromUsername,
       message: data.message,
-      fromUserId:data.fromUserId,
+      fromUserId: data.fromUserId,
     });
     setMessageGroup({
       ...messageGroup,
       ...{ room: { messages: roomMes } },
     });
-  }
+  };
 
   const getMsgKey = (currentShowMessage) => {
     if (currentShowMessage === "room") {
       return "room";
     } else return "private";
   };
-
 
   const filterMsg = (data) => {
     // console.log("filterMsg : ",data)
@@ -300,37 +303,34 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
     }
   };
 
-  useEffect(()=>{
-    console.log(usersData)
+  useEffect(() => {
+    console.log(usersData);
     if (usersData.length !== 0) {
-      thisUserId = sessionStorage.getItem("userId")
-      usersData.forEach((user)=>{
+      thisUserId = sessionStorage.getItem("userId");
+      usersData.forEach((user) => {
         if (user.userId === thisUserId) {
-          return setIsUserJoined(true)
+          return setIsUserJoined(true);
         }
-      })
+      });
       // thisUserId = undefined
     }
-  },[usersData])
+  }, [usersData]);
   // const getMessage = () => {
   //   socket.on("message-get-room", (data) => {
   //     console.log("message-get-room", data);
-  
+
   //   });
   // }
 
-
-
-  useEffect(()=>{
-    console.log(socket)
+  useEffect(() => {
+    console.log(socket);
     var person = prompt("Please enter your name:", "wannakan");
     setUsername(person);
     socket.on("message-get-room", (data) => {
       console.log("message-get-room-hook", data);
-      pushRoomMessage(data)
-  
+      pushRoomMessage(data);
     });
-  },[])
+  }, []);
 
   // const sendMessageRoom = (fromUserId,fromRoomId,fromUsername,message) => {
   //   let data = {
@@ -397,7 +397,12 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
     if (typing) {
       if (currentShowMessage === "room") {
         // let roomMes = messageGroup.room.messages;
-        sendMessageRoom(sessionStorage.getItem("userId"),100001,thisUsername,typing)
+        sendMessageRoom(
+          sessionStorage.getItem("userId"),
+          100001,
+          thisUsername,
+          typing
+        );
         // roomMes.push({
         //   fromRoomId: parseInt(thisRoomId),
         //   fromUsername: thisUsername,
@@ -436,9 +441,15 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
       <div className={classes.chatBox}>
         {/* <Typography >{`${currentShowMessage}`}</Typography> */}
         <div className="chatHeader">
-           {currentShowMessage === "room" ?<div className="username">{isUserJoined? `chat ${currentShowMessage} : ${thisRoomId}`:"PLS JOIN ROOM FIRST"}</div> 
-          :
-          <div className="username">{currentShowMessage}</div>}
+          {currentShowMessage === "room" ? (
+            <div className="username">
+              {isUserJoined
+                ? `chat ${currentShowMessage} : ${thisRoomId}`
+                : "PLS JOIN ROOM FIRST"}
+            </div>
+          ) : (
+            <div className="username">{currentShowMessage}</div>
+          )}
           <IconButton
             className="closeButton"
             onClick={() => {
@@ -464,7 +475,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
                     <div
                       style={{
                         margin:
-                        parseInt(data.fromUserId) === parseInt(thisUserId)
+                          parseInt(data.fromUserId) === parseInt(thisUserId)
                             ? "8px 16px 4px auto"
                             : "8px 0 4px 16px",
                       }}
@@ -474,7 +485,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
                           className="chatboxAvatar"
                           style={{
                             margin:
-                            parseInt(data.fromUserId) === parseInt(thisUserId)
+                              parseInt(data.fromUserId) === parseInt(thisUserId)
                                 ? "0 0 0 auto"
                                 : "0",
                           }}
@@ -486,7 +497,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
                         </Typography>
                       </div>
                       <div style={{ display: "flex" }}>
-                        <Typography  align="left" className="chatboxText">
+                        <Typography align="left" className="chatboxText">
                           {data.message}
                         </Typography>
                       </div>
@@ -574,7 +585,7 @@ function Chat({ roomId: thisRoomId , socket, sendMessageRoom, usersData, ...rest
   return (
     <div
       className={classes.root}
-      style={{zIndex:showChatbox?"":4}}
+      style={{ zIndex: showChatbox ? "" : 4 }}
       onMouseEnter={() => {
         setIsHover(true);
       }}

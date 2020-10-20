@@ -1,5 +1,5 @@
-import React from 'react'
-import Redirect from './Redirect'
+import React from "react";
+import Redirect from "./Redirect";
 import { useHistory } from "react-router";
 
 function isNumeric(value) {
@@ -7,14 +7,14 @@ function isNumeric(value) {
 }
 
 function AuthGuard({ children }) {
-  let userId = sessionStorage.getItem("userId")
+  let userId = sessionStorage.getItem("userId");
   if (!userId) {
-    return <Redirect to="/home"/>
+    return <Redirect to="/home" />;
   }
   if (!isNumeric(userId)) {
-    return <Redirect to="/home"/>
+    return <Redirect to="/home" />;
   }
 
-  return children
+  return children;
 }
-export default AuthGuard
+export default AuthGuard;

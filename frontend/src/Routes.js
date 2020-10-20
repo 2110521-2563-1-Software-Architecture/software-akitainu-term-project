@@ -7,7 +7,7 @@ import Home from "views/Home";
 import NotFound from "views/NotFound";
 import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
-import AuthGuard from 'components/AuthGuard'
+import AuthGuard from "components/AuthGuard";
 
 const ENDPOINT = "localhost:10001";
 const socket = socketIOClient(ENDPOINT);
