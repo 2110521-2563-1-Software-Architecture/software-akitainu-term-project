@@ -82,16 +82,12 @@ export default function PlayerHand(props) {
     ) {
       return true;
     } else if (selectedCards.length === 5) {
-      let hasC1, hasC2, hasC3, hasC4, hasC5;
-      for (let i = 0; i < selectedCards.length; i++) {
-        const card = cards[selectedCards[i]];
-        if (card === Card.common1) hasC1 = true;
-        if (card === Card.common2) hasC2 = true;
-        if (card === Card.common3) hasC3 = true;
-        if (card === Card.common4) hasC4 = true;
-        if (card === Card.common5) hasC5 = true;
+      const selectingCard = selectedCards.map((cardIdx) => cards[cardIdx]);
+      selectingCard.sort()
+      for (let i = 0; i < 4; i++) {
+        if (selectingCard[i] === selectingCard[i+1]) return false;
       }
-      return hasC1 && hasC2 && hasC3 && hasC4 && hasC5;
+      return true;
     } else {
       return false;
     }
