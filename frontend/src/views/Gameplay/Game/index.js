@@ -166,6 +166,7 @@ function Game(props) {
     usersData,
     numberOfDeckCards,
     nextUserId,
+    showCardSelectorBackCard,
   } = props;
   const classes = useStyles();
 
@@ -287,7 +288,7 @@ function Game(props) {
   };
 
   const _handleCloseCardSelectorDialog = (selectedCardIdx) => {
-    setSelectedCardIdx(isSelectingPlayerId, cardSelectorId, selectedCardIdx);
+    setSelectedCardIdx(userId, selectedCardIdx);
   };
 
   const getTopPlayer = (user) => {
@@ -391,7 +392,7 @@ function Game(props) {
           _handleCloseCardSelectorDialog(selelctedCardIdx)
         }
         cardSelectorCards={cardSelectorCards}
-        showBackCard={false}
+        showBackCard={showCardSelectorBackCard}
       />
       <ExplodingPuppyDialog
         open={explodeId === userId}
