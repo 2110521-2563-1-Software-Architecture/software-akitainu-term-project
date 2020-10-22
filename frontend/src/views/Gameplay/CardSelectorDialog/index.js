@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CardSelectorDialog(props) {
   const classes = useStyles();
-  const { cardSelectorCards, open, handleClose, showBackCard = false} = props;
+  const { cardSelectorCards, open, handleClose, showBackCard = false } = props;
   return (
     <TransitionsModal open={open} showCloseButton={false}>
       <div className={classes.root}>
