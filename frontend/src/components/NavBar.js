@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     marginLeft: "16px",
   },
+  logoutButton: {
+    margin: "auto 16px",
+  },
 }));
 
 const NavBar = (props) => {
@@ -27,6 +30,12 @@ const NavBar = (props) => {
     history.push("/home");
     history.go(0);
   };
+
+  const onLogout = () => {
+    sessionStorage.setItem("userId",null)
+    backtoHome()
+  }
+
   return (
     <div className={classes.navBarWrapper}>
       <Button
@@ -36,6 +45,14 @@ const NavBar = (props) => {
         className={classes.homeButton}
       >
         Home
+      </Button>
+      <Button
+        onClick={onLogout}
+        variant="contained"
+        color="secondary"
+        className={classes.logoutButton}
+      >
+        Logout
       </Button>
     </div>
   );

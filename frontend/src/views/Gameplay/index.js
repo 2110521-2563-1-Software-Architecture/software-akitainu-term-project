@@ -50,6 +50,7 @@ class Gameplay extends React.Component {
       canNope: false,
       cardUserId: -1,
       countDownTime: 0,
+      newCardSelectorId: -1,
     };
   }
 
@@ -195,20 +196,17 @@ class Gameplay extends React.Component {
         usersData,
         newNextUserId: nextUserId,
         newNextTurnLeft: nextTurnLeft,
-        canNope: true,
         cardUserId: userId,
+        usingEffectCard: card,
       });
-      this.newCountDown(timeForNope);
 
       switch (card) {
         case Card.favor:
-          this.setState({
-            isSelectingPlayerId: userId,
-            usingEffectCard: Card.favor,
-          });
+          this.setState({ isSelectingPlayerId: userId });
           break;
         default:
-          this.setState({ usingEffectCard: card });
+          this.setState({ canNope: true });
+          this.newCountDown(timeForNope);
       }
     });
     this.state.socket.on("new-common-2", (data) => {
@@ -397,6 +395,7 @@ class Gameplay extends React.Component {
             nextTurnLeft: data.skipCard.nextTurnLeft,
             nextUserId: data.skipCard.nextUserId,
           });
+          this.newCountDown(timePerTurn);
           break;
       }
     });
@@ -430,11 +429,13 @@ class Gameplay extends React.Component {
           break;
       }
       this.setState({
-        cardSelectorId,
+        newCardSelectorId: cardSelectorId,
         cardSelectorCards,
         showCardSelectorBackCard,
         targetId: newTargetId,
+        canNope: true,
       });
+      this.newCountDown(timeForNope);
     });
     this.state.socket.on("new-nope", (data) => {
       console.log("new-nope", data);
@@ -453,7 +454,9 @@ class Gameplay extends React.Component {
         cardUserId,
         userId,
         usingEffectCard,
+        newCardSelectorId,
       } = this.state;
+      this.newCountDown(10000000);
       this.setState({
         nextUserId: newNextUserId,
         nextTurnLeft: newNextTurnLeft,
@@ -465,10 +468,19 @@ class Gameplay extends React.Component {
       });
       switch (usingEffectCard) {
         case Card.attack:
-          if (cardUserId != userId) this.useEffect(userId, usingEffectCard);
+          if (cardUserId === userId) this.useEffect(userId, usingEffectCard);
           break;
         case Card.skip:
-          if (cardUserId != userId) this.useEffect(userId, usingEffectCard);
+          if (cardUserId === userId) this.useEffect(userId, usingEffectCard);
+          break;
+        case Card.favor:
+          this.setState({
+            cardSelectorId: newCardSelectorId,
+            newCardSelectorId: -1,
+          });
+          break;
+        case Card.seeTheFuture:
+          if (cardUserId === userId) this.useEffect(userId, usingEffectCard);
           break;
         default:
           this.useEffect(userId, usingEffectCard);
@@ -530,7 +542,7 @@ class Gameplay extends React.Component {
       userId,
       roomId: this.state.roomId,
     };
-    if (userId !== this.state.nextUserId) return;
+    if (userId !== this.state.nextUserId || this.state.canNope) return;
     console.log(userId, this.state.nextUserId);
     this.state.socket.emit("draw-card", data);
   };
@@ -728,6 +740,7 @@ class Gameplay extends React.Component {
       roomId: this.state.roomId,
       card,
     };
+    console.log("useEffect", data);
     this.newCountDown(timePerTurn);
     this.state.socket.emit("use-effect", data);
   };
