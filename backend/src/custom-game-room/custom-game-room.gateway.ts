@@ -94,6 +94,8 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     }
   }
 
+  isUseNope = false;
+
   @SubscribeMessage('use-card')
   async onUseCard(socket: Socket, data: any) {
     const { roomId, userId, card, cardIdx } = data;
@@ -105,6 +107,16 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     );
 
     this.server.to(roomId).emit('new-card-use', newCardUse);
+    
+    this.isUseNope = false;
+    const nopeTime = 5; // in seconds
+    const canNopeNowCards = [Card.seeTheFuture, Card.skip, Card.attack, Card.shuffle];
+
+    if(canNopeNowCards.indexOf(card) !== -1) {
+      setTimeout(() => {
+        if(!this.isUseNope) this.server.to(roomId).emit('no-new-nope', {roomId});
+      }, nopeTime*1000);
+    }
   }
 
   // @SubscribeMessage('use-favor')
@@ -225,6 +237,13 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
       [effectCard]: result,
     };
     this.server.to(roomId).emit('new-effect', newEffect);
+  }
+
+  @SubscribeMessage('use-nope')
+  async onUseNope(socket: Socket, data: any) {
+    const { roomId } = data;
+    this.isUseNope = true;
+    this.server.to(roomId).emit('new-nope', data);
   }
 
   // chat service

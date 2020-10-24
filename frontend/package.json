@@ -12,6 +12,7 @@
     "formik": "^2.1.5",
     "nprogress": "^0.2.0",
     "react": "^16.13.1",
+    "react-countdown": "^2.3.0",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
     "react-indiana-drag-scroll": "^1.7.0",

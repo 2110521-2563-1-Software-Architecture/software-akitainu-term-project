@@ -1,12 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {useState} from "react";
 import { makeStyles } from "@material-ui/core";
-import { Card, getCardImage } from "../../../components/type";
+import { getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
 import Otherhand from "../Otherhand";
+import Countdown from 'react-countdown';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -139,6 +140,18 @@ const useStyles = makeStyles((theme) => ({
     top: "64px",
     zIndex: "100",
   },
+
+  timeLeft: {
+    fontSize: "24px",
+    marginBottom: "16px",
+  },
+
+  timeLeftBelowFiveSeconds: {
+    fontSize: "24px",
+    marginBottom: "16px",
+    color: "red",
+    fontWeight: "bold",
+  }
 }));
 
 function Game(props) {
@@ -167,14 +180,18 @@ function Game(props) {
     numberOfDeckCards,
     nextUserId,
     showCardSelectorBackCard,
+    userCards,
+    canNope,
+    handleUseNope,
+    countDownTime,
+    newCountDown,
   } = props;
   const classes = useStyles();
 
   const userId = window.sessionStorage.getItem("userId"); // todo:
   const roomId = "100001"; // todo:
-
-  // const [userCards, setUserCards] = useState([]);
-  const { userCards } = props;
+  const timePerTurn = 30; // seconds
+  const [isMyTurn, setIsMyTurn] = useState(false);
   const isSelectingPlayer = isSelectingPlayerId === userId;
 
   let users = usersData;
@@ -333,6 +350,68 @@ function Game(props) {
     );
   };
 
+  const handleDrawCard = () => {
+    drawCard(userId, roomId);
+    if(nextUserId===userId) {
+      newCountDown(timePerTurn);
+    }
+  }
+
+  
+  const normalRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <span></span>;
+    } else {
+      // Render a countdown
+      if(seconds<=5) return <span className={classes.timeLeftBelowFiveSeconds}>Time left: {seconds} (s)</span>;
+      return <span className={classes.timeLeft}>Time left: {seconds} (s)</span>;
+    }
+  };
+
+  const nopeRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <span></span>;
+    } else {
+      // Render a countdown
+      return <span className={classes.timeLeftBelowFiveSeconds}>Nope time left: {seconds} (s)</span>;
+    }
+  };
+
+  const countDownComponent = (
+    (canNope) ?
+      (
+        <Countdown
+          key={countDownTime}
+          date={countDownTime}
+          renderer={nopeRenderer}
+        />
+      ) : userId === nextUserId ?
+      (
+        <Countdown
+          key={countDownTime}
+          date={countDownTime}
+          renderer={normalRenderer}
+          onComplete={handleDrawCard}
+        />
+      ) :
+      (
+        <div></div>
+      )
+  );
+
+  if(!isMyTurn && nextUserId===userId) { // my turn
+    setIsMyTurn(true);
+    newCountDown(timePerTurn);
+  }
+  else if(isMyTurn && nextUserId!==userId) { // other turn
+    setIsMyTurn(false);
+    newCountDown(0);
+  }
+
+  const _handleUseNope = () => {
+    handleUseNope(userId);
+  }
+
   return (
     <>
       <div className={classes.root}>
@@ -354,7 +433,7 @@ function Game(props) {
               <img
                 src={card_back}
                 className={classes.deck}
-                onClick={() => drawCard(userId, roomId)}
+                onClick={handleDrawCard}
               />
             </div>
             <div className={classes.cardWrapper}>
@@ -378,6 +457,9 @@ function Game(props) {
             cards={userCards}
             handleUseCard={_handleUseCard}
             nextUserId={nextUserId}
+            countDownComponent={countDownComponent}
+            countDownTime={countDownTime}
+            handleDrawCard={handleDrawCard}
           />
         </div>
       </div>
@@ -414,7 +496,7 @@ function Game(props) {
           joinCustomRoom
         </button>
         <button onClick={() => startGame(roomId)}>startGame</button>
-        <button onClick={() => console.log(getPropsFromUserId(userId))}>
+        <button onClick={() => {console.log(getPropsFromUserId(userId)); _handleUseNope();}}>
           getProps
         </button>
       </div>

@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
     width: "10%",
     height: "100%",
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 5,
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PlayerHand(props) {
   const classes = useStyles();
-  const { cards, handleUseCard, nextUserId } = props;
+  const { cards, handleUseCard, nextUserId, countDownComponent, countDownTime, handleDrawCard } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
 
@@ -144,7 +145,8 @@ export default function PlayerHand(props) {
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
-        {canUseSelectedCards() ? (
+        {countDownComponent}
+            {canUseSelectedCards() ? (
           <Button
             variant="contained"
             color="primary"
