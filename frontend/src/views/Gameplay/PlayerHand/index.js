@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     paddingTop: "10px",
     overflow: "hidden",
-    backgroundColor: "wheat", //tmp
+    // backgroundColor: "wheat", //tmp
   },
 
   list: {
@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
   listItem: {
     listStyle: "none",
+    width: "7vw",
   },
 
   card: {
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 5,
+    paddingRight: "10px",
   },
 
   disabledButton: {
@@ -55,7 +57,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PlayerHand(props) {
   const classes = useStyles();
-  const { cards, handleUseCard, nextUserId, countDownComponent, countDownTime, handleDrawCard } = props;
+  const {
+    cards,
+    handleUseCard,
+    nextUserId,
+    countDownComponent,
+    countDownTime,
+    handleDrawCard,
+  } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
 
@@ -84,9 +93,9 @@ export default function PlayerHand(props) {
       return true;
     } else if (selectedCards.length === 5) {
       const selectingCard = selectedCards.map((cardIdx) => cards[cardIdx]);
-      selectingCard.sort()
+      selectingCard.sort();
       for (let i = 0; i < 4; i++) {
-        if (selectingCard[i] === selectingCard[i+1]) return false;
+        if (selectingCard[i] === selectingCard[i + 1]) return false;
       }
       return true;
     } else {
@@ -97,9 +106,9 @@ export default function PlayerHand(props) {
   const getNthCardStyle = (n) => ({
     position: "relative",
     zIndex: `${n + 1}`,
-    marginLeft: n === 0 ? "0px" : `-50px`,
+    // marginLeft: n === 0 ? "0px" : `-20%`,
     marginTop: selectedCards.includes(n) ? "-40px" : "0px",
-    height: "250px",
+    width: "10vw",
     boxShadow:
       // equal to theme.shadows[5]
       "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
@@ -140,19 +149,22 @@ export default function PlayerHand(props) {
   return (
     <div className={classes.wrapper}>
       <div className={classes.cardsWrapper}>
-        <ScrollContainer className="scroll-container">
+        <ScrollContainer
+          className="scroll-container"
+          style={{ paddingBottom: "16px" }}
+        >
           <ul className={classes.list}>{getCardsToRender(cards)}</ul>
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
         {countDownComponent}
-            {canUseSelectedCards() ? (
+        {canUseSelectedCards() ? (
           <Button
             variant="contained"
-            color="primary"
             onClick={() => _handleUseCard(selectedCards)}
+            className={classes.useCardButton}
           >
-            Use cards
+            {selectedCards.length <= 1 ? "Use card" : "Use cards"}
           </Button>
         ) : (
           <Button
@@ -160,7 +172,7 @@ export default function PlayerHand(props) {
             disabled
             className={classes.disabledButton}
           >
-            Use card(s)
+            {selectedCards.length <= 1 ? "Use card" : "Use cards"}
           </Button>
         )}
       </div>
