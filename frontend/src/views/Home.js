@@ -5,9 +5,9 @@ import logo from "../shiba-inu.svg";
 function Home() {
   const joinRoom100001 = () => {
     // todo:
-    var userIdPlaceholder = Math.floor(100000 + Math.random() * 900000);
-    const userId = prompt("Please enter your user Id", userIdPlaceholder);
-    window.sessionStorage.setItem("userId", userId);
+    // var userIdPlaceholder = Math.floor(100000 + Math.random() * 900000);
+    // const userId = prompt("Please enter your user Id", userIdPlaceholder);
+    // window.sessionStorage.setItem("userId", userId);
   };
   return (
     <div className="App">
