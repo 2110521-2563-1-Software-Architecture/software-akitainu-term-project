@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
     width: "10%",
     height: "100%",
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 5,
@@ -54,10 +55,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PlayerHand(props) {
   const classes = useStyles();
-  const { cards, handleUseCard } = props;
-  console.log("cards", cards);
+  const { cards, handleUseCard, nextUserId, countDownComponent, countDownTime, handleDrawCard } = props;
   const [selectedCards, setSelectedCards] = useState([]);
+  const userId = window.sessionStorage.getItem("userId");
+
   const canUseSelectedCards = () => {
+    if (nextUserId !== userId) return false;
     if (selectedCards.length === 1) {
       const card = cards[selectedCards[0]];
       if (card === Card.common1) return false;
@@ -80,16 +83,12 @@ export default function PlayerHand(props) {
     ) {
       return true;
     } else if (selectedCards.length === 5) {
-      let hasC1, hasC2, hasC3, hasC4, hasC5;
-      for (let i = 0; i < selectedCards.length; i++) {
-        const card = cards[selectedCards[i]];
-        if (card === Card.common1) hasC1 = true;
-        if (card === Card.common2) hasC2 = true;
-        if (card === Card.common3) hasC3 = true;
-        if (card === Card.common4) hasC4 = true;
-        if (card === Card.common5) hasC5 = true;
+      const selectingCard = selectedCards.map((cardIdx) => cards[cardIdx]);
+      selectingCard.sort()
+      for (let i = 0; i < 4; i++) {
+        if (selectingCard[i] === selectingCard[i+1]) return false;
       }
-      return hasC1 && hasC2 && hasC3 && hasC4 && hasC5;
+      return true;
     } else {
       return false;
     }
@@ -136,7 +135,7 @@ export default function PlayerHand(props) {
   const _handleUseCard = (selectedCards) => {
     handleUseCard(selectedCards);
     setSelectedCards([]);
-  } 
+  };
 
   return (
     <div className={classes.wrapper}>
@@ -146,14 +145,15 @@ export default function PlayerHand(props) {
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
-        {canUseSelectedCards() ? (
+        {countDownComponent}
+            {canUseSelectedCards() ? (
           <Button
-          variant="contained"
-          color="primary"
-          onClick={() => _handleUseCard(selectedCards)}
-        >
-          Use cards
-        </Button>
+            variant="contained"
+            color="primary"
+            onClick={() => _handleUseCard(selectedCards)}
+          >
+            Use cards
+          </Button>
         ) : (
           <Button
             variant="contained"

@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {useState} from "react";
 import { makeStyles } from "@material-ui/core";
-import { Card, getCardImage } from "../../../components/type";
+import { getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
 import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
 import Otherhand from "../Otherhand";
-import { gameTestData } from "./mock";
+import Countdown from 'react-countdown';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -140,6 +140,18 @@ const useStyles = makeStyles((theme) => ({
     top: "64px",
     zIndex: "100",
   },
+
+  timeLeft: {
+    fontSize: "24px",
+    marginBottom: "16px",
+  },
+
+  timeLeftBelowFiveSeconds: {
+    fontSize: "24px",
+    marginBottom: "16px",
+    color: "red",
+    fontWeight: "bold",
+  }
 }));
 
 function Game(props) {
@@ -166,25 +178,31 @@ function Game(props) {
     cardSelectorCards,
     usersData,
     numberOfDeckCards,
+    nextUserId,
+    showCardSelectorBackCard,
+    userCards,
+    canNope,
+    handleUseNope,
+    countDownTime,
+    newCountDown,
   } = props;
   const classes = useStyles();
 
   const userId = window.sessionStorage.getItem("userId"); // todo:
   const roomId = "100001"; // todo:
-
-  // const [userCards, setUserCards] = useState([]);
-  const { userCards } = props;
-  const isSelectingPlayer = isSelectingPlayerId === userId
+  const timePerTurn = 30; // seconds
+  const [isMyTurn, setIsMyTurn] = useState(false);
+  const isSelectingPlayer = isSelectingPlayerId === userId;
 
   let users = usersData;
-  
-  for(let i=0;i<users.length;i++) {
+
+  for (let i = 0; i < users.length; i++) {
     const firstUser = users[0];
-    if(firstUser.userId === userId) break;
-    users.splice(0,1);
+    if (firstUser.userId === userId) break;
+    users.splice(0, 1);
     users.push(firstUser);
   }
-  
+
   const getUsersToRender = () => {
     switch (users.length) {
       case 1:
@@ -283,12 +301,12 @@ function Game(props) {
   const usersToRender = getUsersToRender();
 
   const _handleUseCard = (cardsIdx) => {
-    handleUseCard(userId, cardsIdx)
+    handleUseCard(userId, cardsIdx);
   };
 
   const _handleCloseCardSelectorDialog = (selectedCardIdx) => {
-    setSelectedCardIdx(isSelectingPlayerId, cardSelectorId, selectedCardIdx);
-  }
+    setSelectedCardIdx(userId, selectedCardIdx);
+  };
 
   const getTopPlayer = (user) => {
     return (
@@ -332,6 +350,68 @@ function Game(props) {
     );
   };
 
+  const handleDrawCard = () => {
+    drawCard(userId, roomId);
+    if(nextUserId===userId) {
+      newCountDown(timePerTurn);
+    }
+  }
+
+  
+  const normalRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <span></span>;
+    } else {
+      // Render a countdown
+      if(seconds<=5) return <span className={classes.timeLeftBelowFiveSeconds}>Time left: {seconds} (s)</span>;
+      return <span className={classes.timeLeft}>Time left: {seconds} (s)</span>;
+    }
+  };
+
+  const nopeRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <span></span>;
+    } else {
+      // Render a countdown
+      return <span className={classes.timeLeftBelowFiveSeconds}>Nope time left: {seconds} (s)</span>;
+    }
+  };
+
+  const countDownComponent = (
+    (canNope) ?
+      (
+        <Countdown
+          key={countDownTime}
+          date={countDownTime}
+          renderer={nopeRenderer}
+        />
+      ) : userId === nextUserId ?
+      (
+        <Countdown
+          key={countDownTime}
+          date={countDownTime}
+          renderer={normalRenderer}
+          onComplete={handleDrawCard}
+        />
+      ) :
+      (
+        <div></div>
+      )
+  );
+
+  if(!isMyTurn && nextUserId===userId) { // my turn
+    setIsMyTurn(true);
+    newCountDown(timePerTurn);
+  }
+  else if(isMyTurn && nextUserId!==userId) { // other turn
+    setIsMyTurn(false);
+    newCountDown(0);
+  }
+
+  const _handleUseNope = () => {
+    handleUseNope(userId);
+  }
+
   return (
     <>
       <div className={classes.root}>
@@ -353,12 +433,12 @@ function Game(props) {
               <img
                 src={card_back}
                 className={classes.deck}
-                onClick={() => drawCard(userId, roomId)}
+                onClick={handleDrawCard}
               />
             </div>
             <div className={classes.cardWrapper}>
               <img
-                src={topDiscardPile? getCardImage(topDiscardPile): undefined}
+                src={topDiscardPile ? getCardImage(topDiscardPile) : undefined}
                 className={classes.usedCard}
               />
             </div>
@@ -376,29 +456,35 @@ function Game(props) {
           <PlayerHand
             cards={userCards}
             handleUseCard={_handleUseCard}
+            nextUserId={nextUserId}
+            countDownComponent={countDownComponent}
+            countDownTime={countDownTime}
+            handleDrawCard={handleDrawCard}
           />
         </div>
       </div>
       <SeeTheFutureDialog
-        open={seeTheFutureId===userId}
+        open={seeTheFutureId === userId}
         handleClose={() => closeSeeTheFutureDialog()}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog
-        open={cardSelectorId===userId}
-        handleClose={(selelctedCardIdx) => _handleCloseCardSelectorDialog(selelctedCardIdx)}
+        open={cardSelectorId === userId}
+        handleClose={(selelctedCardIdx) =>
+          _handleCloseCardSelectorDialog(selelctedCardIdx)
+        }
         cardSelectorCards={cardSelectorCards}
-        showBackCard={false}
+        showBackCard={showCardSelectorBackCard}
       />
       <ExplodingPuppyDialog
         open={explodeId === userId}
         hasDefuse={hasDefuse(userId)}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          gameLose(userId)
+          gameLose(userId);
         }}
         onClickHideExplodingPuppy={(idx) => {
-          insertExplodingPuppy(userId, idx)
+          insertExplodingPuppy(userId, idx);
         }}
       />
       {isSelectingPlayer && <div className={classes.backdrop} />}
@@ -410,7 +496,7 @@ function Game(props) {
           joinCustomRoom
         </button>
         <button onClick={() => startGame(roomId)}>startGame</button>
-        <button onClick={() => console.log(getPropsFromUserId(userId))}>
+        <button onClick={() => {console.log(getPropsFromUserId(userId)); _handleUseNope();}}>
           getProps
         </button>
       </div>
