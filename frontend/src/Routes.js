@@ -9,6 +9,7 @@ import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
 import AuthGuard from "components/AuthGuard";
 
+// const ENDPOINT = "18.141.138.13:10001";
 const ENDPOINT = "localhost:10001";
 const socket = socketIOClient(ENDPOINT);
 
