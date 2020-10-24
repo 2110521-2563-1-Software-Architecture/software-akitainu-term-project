@@ -17,8 +17,8 @@ const classNames = {
 };
 
 const allSelectableCards = Object.values(Card);
-allSelectableCards.splice(allSelectableCards.indexOf(Card.explodingPuppy),1);
-allSelectableCards.splice(allSelectableCards.indexOf(Card.backCard),1);
+allSelectableCards.splice(allSelectableCards.indexOf(Card.explodingPuppy), 1);
+allSelectableCards.splice(allSelectableCards.indexOf(Card.backCard), 1);
 
 const timePerTurn = 30; // seconds
 const timeForNope = 5; // seconds
@@ -51,6 +51,7 @@ class Gameplay extends React.Component {
       canNope: false,
       cardUserId: -1,
       countDownTime: 0,
+      newCardSelectorId: -1,
     };
   }
 
@@ -196,17 +197,17 @@ class Gameplay extends React.Component {
         usersData,
         newNextUserId: nextUserId,
         newNextTurnLeft: nextTurnLeft,
-        canNope: true,
         cardUserId: userId,
+        usingEffectCard: card,
       });
-      this.newCountDown(timeForNope);
 
       switch (card) {
         case Card.favor:
-          this.setState({ isSelectingPlayerId: userId, usingEffectCard: Card.favor });
+          this.setState({ isSelectingPlayerId: userId });
           break;
         default:
-          this.setState({ usingEffectCard: card });
+          this.setState({ canNope: true });
+          this.newCountDown(timeForNope);
       }
     });
     this.state.socket.on("new-common-2", (data) => {
@@ -224,9 +225,13 @@ class Gameplay extends React.Component {
         else discardPile.push(card);
       });
       usersData[userIdx].userCards = newUserCard;
-      usersData[userIdx].numberOfCards-=2;
+      usersData[userIdx].numberOfCards -= 2;
 
-      this.setState({ usersData, isSelectingPlayerId: userId, usingEffectCard: Card.common2 });
+      this.setState({
+        usersData,
+        isSelectingPlayerId: userId,
+        usingEffectCard: Card.common2,
+      });
     });
     this.state.socket.on("receive-common-2", (data) => {
       console.log("receive-common-2", data);
@@ -258,9 +263,13 @@ class Gameplay extends React.Component {
         else discardPile.push(card);
       });
       usersData[userIdx].userCards = newUserCard;
-      usersData[userIdx].numberOfCards-=3;
+      usersData[userIdx].numberOfCards -= 3;
 
-      this.setState({ usersData, isSelectingPlayerId: userId, usingEffectCard: Card.common3 });
+      this.setState({
+        usersData,
+        isSelectingPlayerId: userId,
+        usingEffectCard: Card.common3,
+      });
     });
     this.state.socket.on("receive-common-3", (data) => {
       console.log("receive-common-3", data);
@@ -270,10 +279,10 @@ class Gameplay extends React.Component {
       if (this.state.roomId !== roomId) return;
 
       const userIdx = this.findUserIdx(userId);
-      const targetIdx = this.findUserIdx(targetId); 
+      const targetIdx = this.findUserIdx(targetId);
 
       const targetCardIdx = usersData[targetIdx].userCards.indexOf(selectCard);
-      if(targetCardIdx === -1) return;
+      if (targetCardIdx === -1) return;
 
       const targetCard = usersData[targetIdx].userCards[targetCardIdx];
       usersData[userIdx].userCards.push(targetCard);
@@ -301,14 +310,14 @@ class Gameplay extends React.Component {
         else discardPile.push(card);
       });
       usersData[userIdx].userCards = newUserCard;
-      usersData[userIdx].numberOfCards-=5;
+      usersData[userIdx].numberOfCards -= 5;
 
       this.setState({
         usersData,
         cardSelectorId,
         cardSelectorCards,
         showCardSelectorBackCard,
-        usingEffectCard: Card.common5
+        usingEffectCard: Card.common5,
       });
     });
     this.state.socket.on("receive-common-5", (data) => {
@@ -387,6 +396,7 @@ class Gameplay extends React.Component {
             nextTurnLeft: data.skipCard.nextTurnLeft,
             nextUserId: data.skipCard.nextUserId,
           });
+          this.newCountDown(timePerTurn);
           break;
       }
     });
@@ -396,9 +406,12 @@ class Gameplay extends React.Component {
       const { userId, roomId, targetId } = data;
       if (this.state.roomId !== roomId) return;
 
-      let cardSelectorId, cardSelectorCards, showCardSelectorBackCard, newTargetId= targetId;
-      const {usingEffectCard} = this.state;
-      switch(usingEffectCard) {
+      let cardSelectorId,
+        cardSelectorCards,
+        showCardSelectorBackCard,
+        newTargetId = targetId;
+      const { usingEffectCard } = this.state;
+      switch (usingEffectCard) {
         case Card.favor:
           cardSelectorId = targetId;
           cardSelectorCards = this.getUserCard(targetId);
@@ -417,24 +430,34 @@ class Gameplay extends React.Component {
           break;
       }
       this.setState({
-        cardSelectorId,
+        newCardSelectorId: cardSelectorId,
         cardSelectorCards,
         showCardSelectorBackCard,
         targetId: newTargetId,
+        canNope: true,
       });
+      this.newCountDown(timeForNope);
     });
     this.state.socket.on("new-nope", (data) => {
       console.log("new-nope", data);
-      const {userId, roomId} = data;
+      const { userId, roomId } = data;
       if (this.state.roomId !== roomId) return;
       this.setState({
         canNope: false,
-      })
+      });
       this.newCountDown(timePerTurn);
     });
     this.state.socket.on("no-new-nope", (data) => {
       console.log("no-new-nope", data);
-      const { newNextUserId, newNextTurnLeft, cardUserId, userId, usingEffectCard} = this.state;
+      const {
+        newNextUserId,
+        newNextTurnLeft,
+        cardUserId,
+        userId,
+        usingEffectCard,
+        newCardSelectorId,
+      } = this.state;
+      this.newCountDown(10000000);
       this.setState({
         nextUserId: newNextUserId,
         nextTurnLeft: newNextTurnLeft,
@@ -444,12 +467,21 @@ class Gameplay extends React.Component {
         usingEffectCard: Card.backCard,
         canNope: false,
       });
-      switch(usingEffectCard) {
+      switch (usingEffectCard) {
         case Card.attack:
-          if (cardUserId != userId) this.useEffect(userId, usingEffectCard);
+          if (cardUserId === userId) this.useEffect(userId, usingEffectCard);
           break;
         case Card.skip:
-          if (cardUserId != userId) this.useEffect(userId, usingEffectCard);
+          if (cardUserId === userId) this.useEffect(userId, usingEffectCard);
+          break;
+        case Card.favor:
+          this.setState({
+            cardSelectorId: newCardSelectorId,
+            newCardSelectorId: -1,
+          });
+          break;
+        case Card.seeTheFuture:
+          if (cardUserId === userId) this.useEffect(userId, usingEffectCard);
           break;
         default:
           this.useEffect(userId, usingEffectCard);
@@ -511,7 +543,7 @@ class Gameplay extends React.Component {
       userId,
       roomId: this.state.roomId,
     };
-    if (userId !== this.state.nextUserId) return;
+    if (userId !== this.state.nextUserId || this.state.canNope) return;
     console.log(userId, this.state.nextUserId);
     this.state.socket.emit("draw-card", data);
   };
@@ -625,7 +657,7 @@ class Gameplay extends React.Component {
     if (cardsIdx.length !== 5) return;
     cards.sort();
     for (let i = 0; i < 4; i++) {
-      if (cards[i] === cards[i+1]) return;
+      if (cards[i] === cards[i + 1]) return;
     }
 
     const data = {
@@ -709,6 +741,7 @@ class Gameplay extends React.Component {
       roomId: this.state.roomId,
       card,
     };
+    console.log("useEffect", data);
     this.newCountDown(timePerTurn);
     this.state.socket.emit("use-effect", data);
   };
@@ -723,14 +756,14 @@ class Gameplay extends React.Component {
       userId,
       roomId: roomId,
       targetId,
-      card: usingEffectCard
+      card: usingEffectCard,
     };
-    this.setState({ isSelectingPlayerId: -1});
+    this.setState({ isSelectingPlayerId: -1 });
     this.state.socket.emit("select-player", data);
   };
 
   setSelectedCardIdx = (userId, selectedCardIdx) => {
-    const {usingEffectCard, targetId, roomId} = this.state;
+    const { usingEffectCard, targetId, roomId } = this.state;
     const data = {
       userId,
       roomId,
@@ -738,7 +771,7 @@ class Gameplay extends React.Component {
       targetId,
     };
     this.setState({ cardSelectorId: -1, usingEffectCard: Card.backCard });
-    switch(usingEffectCard) {
+    switch (usingEffectCard) {
       case Card.favor:
         data.favorCardIdx = selectedCardIdx;
         data.userId = targetId;
@@ -780,9 +813,9 @@ class Gameplay extends React.Component {
   };
 
   newCountDown = (second) => {
-    this.setState({countDownTime: Date.now() + second*1000});
+    this.setState({ countDownTime: Date.now() + second * 1000 });
     console.log(this.state.countDownTime);
-  }
+  };
 
   render() {
     // const classes = useStyles();
