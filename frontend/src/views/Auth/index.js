@@ -10,36 +10,117 @@ import Redirect from 'components/Redirect'
 import { useHistory } from "react-router";
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import background from 'image/shibaBackground.svg'
+import clsx from 'clsx'
+import logo from '../../shiba-inu.svg'
 
 const useStlyes = makeStyles((the)=>({
   root : {
     display:"flex",
-    justifyContent:"center",
+    justifyContent:"flex-start",
     height:"100vh",
     alignItems:"center",
     flexDirection:"column",
+    backgroundColor:"#465A74",
     backgroundImage:`url(${background})`,
+  },
+  container : {
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center",
+    flexDirection:"column",
+    marginTop:"80px",
+    // backdropFilter:"blur(4px)",
+    // border:"1px solid black",
+    padding:"40px 24px",
+    borderRadius:"16px",
+    maxHeight:"100vh",
   },
   googleButton: {
     background: "#2F80ED",
-    height: "40px",
     color: "white",
-    width: "130px",
+    padding:"4px 24px",
+    width:"200px",
+    fontSize:"24px",
     margin:"8px 0",
+    fontFamily:"Quick",
     "&:hover": {
       background: "#2F80ED",
     },
   },
-  devLoginButton: {
-    background: "#2F80ED",
-    height: "40px",
-    color: "white",
-    width: "130px",
-    margin:"8px 0",
+  loginButton: {
+    background:"linear-gradient(to right, #FFEFBA, #FFFFFF);",
+    "-webkit-background-clip": "text",
+    "-webkit-text-fill-color": "transparent",
+    "text-shadow": "rgba(17, 12, 46, 0.15) 0px 48px 100px 0px",
+    border:"3px solid #78ffd6",
+    padding:"4px 24px",
+    width:"280px",
+    margin:"16px 0",
+    fontFamily:"Quick",
+    fontSize:"24px",
+    transition:"all 0.3s ease-in-out",
+    fontWeight:600,
+    borderRadius:"8px",
+    height:"60px",
+    backdropFilter:"blur(2px)",
+    // "& span": {
+    //   position: "absolute",
+    //   width: "25%",
+    //   height: "100%",
+    //   backgroundColor: "red",
+    //   transform: "translateY(150%)",
+    //   borderRadius: "50%",
+    //   left: "calc((var(--n) - 1) * 25%)",
+    //   transition: "0.5s",
+    //   transitionDelay: "calc((var(--n) - 1) * 0.1s)",
+    //   zIndex: -1,
+    // },
+    // "& span:nth-child(1)" : {
+    //   "--n": 1,
+    // },
+    // "& span:nth-child(2)" : {
+    //   "--n": 2,
+    // },
+    // "& span:nth-child(3)" : {
+    //   "--n": 3,
+    // },
+    // "& span:nth-child(4)" : {
+    //   "--n": 4,
+    // },
     "&:hover": {
-      background: "#2F80ED",
+      // border:"1px solid #ffa751",
+      transform:"scale(1.2)",
+      // boxShadow: "inset 6.5em 0 0 0 red",
+      // border:"3px sold #ef8e38"
     },
   },
+  title : {
+    transition:"all 0.3s ease-in-out",
+    paddingBottom:"32px",
+    fontFamily:"Quick",
+    fontSize:"64px",
+    // fontWeight:800,
+    // background:"linear-gradient(to right, #a8ff78, #78ffd6);",
+    background:"linear-gradient(to right, #FFEFBA, #FFFFFF);",
+    cursor:"pointer",
+    "-webkit-background-clip": "text",
+    "-webkit-text-fill-color": "transparent",
+    // "text-shadow": "rgba(17, 12, 46, 0.15) 0px 48px 100px 0px",
+    // textShadow:"2px 2px 4px #000000",
+    "&:hover": {
+      // border:"1px solid #ffa751",
+      transform:"scale(1.2)",
+      // boxShadow: "inset 6.5em 0 0 0 red",
+    },
+  },
+  // slide : {
+  //   "& :hover" : {
+  //     boxShadow: "inset 6.5em 0 0 0 red",
+  //   },
+  //   "&:focus" : {
+  //     boxShadow: "inset 6.5em 0 0 0 var(--hover)",
+  //   }
+  // }
 }))
 
 var userId_tmp
@@ -106,14 +187,17 @@ function Auth() {
 
   return (
     <div className={classes.root}>
+      <div className={classes.container}>
+      <img src={logo} className="App-logo" alt="logo" style={{width:"200px",height:"200px",marginBottom:"32px"}}/>
+      <Typography align="center" className={clsx(classes.title,classes.slide)}>Exploding Puppy</Typography>
       <GoogleLogin
         clientId={clientId}
         render={renderProps => (
           <Button 
-            className={classes.googleButton}
+            className={classes.loginButton}
             onClick={renderProps.onClick} 
             disabled={renderProps.disabled}>
-              Google
+              Google Login
           </Button>
         )}
         buttonText="Login"
@@ -122,22 +206,12 @@ function Auth() {
         cookiePolicy={'single_host_origin'}
       />
       {isDevEnv&&<Button
-        className={classes.devLoginButton}
+        className={clsx(classes.loginButton)}
         onClick={()=>onDevSignIn()}
         >
         dev login
       </Button>}
-      {/* <Snackbar
-        key={`snackbar-authguard`}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={showNoti}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        message={userId_tmp ? `logged in as ${userId_tmp}` : undefined}
-      /> */}
+      </div>
     </div>
   )
 }
