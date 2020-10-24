@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "16px",
   },
   logoutButton: {
-    margin: "14px 16px",
+    margin: "auto 16px",
   },
 }));
 

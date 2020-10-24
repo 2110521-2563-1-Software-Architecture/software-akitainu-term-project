@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import GoogleLogin from "react-google-login";
 import { 
   Button,
   makeStyles,
+  Typography,
 } from '@material-ui/core'
 import { Palette } from 'components'
 import Redirect from 'components/Redirect'
 import { useHistory } from "react-router";
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import background from 'image/shibaBackground.svg'
 
 const useStlyes = makeStyles((the)=>({
   root : {
@@ -15,6 +18,7 @@ const useStlyes = makeStyles((the)=>({
     height:"100vh",
     alignItems:"center",
     flexDirection:"column",
+    backgroundImage:`url(${background})`,
   },
   googleButton: {
     background: "#2F80ED",
@@ -38,18 +42,39 @@ const useStlyes = makeStyles((the)=>({
   },
 }))
 
+var userId_tmp
+var userName_tmp
+
+
 function Auth() {
   const clientId = process.env.GOOGLE_CLIENT_ID || "315916359879-9hc3ac4snn53s7cma3rbfbotm84q6tfl.apps.googleusercontent.com"
   const history = useHistory();
   const classes = useStlyes()
+  // const [showNoti,setShowNoti] = useState(false)
+  const { enqueueSnackbar } = useSnackbar();
+  const [userName,setUserName] = useState("")
   const isDevEnv = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' 
 
-  const onLoginSuccess = () => {
-    history.push("/home");
+  const onLoginSuccess = (userName) => {
+    if (userName) {
+      enqueueSnackbar(`Welcome ${userName} (${userId_tmp})`,{variant:"success"});
+    }
+    else {
+      enqueueSnackbar(`logged in as ${userId_tmp}`,{variant:"success"});
+    }
+    setTimeout(function(){
+      enqueueSnackbar(`Entering the game`);
+    }, 1000);
+    setTimeout(function(){
+      history.push("/home"); 
+    }, 3000);
   }
+  // useEffect(()=>{
+  //   console.log(userName)
+  // },[userName])
 
   const mockUserId = () => {
-    var userId_tmp = Math.floor(100000 + Math.random() * 900000);
+    userId_tmp = Math.floor(100000 + Math.random() * 900000);
     window.sessionStorage.setItem("userId", userId_tmp);
   }
 
@@ -63,7 +88,7 @@ function Auth() {
     console.log(googleUser);
     if (googleUser.accessToken) {
       mockUserId()
-      onLoginSuccess()
+      onLoginSuccess(profile.getName())
     }
   }
 
@@ -71,6 +96,13 @@ function Auth() {
     mockUserId()
     onLoginSuccess()
   }
+
+  // const handleClose = (event, reason) => {
+  //   if (reason === 'clickaway') {
+  //     return;
+  //   }
+  //   setShowNoti(false);
+  // };
 
   return (
     <div className={classes.root}>
@@ -95,7 +127,24 @@ function Auth() {
         >
         dev login
       </Button>}
+      {/* <Snackbar
+        key={`snackbar-authguard`}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={showNoti}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message={userId_tmp ? `logged in as ${userId_tmp}` : undefined}
+      /> */}
     </div>
   )
 }
-export default Auth
+export default function Authen() {
+  return (
+    <SnackbarProvider maxSnack={3}>
+      <Auth />
+    </SnackbarProvider>
+  );
+}

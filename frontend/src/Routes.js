@@ -8,7 +8,7 @@ import NotFound from "views/NotFound";
 import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
 import AuthGaurd from "components/AuthGaurd";
-import Auth from 'views/Auth'
+import Authen from 'views/Auth'
 
 // const ENDPOINT = "18.141.138.13:10001";
 const ENDPOINT = "localhost:10001";
@@ -52,7 +52,7 @@ const routesConfig = [
   {
     exact: true,
     path: "/login",
-    component: () => <Auth />,
+    component: () => <Authen />,
   },
   //add more path
   {

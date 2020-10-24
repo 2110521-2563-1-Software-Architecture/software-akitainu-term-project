@@ -1,14 +1,22 @@
 import React from "react";
 import logo from "../shiba-inu.svg";
+import { useHistory } from "react-router-dom";
 // import logo from '../logo.svg'
 
 function Home() {
+  const history = useHistory()
+
   const joinRoom100001 = () => {
     // todo:
     // var userIdPlaceholder = Math.floor(100000 + Math.random() * 900000);
     // const userId = prompt("Please enter your user Id", userIdPlaceholder);
     // window.sessionStorage.setItem("userId", userId);
   };
+  const onLogout = () => {
+    sessionStorage.setItem("userId",null)
+    history.push("/home");
+    history.go(0)
+  }
   return (
     <div className="App">
       <header className="App-header">
@@ -38,6 +46,9 @@ function Home() {
         >
           Go to room 100001
         </a>
+        <button onClick={()=>onLogout()} style={{padding:"8px 16px"}}>
+          logout
+        </button>
       </header>
     </div>
   );
