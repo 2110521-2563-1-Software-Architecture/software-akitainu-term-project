@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
@@ -7,7 +7,7 @@ import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
 import Otherhand from "../Otherhand";
-import Countdown from 'react-countdown';
+import Countdown from "react-countdown";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -151,7 +151,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "16px",
     color: "red",
     fontWeight: "bold",
-  }
+  },
 }));
 
 function Game(props) {
@@ -352,18 +352,22 @@ function Game(props) {
 
   const handleDrawCard = () => {
     drawCard(userId, roomId);
-    if(nextUserId===userId) {
+    if (nextUserId === userId) {
       newCountDown(timePerTurn);
     }
-  }
+  };
 
-  
   const normalRenderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
       return <span></span>;
     } else {
       // Render a countdown
-      if(seconds<=5) return <span className={classes.timeLeftBelowFiveSeconds}>Time left: {seconds} (s)</span>;
+      if (seconds <= 5)
+        return (
+          <span className={classes.timeLeftBelowFiveSeconds}>
+            Time left: {seconds} (s)
+          </span>
+        );
       return <span className={classes.timeLeft}>Time left: {seconds} (s)</span>;
     }
   };
@@ -373,44 +377,44 @@ function Game(props) {
       return <span></span>;
     } else {
       // Render a countdown
-      return <span className={classes.timeLeftBelowFiveSeconds}>Nope time left: {seconds} (s)</span>;
+      return (
+        <span className={classes.timeLeftBelowFiveSeconds}>
+          Nope time left: {seconds} (s)
+        </span>
+      );
     }
   };
 
-  const countDownComponent = (
-    (canNope) ?
-      (
-        <Countdown
-          key={countDownTime}
-          date={countDownTime}
-          renderer={nopeRenderer}
-        />
-      ) : userId === nextUserId ?
-      (
-        <Countdown
-          key={countDownTime}
-          date={countDownTime}
-          renderer={normalRenderer}
-          onComplete={handleDrawCard}
-        />
-      ) :
-      (
-        <div></div>
-      )
+  const countDownComponent = canNope ? (
+    <Countdown
+      key={countDownTime}
+      date={countDownTime}
+      renderer={nopeRenderer}
+    />
+  ) : userId === nextUserId ? (
+    <Countdown
+      key={countDownTime}
+      date={countDownTime}
+      renderer={normalRenderer}
+      onComplete={handleDrawCard}
+    />
+  ) : (
+    <div></div>
   );
 
-  if(!isMyTurn && nextUserId===userId) { // my turn
+  if (!isMyTurn && nextUserId === userId) {
+    // my turn
     setIsMyTurn(true);
     newCountDown(timePerTurn);
-  }
-  else if(isMyTurn && nextUserId!==userId) { // other turn
+  } else if (isMyTurn && nextUserId !== userId) {
+    // other turn
     setIsMyTurn(false);
     newCountDown(0);
   }
 
   const _handleUseNope = () => {
     handleUseNope(userId);
-  }
+  };
 
   return (
     <>
@@ -496,7 +500,12 @@ function Game(props) {
           joinCustomRoom
         </button>
         <button onClick={() => startGame(roomId)}>startGame</button>
-        <button onClick={() => {console.log(getPropsFromUserId(userId)); _handleUseNope();}}>
+        <button
+          onClick={() => {
+            console.log(getPropsFromUserId(userId));
+            _handleUseNope();
+          }}
+        >
           getProps
         </button>
       </div>
