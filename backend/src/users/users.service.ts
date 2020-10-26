@@ -4,6 +4,7 @@ import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { newUserDto, userDto } from './users.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { access } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -13,6 +14,7 @@ export class UserService {
   ) {}
 
   async checkUser(accessToken: string) {
+    // console.log(accessToken)
     const checkUser = await this.userRepository.findOne({
       where: {
         accessToken,
