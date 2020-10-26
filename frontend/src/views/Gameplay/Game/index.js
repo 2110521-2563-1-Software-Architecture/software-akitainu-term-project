@@ -315,7 +315,7 @@ function Game(props) {
 
   const getMiddlePlayer = (user) => {
     return (
-      <div className={classes.middleWrapper}>
+      <div className={classes.middlePlayerWrapper}>
         {user && (
           <Otherhand
             user={user}

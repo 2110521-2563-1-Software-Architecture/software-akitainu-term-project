@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     fontFamily: "Roboto",
-    fontSize: "100%",
+    fontSize: "120%",
     color: "white",
     textShadow:
       "2px 0 0 black, \
@@ -85,7 +85,6 @@ const useStyles = makeStyles((theme) => ({
 const getNthCardStyle = (n) => ({
   position: "relative",
   zIndex: `${n + 1}`,
-  // marginTop: n % 2 === 1 ? "0" : "20%",
   height: "60%",
   boxShadow:
     // equal to theme.shadows[5]
