@@ -27,11 +27,13 @@
     "@nestjs/platform-socket.io": "^7.4.4",
     "@nestjs/typeorm": "^7.1.4",
     "@nestjs/websockets": "^7.4.4",
+    "dotenv": "^8.2.0",
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
-    "typeorm": "^0.2.28"
+    "typeorm": "^0.2.28",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
