@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { Card, getCardImage } from "../../../components/type";
 import ScrollContainer from "react-indiana-drag-scroll";
-import Button from "@material-ui/core/Button";
+import Button from "../../../components/Button";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     paddingTop: "10px",
     overflow: "hidden",
-    // backgroundColor: "wheat", //tmp
   },
 
   list: {
@@ -49,9 +48,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "10px",
   },
 
-  disabledButton: {
-    color: "#494949 !important",
-    backgroundColor: "#9E9E9E !important",
+  useCardButton: {
+    width: "60%",
   },
 }));
 
@@ -105,7 +103,6 @@ export default function PlayerHand(props) {
   const getNthCardStyle = (n) => ({
     position: "relative",
     zIndex: `${n + 1}`,
-    // marginLeft: n === 0 ? "0px" : `-20%`,
     marginTop: selectedCards.includes(n) ? "-40px" : "0px",
     width: "10vw",
     boxShadow:
@@ -157,23 +154,12 @@ export default function PlayerHand(props) {
       </div>
       <div className={classes.menuWrapper}>
         {countDownComponent}
-        {canUseSelectedCards() ? (
-          <Button
-            variant="contained"
-            onClick={() => _handleUseCard(selectedCards)}
-            className={classes.useCardButton}
-          >
-            {selectedCards.length <= 1 ? "Use card" : "Use cards"}
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            disabled
-            className={classes.disabledButton}
-          >
-            {selectedCards.length <= 1 ? "Use card" : "Use cards"}
-          </Button>
-        )}
+        <Button
+          disabled={!canUseSelectedCards()}
+          text={selectedCards.length <= 1 ? "Use card" : "Use cards"}
+          onClick={() => _handleUseCard(selectedCards)}
+          className={classes.useCardButton}
+        />
       </div>
     </div>
   );
