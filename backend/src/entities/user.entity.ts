@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { LoginType } from '../users/users.dto';
 
 @Entity()
 export class User {
@@ -15,5 +16,8 @@ export class User {
   userLevel: number;
 
   @Column('varchar', { length: 255 })
-  accessToken: string;
+  snsId: string;
+
+  @Column('text')
+  loginType: LoginType;
 }
