@@ -102,6 +102,32 @@ const useStyles = makeStyles((theme) => ({
     padding: "16px",
   },
 
+  logsList: {
+    width: "100%",
+    height: "100%",
+    overflow: "auto",
+  },
+
+  logItem: {
+    width: "100%",
+    fontSize: "20px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+    padding: "8px 0px",
+    listStyle: "none",
+    borderBottom: "solid 1px white",
+  },
+
   deck: {
     width: "10vw",
     cursor: "pointer",
@@ -193,6 +219,16 @@ function Game(props) {
     countDownTime,
     newCountDown,
     handleCompleteNopeCountdown,
+    logs = [
+      "a very very very very very very very very long log",
+      "a short log",
+      "more log to test overflow",
+      "more log to test overflow",
+      "more log to test overflow",
+      "more log to test overflow",
+      "more log to test overflow",
+      "more log to test overflow",
+    ],
   } = props;
   const classes = useStyles();
 
@@ -429,6 +465,27 @@ function Game(props) {
     handleUseNope(userId);
   };
 
+  const logItems = logs.map((item, idx) => (
+    <li
+      key={`log-${idx}`}
+      className={classes.logItem}
+      style={
+        idx === 0
+          ? { paddingTop: "0" }
+          : idx === logs.length - 1
+          ? { paddingButtom: "0", border: "none" }
+          : undefined
+      }
+    >
+      {item}
+    </li>
+  ));
+
+  const updateLogsScroll = () => {
+    const element = document.getElementById("logs");
+    element.scrollTop = element.scrollHeight;
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -460,7 +517,11 @@ function Game(props) {
               />
             </div>
             <div className={classes.logWrapper}>
-              <div className={classes.log}>log</div>
+              <div className={classes.log}>
+                <ui id="logs" className={classes.logsList}>
+                  {logItems}
+                </ui>
+              </div>
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
