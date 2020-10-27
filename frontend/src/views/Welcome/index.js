@@ -13,6 +13,7 @@ import {
 import logo from "../../shiba-inu.svg";
 import { useHistory } from "react-router-dom";
 import Button from "components/Button";
+import ModeDialog from "./ModeDialog";
 // import logo from '../logo.svg'
 
 const usestyle = makeStyles((theme) => ({
@@ -37,12 +38,14 @@ const usestyle = makeStyles((theme) => ({
   },
   playButton: {
     width: "128px",
+    alignSelf: "center",
   },
 }));
 
 function Welcome() {
   const classes = usestyle();
   const history = useHistory();
+  const [openModeDialog, setModeDialog] = useState(false);
 
   const joinRoom100001 = () => {
     // todo:
@@ -55,6 +58,16 @@ function Welcome() {
     history.push("/home");
     history.go(0);
   };
+
+  const handleClickPlayButton = () => {
+    console.log("click");
+    setModeDialog(true);
+  };
+
+  const closeModeDialog = () => {
+    setModeDialog(false);
+  };
+
   return (
     <Grid container direction="row" className={classes.root}>
       <Grid item container direction="row" xs="3">
@@ -85,12 +98,17 @@ function Welcome() {
           Exploding puppy
         </Typography>
         <Grid container style={{ justifyContent: "center", marginTop: "50px" }}>
-          <Button text="Play" className={classes.playButton}></Button>
+          <Button
+            text="Play"
+            className={classes.playButton}
+            onClick={handleClickPlayButton}
+          ></Button>
         </Grid>
       </Grid>
       <Grid item xs="3" className={classes.mainSection}>
         <Typography style={{ textAlign: "center" }}>Leader Board</Typography>
       </Grid>
+      <ModeDialog open={openModeDialog} onClose={closeModeDialog} />
     </Grid>
   );
 }
