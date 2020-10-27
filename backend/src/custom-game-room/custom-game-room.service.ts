@@ -97,6 +97,18 @@ export class CustomGameRoomService {
     return array;
   }
 
+  async onStartGame(roomId: string) {
+    // determine first turn and turn left
+    const { usersId } = this.rooms[roomId];
+    this.rooms[roomId]['nextUserIndex'] = 0;
+    this.rooms[roomId]['lastUserIndex'] = 0;
+    this.rooms[roomId]['nextTurnLeft'] = 1;
+    this.rooms[roomId]['aliveUsersId'] = usersId;
+    this.rooms[roomId]['result'] = [];
+
+    return this.initializeDeck(roomId);
+  }
+
   async initializeDeck(roomId: string) {
     const { usersId } = this.rooms[roomId];
     const userNumber = usersId.length;
@@ -133,12 +145,6 @@ export class CustomGameRoomService {
       usersCard[j].push(Card.defuse);
     }
 
-    // determine first turn and turn left
-    this.rooms[roomId]['nextUserIndex'] = 0;
-    this.rooms[roomId]['lastUserIndex'] = 0;
-    this.rooms[roomId]['nextTurnLeft'] = 1;
-    this.rooms[roomId]['dead'] = new Set();
-
     deck = deck.slice(userNumber * 7);
 
     deck.push(...Array(userNumber === 5 ? 1 : 2).fill(Card.defuse));
@@ -151,8 +157,8 @@ export class CustomGameRoomService {
       leftCardNumber: deck.length,
       usersId: usersId,
       usersCard: usersCard,
-      nextUserId: usersId[this.rooms[roomId]['nextUserIndex']],
-      nextTurnLeft: this.rooms[roomId]['nextTurnLeft'],
+      nextUserId: usersId[0],
+      nextTurnLeft: 1,
     };
 
     console.log('newGame: ', newGame);
@@ -161,19 +167,24 @@ export class CustomGameRoomService {
   }
 
   async drawCard(userId: string, roomId: string) {
-    const { deck, usersId, nextUserIndex, nextTurnLeft } = this.rooms[roomId];
+    const { deck, aliveUsersId, nextUserIndex, nextTurnLeft } = this.rooms[
+      roomId
+    ];
     if (deck.length <= 0) {
       return false;
     }
 
     const card = deck.shift();
     const leftCardNumber = deck.length;
+    console.log('nextUser: ', aliveUsersId[nextUserIndex]);
+    console.log('nextTurnLeft: ', nextTurnLeft);
     let nextTurnLeftTmp = nextTurnLeft - 1;
 
     const nextUserIndexTmp =
       nextTurnLeftTmp === 0
-        ? (nextUserIndex + 1) % usersId.length
+        ? (nextUserIndex + 1) % aliveUsersId.length
         : nextUserIndex;
+    console.log('nextUserTmp: ', aliveUsersId[nextUserIndexTmp]);
     nextTurnLeftTmp = nextTurnLeftTmp === 0 ? 1 : nextTurnLeftTmp;
     this.setRoomByRoomId(roomId, {
       nextUserIndex: nextUserIndexTmp,
@@ -186,20 +197,20 @@ export class CustomGameRoomService {
       roomId,
       card,
       leftCardNumber,
-      nextUserId: usersId[nextUserIndexTmp],
+      nextUserId: aliveUsersId[nextUserIndexTmp],
       nextTurnLeft: nextTurnLeftTmp,
     };
     return newCard;
   }
 
   async useCard(userId: string, roomId: string, card: string, cardIdx: number) {
-    const { usersId, nextUserIndex, nextTurnLeft } = this.rooms[roomId];
+    const { aliveUsersId, nextUserIndex, nextTurnLeft } = this.rooms[roomId];
     const newCardUse = {
       userId,
       roomId,
       card,
       cardIdx,
-      nextUserId: usersId[nextUserIndex],
+      nextUserId: aliveUsersId[nextUserIndex],
       nextTurnLeft: nextTurnLeft,
     };
     return newCardUse;
@@ -211,7 +222,7 @@ export class CustomGameRoomService {
   }
 
   async insertExplodingPuppy(roomId: string, idx: number) {
-    const { deck, usersId, nextUserIndex } = this.rooms[roomId];
+    const { deck, aliveUsersId, nextUserIndex } = this.rooms[roomId];
     const deckTmp = [
       ...deck.slice(0, idx),
       Card.explodingPuppy,
@@ -219,7 +230,7 @@ export class CustomGameRoomService {
     ];
     this.setRoomByRoomId(roomId, { deck: deckTmp });
 
-    return usersId[nextUserIndex];
+    return aliveUsersId[nextUserIndex];
   }
 
   async useEffectCard(roomId: string, card: string) {
@@ -241,9 +252,11 @@ export class CustomGameRoomService {
         break;
       }
       case Card.attack: {
-        const { nextTurnLeft, nextUserIndex, usersId } = this.rooms[roomId];
+        const { nextTurnLeft, nextUserIndex, aliveUsersId } = this.rooms[
+          roomId
+        ];
         const nextTurnLeftTmp = nextTurnLeft === 1 ? 2 : nextTurnLeft + 2;
-        const nextUserIndexTmp = (nextUserIndex + 1) % usersId.length;
+        const nextUserIndexTmp = (nextUserIndex + 1) % aliveUsersId.length;
         this.setRoomByRoomId(roomId, {
           nextTurnLeft: nextTurnLeftTmp,
           lastUserIndex: nextUserIndex,
@@ -251,24 +264,30 @@ export class CustomGameRoomService {
         });
         newEffectCard = {
           nextTurnLeft: nextTurnLeftTmp,
-          nextUserId: usersId[nextUserIndexTmp],
+          nextUserId: aliveUsersId[nextUserIndexTmp],
         };
         break;
       }
       case Card.skip: {
-        const { nextTurnLeft, nextUserIndex, usersId } = this.rooms[roomId];
+        const { nextTurnLeft, nextUserIndex, aliveUsersId } = this.rooms[
+          roomId
+        ];
         let nextTurnLeftTmp = nextTurnLeft - 1;
         let nextUserIndexTmp = nextUserIndex;
         if (nextTurnLeftTmp === 0) {
           this.setRoomByRoomId(roomId, { lastUserIndex: nextUserIndex });
-          nextUserIndexTmp = (nextUserIndex + 1) % usersId.length;
+          nextUserIndexTmp = (nextUserIndex + 1) % aliveUsersId.length;
           nextTurnLeftTmp = 1;
         }
-        this.setRoomByRoomId(roomId, { nextTurnLeft: nextTurnLeftTmp });
+        this.setRoomByRoomId(roomId, {
+          nextTurnLeft: nextTurnLeftTmp,
+          nextUserIndex: nextUserIndexTmp,
+        });
         newEffectCard = {
           nextTurnLeft: nextTurnLeftTmp,
-          nextUserId: usersId[nextUserIndexTmp],
+          nextUserId: aliveUsersId[nextUserIndexTmp],
         };
+        console.log('skip');
         break;
       }
       default: {
@@ -278,18 +297,85 @@ export class CustomGameRoomService {
     return newEffectCard;
   }
 
-  async loseGame(roomId: string) {
-    const { usersId, lastUserIndex, nextUserIndex, dead } = this.rooms[roomId];
-    dead.add(usersId[lastUserIndex]);
+  async loseGame(roomId: string, userId: string) {
+    const {
+      nextUserIndex,
+      aliveUsersId,
+      result,
+      deck,
+      nextTurnLeft,
+    } = this.rooms[roomId];
+
+    const index = aliveUsersId.indexOf(userId);
+    result.push(aliveUsersId[index]);
+    if (index > -1) {
+      aliveUsersId.splice(index, 1);
+    }
+
+    if (aliveUsersId.length === 1) {
+      result.push(aliveUsersId[0]);
+      aliveUsersId.splice(0, 1);
+    }
+
     let nextUserIndexTmp = nextUserIndex;
-    while (dead.has(usersId[nextUserIndex])) {
-      nextUserIndexTmp = (nextUserIndex + 1) % usersId.length;
+    if (aliveUsersId[nextUserIndex] !== userId) {
+      const deckIndex = deck.indexOf(Card.explodingPuppy);
+      if (deckIndex > -1) {
+        deck.splice(deckIndex, 1);
+      }
+      this.setRoomByRoomId(roomId, {
+        deck,
+      });
+    } else {
+      nextUserIndexTmp = (nextUserIndex + 1) % aliveUsersId.length;
+      this.setRoomByRoomId(roomId, {
+        nextUserIndex: nextUserIndexTmp,
+        lastUserIndex: nextUserIndexTmp,
+      });
     }
     this.setRoomByRoomId(roomId, {
-      nextUserIndex: nextUserIndexTmp,
-      lastUserIndex: nextUserIndexTmp,
-      dead,
+      aliveUsersId,
     });
-    return usersId[nextUserIndexTmp];
+    const gameLose = {
+      nextUserId: aliveUsersId[nextUserIndexTmp],
+      nextTurnLeft,
+    };
+    return gameLose;
   }
+
+  async resultGame(roomId: string) {
+    const { result, aliveUsersId } = this.rooms[roomId];
+    if (aliveUsersId.length !== 0) {
+      return false;
+    }
+    return result;
+  }
+
+  // async onPlayerExit(roomId: string, userId: string) {
+  //   const { nextUserIndex, aliveUsersId, result, deck } = this.rooms[roomId];
+  //   const explodeIndex = deck.indexOf(Card.explodingPuppy);
+  //   const userIndex = aliveUsersId.indexOf(userId);
+  //   result.push(aliveUsersId[userIndex]);
+  //   if (userIndex > -1) {
+  //     aliveUsersId.splice(userIndex, 1);
+  //   }
+
+  //   if (aliveUsersId.length === 1) {
+  //     result.push(aliveUsersId[0]);
+  //     aliveUsersId.splice(0, 1);
+  //   }
+
+  //   if (explodeIndex > -1) {
+  //     deck.splice(explodeIndex, 1);
+  //   }
+
+  //   const nextUserIndexTmp = (nextUserIndex + 1) % aliveUsersId.length;
+
+  //   this.setRoomByRoomId(roomId, {
+  //     nextUserIndex: nextUserIndexTmp,
+  //     lastUserIndex: nextUserIndexTmp,
+  //     aliveUsersId,
+  //   });
+
+  // }
 }
