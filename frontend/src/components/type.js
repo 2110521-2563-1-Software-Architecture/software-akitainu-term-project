@@ -36,7 +36,6 @@ export const Card = {
 };
 
 export function getCardImage(card) {
-  // console.log(card);
   switch (card) {
     case Card.defuse:
       return defuse;

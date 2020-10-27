@@ -1,19 +1,8 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
-import { useParams, useHistory } from "react-router-dom";
 import Chat from "./Chat";
 import Game from "./Game";
-import NavBar from "../../components/NavBar";
 import { Palette } from "components";
 import { Card } from "../../components/type";
-
-const classNames = {
-  root: {
-    height: "100vh",
-    width: "100vw",
-    maxWidth: "100%",
-  },
-};
 
 const allSelectableCards = Object.values(Card);
 allSelectableCards.splice(allSelectableCards.indexOf(Card.explodingPuppy), 1);
