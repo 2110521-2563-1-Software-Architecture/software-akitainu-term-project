@@ -77,7 +77,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   @SubscribeMessage('start-game')
   async onStartGame(socket: Socket, data: any) {
     const { roomId } = data;
-    const newGame = await this.customGameRoomService.initializeDeck(roomId);
+    const newGame = await this.customGameRoomService.onStartGame(roomId);
 
     console.log('newGame: ', newGame);
 
@@ -184,9 +184,18 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
 
   @SubscribeMessage('game-lose')
   async onGameLose(socket: Socket, data: any) {
-    const { roomId } = data;
-    const nextUserId = await this.customGameRoomService.loseGame(roomId);
+    const { roomId, userId } = data;
+    const loseResult = await this.customGameRoomService.loseGame(
+      roomId,
+      userId,
+    );
+    const { nextUserId } = loseResult;
     this.server.to(roomId).emit('new-lose', { ...data, nextUserId });
+
+    const result = await this.customGameRoomService.resultGame(roomId);
+    if (result) {
+      this.server.to(roomId).emit('new-win', { result });
+    }
   }
 
   @SubscribeMessage('use-effect')
@@ -236,6 +245,16 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
   async onNoOneNope(socket: Socket, data: any) {
     const { roomId } = data;
     this.server.to(roomId).emit('no-new-nope', data);
+  }
+
+  @SubscribeMessage('player-exit')
+  async onPlayerExit(socket: Socket, data: any) {
+    const { roomId, userId } = data;
+    const exitResult = await this.customGameRoomService.loseGame(
+      roomId,
+      userId,
+    );
+    this.server.to(roomId).emit('new-exit', { ...data, ...exitResult });
   }
 
   // chat service
