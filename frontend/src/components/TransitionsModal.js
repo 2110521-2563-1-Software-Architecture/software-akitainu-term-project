@@ -15,10 +15,11 @@ const useStyles = makeStyles((theme) => ({
   dialog: {
     width: "fit-content",
     height: "fit-content",
-    backgroundColor: "white",
+    backgroundColor: "#465A74",
     outline: "none",
+    border: "solid 4px black",
     borderRadius: "16px",
-    boxShadow: "0 0 8px 2px rgba(0, 0, 0, 0.5)",
+    boxShadow: "10px 10px 4px rgba(0, 0, 0, 0.5)",
     padding: "16px",
   },
   closeButton: {

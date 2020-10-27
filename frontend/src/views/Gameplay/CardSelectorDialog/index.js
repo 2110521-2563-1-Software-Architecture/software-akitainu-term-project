@@ -15,21 +15,33 @@ const useStyles = makeStyles((theme) => ({
   },
 
   title: {
-    fontWeight: "1000",
+    fontWeight: "bold",
     fontSize: "36px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
   },
 
   list: {
     display: "grid",
     padding: "0",
-    overflow: "scroll",
+    overflow: "auto",
     overflowX: "hidden",
     maxWidth: "85vw",
     height: "70vh",
-    gridTemplateColumns: "repeat(auto-fill, 232px)",
+    gridTemplateColumns: "repeat(auto-fill, 12vw)",
     gridGap: "10px",
-    gridAutoColumns: "250px",
-    gridAutoRows: "auto",
+    gridAutoColumns: "auto",
+    gridAutoRows: "17vw",
   },
 
   listItem: {
@@ -38,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   card: {
-    height: "250px",
+    width: "10vw",
     borderRadius: "16px",
     boxShadow: theme.shadows[5],
   },
@@ -47,6 +59,19 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     textAlign: "center",
+    fontSize: "24px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
   },
 }));
 
@@ -72,7 +97,7 @@ export default function CardSelectorDialog(props) {
                   <img
                     src={getCardImage(showBackCard ? Card.backCard : card)}
                     className={classes.card}
-                    style={{ margin: "16px" }}
+                    style={{ margin: "16px auto" }}
                   />
                 </div>
               </li>
