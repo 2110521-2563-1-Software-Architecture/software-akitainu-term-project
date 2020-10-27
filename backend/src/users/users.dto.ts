@@ -1,3 +1,7 @@
+export enum LoginType {
+  facebook,
+  google,
+}
 export class userDto {
   userId: string;
   userName: string;
@@ -7,5 +11,11 @@ export class userDto {
 
 export class newUserDto {
   userName: string;
-  accessToken: string;
+  snsId: string;
+  loginType: LoginType;
+}
+
+export class loginUserDto {
+  snsId: string;
+  loginType: LoginType;
 }

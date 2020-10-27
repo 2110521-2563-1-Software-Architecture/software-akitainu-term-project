@@ -8,9 +8,7 @@ export class UserController {
 
   @Get()
   async loginUser(@Body() loginUser) {
-    const { accessToken } = loginUser;
-    console.log("get",loginUser)
-    return this.userService.loginUser(accessToken);
+    return this.userService.loginUser(loginUser);
   }
 
   @Post()
