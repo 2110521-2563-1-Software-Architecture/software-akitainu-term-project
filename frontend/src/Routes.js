@@ -4,6 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import LoadingScreen from "components/LoadingScreen";
 import Redirect from "components/Redirect";
 import Home from "views/Home";
+import Welcome from "views/Welcome";
 import NotFound from "views/NotFound";
 import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
@@ -63,6 +64,12 @@ const routesConfig = [
         guard: AuthGaurd,
         path: "/home",
         component: Home,
+      },
+      {
+        exact: true,
+        guard: AuthGaurd,
+        path: "/welcome",
+        component: () => <Welcome />,
       },
       {
         exact: true,
