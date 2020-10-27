@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
+import exit from "../../../image/exit.png";
 import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
+import Button from "../../../components/Button";
 import Otherhand from "../Otherhand";
 import Countdown from "react-countdown";
+import classNames from "classnames";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,7 +73,6 @@ const useStyles = makeStyles((theme) => ({
   cardWrapper: {
     width: "25%",
     height: "100%",
-    // backgroundColor: "yellow", //tmp
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -79,7 +81,6 @@ const useStyles = makeStyles((theme) => ({
   logWrapper: {
     width: "50%",
     height: "100%",
-    // backgroundColor: "green", //tmp
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -92,7 +93,6 @@ const useStyles = makeStyles((theme) => ({
     zIndex: "101",
     backgroundColor: "rgba(0,0,0,0.2)",
     borderRadius: "16px",
-    // border: "16px double gray",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -127,15 +127,37 @@ const useStyles = makeStyles((theme) => ({
   },
 
   timeLeft: {
-    fontSize: "24px",
+    fontFamily: "Roboto",
+    color: "white",
+    fontSize: "32px",
     marginBottom: "16px",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
   },
 
   timeLeftBelowFiveSeconds: {
-    fontSize: "24px",
-    marginBottom: "16px",
     color: "red",
     fontWeight: "bold",
+  },
+
+  exitButton: {
+    position: "absolute",
+    top: "8px",
+    left: "8px",
+    padding: "8px 16px",
+    "& > div": {
+      "& > div": {
+        fontSize: "16px",
+      },
+    },
   },
 }));
 
@@ -345,13 +367,15 @@ function Game(props) {
       return <span></span>;
     } else {
       // Render a countdown
-      if (seconds <= 5)
-        return (
-          <span className={classes.timeLeftBelowFiveSeconds}>
-            Time left: {seconds} (s)
-          </span>
-        );
-      return <span className={classes.timeLeft}>Time left: {seconds} (s)</span>;
+      return (
+        <div
+          className={classNames(classes.timeLeft, {
+            [classes.timeLeftBelowFiveSeconds]: seconds <= 5,
+          })}
+        >
+          {seconds}
+        </div>
+      );
     }
   };
 
@@ -361,9 +385,14 @@ function Game(props) {
     } else {
       // Render a countdown
       return (
-        <span className={classes.timeLeftBelowFiveSeconds}>
-          Nope time left: {seconds} (s)
-        </span>
+        <div
+          className={classNames(
+            classes.timeLeft,
+            classes.timeLeftBelowFiveSeconds
+          )}
+        >
+          {seconds}
+        </div>
       );
     }
   };
@@ -476,6 +505,14 @@ function Game(props) {
         }}
       />
       {isSelectingPlayer && <div className={classes.backdrop} />}
+      <Button
+        text={"Exit"}
+        icon={exit}
+        iconPosition={"top"}
+        style={"secondary"}
+        onClick={() => console.log("exit room")}
+        className={classes.exitButton}
+      />
       <div>
         <button onClick={() => createCustomRoom(userId)}>
           createCustomRoom

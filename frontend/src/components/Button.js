@@ -76,23 +76,23 @@ export default function Button(props) {
   switch (iconPosition) {
     case "left":
       contentStyle = { flexDirection: "row" };
-      iconStyle = { marginRight: "16px" };
+      iconStyle = { marginRight: "8px" };
       break;
     case "right":
       contentStyle = { flexDirection: "row-reverse" };
-      iconStyle = { marginLeft: "16px" };
+      iconStyle = { marginLeft: "8px" };
       break;
     case "top":
       contentStyle = { flexDirection: "column" };
-      iconStyle = { marginBottom: "16px" };
+      iconStyle = { marginBottom: "8px" };
       break;
     case "buttom":
       contentStyle = { flexDirection: "column-reverse" };
-      iconStyle = { marginTop: "16px" };
+      iconStyle = { marginTop: "8px" };
       break;
     default:
       contentStyle = { flexDirection: "row" };
-      iconStyle = { marginRight: "16px" };
+      iconStyle = { marginRight: "8px" };
       break;
   }
   return (
