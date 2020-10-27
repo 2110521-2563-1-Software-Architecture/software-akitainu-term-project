@@ -170,6 +170,7 @@ function Game(props) {
     handleUseNope,
     countDownTime,
     newCountDown,
+    handleCompleteNopeCountdown,
   } = props;
   const classes = useStyles();
 
@@ -373,6 +374,7 @@ function Game(props) {
       key={countDownTime}
       date={countDownTime}
       renderer={nopeRenderer}
+      onComplete={handleCompleteNopeCountdown}
     />
   ) : userId === nextUserId ? (
     <Countdown
@@ -445,8 +447,7 @@ function Game(props) {
             handleUseCard={_handleUseCard}
             nextUserId={nextUserId}
             countDownComponent={countDownComponent}
-            countDownTime={countDownTime}
-            handleDrawCard={handleDrawCard}
+            canNope={canNope}
           />
         </div>
       </div>
@@ -484,12 +485,14 @@ function Game(props) {
         </button>
         <button onClick={() => startGame(roomId)}>startGame</button>
         <button
-          onClick={() => {
-            console.log(getPropsFromUserId(userId));
-            _handleUseNope();
-          }}
+          onClick={() => console.log(getPropsFromUserId(userId))}
         >
           getProps
+        </button>
+        <button
+          onClick={() => _handleUseNope()}
+        >
+          use nope
         </button>
       </div>
     </>

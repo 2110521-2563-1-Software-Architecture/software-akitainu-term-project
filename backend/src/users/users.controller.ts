@@ -13,6 +13,7 @@ export class UserController {
 
   @Post()
   async createNewUser(@Body() newUser: newUserDto) {
+    // console.log(newUser)
     return this.userService.createNewUser(newUser);
   }
 }

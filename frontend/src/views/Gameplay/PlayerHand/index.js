@@ -60,23 +60,22 @@ export default function PlayerHand(props) {
     handleUseCard,
     nextUserId,
     countDownComponent,
-    countDownTime,
-    handleDrawCard,
+    canNope,
   } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
 
   const canUseSelectedCards = () => {
-    if (nextUserId !== userId) return false;
+    if ((nextUserId !== userId) && !canNope) return false;
+    if(canNope) {
+      if(selectedCards.length === 1 && cards[selectedCards[0]] === Card.nope) return true;
+      return false;
+    }
     if (selectedCards.length === 1) {
       const card = cards[selectedCards[0]];
-      if (card === Card.common1) return false;
-      else if (card === Card.common2) return false;
-      else if (card === Card.common3) return false;
-      else if (card === Card.common4) return false;
-      else if (card === Card.common5) return false;
-      else if (card === Card.defuse) return false;
-      else return true;
+      const cantUseCard = [Card.common1, Card.common2, Card.common3, Card.common4, Card.common5, Card.defuse, Card.explodingPuppy, Card.backCard, Card.nope];
+      if (cantUseCard.indexOf(card) !== -1) return false;
+      return true;
     } else if (
       selectedCards.length === 2 &&
       cards[selectedCards[0]] === cards[selectedCards[1]]

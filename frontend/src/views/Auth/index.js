@@ -12,6 +12,7 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 import background from 'image/shibaBackground.svg'
 import clsx from 'clsx'
 import logo from '../../shiba-inu.svg'
+import axios from 'axios';
 
 const useStlyes = makeStyles((the)=>({
   root : {
@@ -159,17 +160,38 @@ function Auth() {
     window.sessionStorage.setItem("userId", userId_tmp);
   }
 
+  const googleAuthen = (profile,googleUser) => {
+    let user = {
+      accessToken:profile.getId(),
+      userName:profile.getName(),
+      googleId:profile.getId(),
+      googleToken:googleUser.accessToken,
+    }
+    console.log(user)
+    axios.post(`http://localhost:10000/users`,  user )
+      .then(res => {
+        console.log("regis success",res.data)
+      }).catch(err=>{
+        axios.get(`http://localhost:10000/users`).then((res)=>{
+          console.log("login",res.data)
+        }).catch(err=>{
+
+        })
+      })
+  }
+
   function onSignIn(googleUser) {
     console.log("success");
     var profile = googleUser.getBasicProfile();
-    console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log("Name: " + profile.getName());
-    console.log("Image URL: " + profile.getImageUrl());
-    console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
-    console.log(googleUser);
+    // console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    // console.log("Name: " + profile.getName());
+    // console.log("Image URL: " + profile.getImageUrl());
+    // console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
+    // console.log(googleUser);
     if (googleUser.accessToken) {
-      mockUserId()
-      onLoginSuccess(profile.getName())
+      // mockUserId()
+      const userData = googleAuthen(profile,googleUser)
+      // onLoginSuccess(profile.getName())
     }
   }
 
