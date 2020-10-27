@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 // import logo from '../logo.svg'
 
 function Home() {
-  const history = useHistory()
+  const history = useHistory();
 
   const joinRoom100001 = () => {
     // todo:
@@ -13,10 +13,10 @@ function Home() {
     // window.sessionStorage.setItem("userId", userId);
   };
   const onLogout = () => {
-    sessionStorage.setItem("userId",null)
+    sessionStorage.setItem("userId", null);
     history.push("/home");
-    history.go(0)
-  }
+    history.go(0);
+  };
   return (
     <div className="App">
       <header className="App-header">
@@ -46,7 +46,7 @@ function Home() {
         >
           Go to room 100001
         </a>
-        <button onClick={()=>onLogout()} style={{padding:"8px 16px"}}>
+        <button onClick={() => onLogout()} style={{ padding: "8px 16px" }}>
           logout
         </button>
       </header>

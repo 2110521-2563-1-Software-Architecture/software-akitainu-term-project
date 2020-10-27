@@ -51,7 +51,7 @@ class Gameplay extends React.Component {
       cardUserId: -1,
       countDownTime: 0,
       newCardSelectorId: -1,
-      isNoped: false, // false mean 0/2/4/... nope, true mean 1/3/5/... nope 
+      isNoped: false, // false mean 0/2/4/... nope, true mean 1/3/5/... nope
     };
   }
 
@@ -327,7 +327,7 @@ class Gameplay extends React.Component {
         usingEffectCard: Card.common5,
         newNextUserId: nextUserId,
         newNextTurnLeft: nextTurnLeft,
-        canNope: true, 
+        canNope: true,
         isNoped: false,
       });
       this.newCountDown(timeForNope);
@@ -380,7 +380,7 @@ class Gameplay extends React.Component {
 
       const { userId, roomId, card } = data;
       if (this.state.roomId !== roomId) return;
-      this.setState({usingEffectCard: Card.backCard});
+      this.setState({ usingEffectCard: Card.backCard });
       switch (card) {
         case Card.seeTheFuture:
           const { seeTheFutureCards } = data;
@@ -456,7 +456,7 @@ class Gameplay extends React.Component {
       console.log("new-nope", data);
       const { userId, roomId } = data;
       if (this.state.roomId !== roomId) return;
-      this.setState({canNope: true, isNoped: !this.state.isNoped});
+      this.setState({ canNope: true, isNoped: !this.state.isNoped });
       this.newCountDown(timeForNope);
     });
     this.state.socket.on("no-new-nope", (data) => {
@@ -480,7 +480,7 @@ class Gameplay extends React.Component {
         canNope: false,
         isNoped: false,
       });
-      if(!isNoped) {
+      if (!isNoped) {
         switch (usingEffectCard) {
           case Card.favor:
             this.setState({
@@ -590,11 +590,10 @@ class Gameplay extends React.Component {
       card,
       cardIdx,
     };
-    if(card === Card.nope) {
+    if (card === Card.nope) {
       this.newCountDown(timePerTurn);
       this.state.socket.emit("use-nope", data);
-    }
-    else this.state.socket.emit("use-card", data);
+    } else this.state.socket.emit("use-card", data);
   };
 
   selectFavorCard = (userId, targetId, card) => {
@@ -832,7 +831,8 @@ class Gameplay extends React.Component {
     return 0;
   };
 
-  handleUseNope = (userId) => { // now use only for test (click on use nope button below)
+  handleUseNope = (userId) => {
+    // now use only for test (click on use nope button below)
     const data = {
       userId,
       roomId: this.state.roomId,
@@ -846,12 +846,12 @@ class Gameplay extends React.Component {
   };
 
   handleCompleteNopeCountdown = () => {
-    const {roomId, cardUserId, userId} = this.state;
+    const { roomId, cardUserId, userId } = this.state;
     const data = {
       roomId: roomId,
     };
-    if(cardUserId === userId) this.state.socket.emit("no-one-nope", data);
-  }
+    if (cardUserId === userId) this.state.socket.emit("no-one-nope", data);
+  };
 
   render() {
     // const classes = useStyles();

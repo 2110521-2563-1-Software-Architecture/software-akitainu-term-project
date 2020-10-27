@@ -484,16 +484,10 @@ function Game(props) {
           joinCustomRoom
         </button>
         <button onClick={() => startGame(roomId)}>startGame</button>
-        <button
-          onClick={() => console.log(getPropsFromUserId(userId))}
-        >
+        <button onClick={() => console.log(getPropsFromUserId(userId))}>
           getProps
         </button>
-        <button
-          onClick={() => _handleUseNope()}
-        >
-          use nope
-        </button>
+        <button onClick={() => _handleUseNope()}>use nope</button>
       </div>
     </>
   );

@@ -4,11 +4,12 @@ import { Switch, Route } from "react-router-dom";
 import LoadingScreen from "components/LoadingScreen";
 import Redirect from "components/Redirect";
 import Home from "views/Home";
+import Welcome from "views/Welcome";
 import NotFound from "views/NotFound";
 import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
 import AuthGaurd from "components/AuthGaurd";
-import Authen from 'views/Auth'
+import Authen from "views/Auth";
 
 // const ENDPOINT = "18.141.138.13:10001";
 const ENDPOINT = "localhost:10001";
@@ -63,6 +64,12 @@ const routesConfig = [
         guard: AuthGaurd,
         path: "/home",
         component: Home,
+      },
+      {
+        exact: true,
+        guard: AuthGaurd,
+        path: "/welcome",
+        component: () => <Welcome />,
       },
       {
         exact: true,
