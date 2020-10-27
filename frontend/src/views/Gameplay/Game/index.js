@@ -335,10 +335,9 @@ function Game(props) {
   };
 
   const handleDrawCard = () => {
+    if (nextUserId !== userId || cardSelectorId !== -1 || canNope) return;
     drawCard(userId, roomId);
-    if (nextUserId === userId) {
-      newCountDown(timePerTurn);
-    }
+    newCountDown(timePerTurn);
   };
 
   const normalRenderer = ({ hours, minutes, seconds, completed }) => {
@@ -448,6 +447,7 @@ function Game(props) {
             nextUserId={nextUserId}
             countDownComponent={countDownComponent}
             canNope={canNope}
+            cardSelectorId={cardSelectorId}
           />
         </div>
       </div>
@@ -484,16 +484,10 @@ function Game(props) {
           joinCustomRoom
         </button>
         <button onClick={() => startGame(roomId)}>startGame</button>
-        <button
-          onClick={() => console.log(getPropsFromUserId(userId))}
-        >
+        <button onClick={() => console.log(getPropsFromUserId(userId))}>
           getProps
         </button>
-        <button
-          onClick={() => _handleUseNope()}
-        >
-          use nope
-        </button>
+        <button onClick={() => _handleUseNope()}>use nope</button>
       </div>
     </>
   );

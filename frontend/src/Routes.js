@@ -8,7 +8,7 @@ import NotFound from "views/NotFound";
 import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
 import AuthGaurd from "components/AuthGaurd";
-import Authen from 'views/Auth'
+import Authen from "views/Auth";
 
 // const ENDPOINT = "18.141.138.13:10001";
 const ENDPOINT = "localhost:10001";

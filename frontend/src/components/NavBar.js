@@ -32,9 +32,9 @@ const NavBar = (props) => {
   };
 
   const onLogout = () => {
-    sessionStorage.setItem("userId",null)
-    backtoHome()
-  }
+    sessionStorage.setItem("userId", null);
+    backtoHome();
+  };
 
   return (
     <div className={classes.navBarWrapper}>

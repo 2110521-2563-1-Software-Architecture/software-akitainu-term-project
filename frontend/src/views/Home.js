@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 // import logo from '../logo.svg'
 
 function Home() {
-  const history = useHistory()
+  const history = useHistory();
 
   const joinRoom100001 = () => {
     // todo:
@@ -13,10 +13,14 @@ function Home() {
     // window.sessionStorage.setItem("userId", userId);
   };
   const onLogout = () => {
-    sessionStorage.setItem("userId",null)
+    sessionStorage.setItem("userId", null);
     history.push("/home");
-    history.go(0)
-  }
+    history.go(0);
+  };
+  const handleRedirect = (to) => {
+    history.push(to);
+    history.go(0);
+  };
   return (
     <div className="App">
       <header className="App-header">
@@ -33,20 +37,19 @@ function Home() {
           Learn React
         </a>
         <p className="akitainu">by software akitainu</p>
-        <a
+        <span
           className="App-link"
-          href="http://localhost:3002/helloworld/shiba_lover"
+          onClick={() => handleRedirect("/helloworld/shiba_lover")}
         >
           Try Helloworld with shiba_lover
-        </a>
-        <a
+        </span>
+        <span
           className="App-link"
-          href="http://localhost:3002/gameplay/100001"
-          onClick={() => joinRoom100001()}
+          onClick={() => handleRedirect("/gameplay/100001")}
         >
           Go to room 100001
-        </a>
-        <button onClick={()=>onLogout()} style={{padding:"8px 16px"}}>
+        </span>
+        <button onClick={() => onLogout()} style={{ padding: "8px 16px" }}>
           logout
         </button>
       </header>
