@@ -61,12 +61,14 @@ export default function PlayerHand(props) {
     nextUserId,
     countDownComponent,
     canNope,
+    cardSelectorId,
   } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
 
   const canUseSelectedCards = () => {
     if (nextUserId !== userId && !canNope) return false;
+    if (cardSelectorId !== -1) return false;
     if (canNope) {
       if (selectedCards.length === 1 && cards[selectedCards[0]] === Card.nope)
         return true;
