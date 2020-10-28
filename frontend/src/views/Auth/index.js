@@ -119,48 +119,47 @@ const useStlyes = makeStyles((the) => ({
   //     boxShadow: "inset 6.5em 0 0 0 var(--hover)",
   //   }
   // }
-  loadingScreen : {
-    position:"absolute",
-    bottom:"0",
-    display:"flex",
-    flexDirection:"row",
+  loadingScreen: {
+    position: "absolute",
+    bottom: "0",
+    display: "flex",
+    flexDirection: "row",
     // background:"rgba(0,0,0,0.5)",
     // filter:"blur(4px)",
     // backdropFilter:"blur(20px)",
-    width:"100vw",
+    width: "100vw",
     // borderRadius:"100% 100% 0 0",
     // height:"10px",
   },
-  loadingContent : {
+  loadingContent: {
     // background:"black",
     // filter:"blur(4px)",
     // height:"100vh",
-    fontSize:"0px",
-    transition:"height 0.5s ease-in",
-    width:"20vw",
-    marginTop:"auto",
+    fontSize: "0px",
+    transition: "height 0.5s ease-in",
+    width: "20vw",
+    marginTop: "auto",
   },
-  gradien1 : {
+  gradien1: {
     background: "linear-gradient(to bottom, #ED213A, #93291E);",
-    transitionDelay:"0s",
+    transitionDelay: "0s",
   },
-  gradien2 : {
+  gradien2: {
     background: "linear-gradient(to bottom, #FDC830, #F37335);",
-    transitionDelay:"0.3s",
+    transitionDelay: "0.3s",
   },
-  gradien3 : {
+  gradien3: {
     background: "linear-gradient(to bottom, #ad5389, #3c1053);",
-    transitionDelay:"0.6s",
+    transitionDelay: "0.6s",
   },
-  gradien4 : {
+  gradien4: {
     background: "linear-gradient(to bottom, #a8c0ff, #3f2b96);",
-    transitionDelay:"0.9s",
+    transitionDelay: "0.9s",
   },
-  gradien5 : {
+  gradien5: {
     background: "linear-gradient(to bottom, #11998e, #38ef7d);",
-    transitionDelay:"1.2s",
+    transitionDelay: "1.2s",
   },
-
 }));
 
 var userId_tmp;
@@ -172,7 +171,7 @@ function Auth() {
     "315916359879-9hc3ac4snn53s7cma3rbfbotm84q6tfl.apps.googleusercontent.com";
   const history = useHistory();
   const classes = useStlyes();
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const isDevEnv =
     !process.env.NODE_ENV || process.env.NODE_ENV === "development";
@@ -189,7 +188,7 @@ function Auth() {
     }
     setTimeout(function () {
       enqueueSnackbar(`Entering the game`);
-      setLoading(true)
+      setLoading(true);
     }, 1000);
     setTimeout(function () {
       history.push("/home");

@@ -11,9 +11,12 @@ import {
   IconButton,
   InputAdornment,
   Dialog,
+  Box,
 } from "@material-ui/core";
 import Button from "components/Button";
 import CloseIcon from "@material-ui/icons/Close";
+import PetsIcon from "@material-ui/icons/Pets";
+import Pet from "../../../pets.jpg";
 
 const usestyle = makeStyles((theme) => ({
   root: {
@@ -29,11 +32,19 @@ const usestyle = makeStyles((theme) => ({
   },
 }));
 
-function ModeDialog({ open, onClose, customButton, rankButton }) {
+function RankDialog({ open, onClose, time, settime }) {
   const classes = usestyle();
-  // console.log("open",openDialog)
+  // console.log("open",open)
+
+  React.useEffect(() => {
+    if (open) {
+      setTimeout(() => settime(time + 1), 1000);
+    }
+    console.log("open", open);
+  }, [time, open]);
 
   const handleClose = () => {
+    settime(0);
     onClose();
   };
 
@@ -52,6 +63,38 @@ function ModeDialog({ open, onClose, customButton, rankButton }) {
           }}
           onClick={handleClose}
         ></CloseIcon>
+        {/* <PetsIcon
+                    style={{
+                        position: "absolute",
+                        top: "28%",
+                        right: "38%",
+                        width: "300px",
+                        height: "300px",
+                        color: "#DADADA",
+                    }}
+                ></PetsIcon> */}
+        <Grid
+          container
+          style={{
+            position: "absolute",
+            top: "56%",
+            left: "45%",
+            textAlign: "center",
+            width: "200px",
+            // backgroundImage:`url(${Pet})`
+          }}
+        >
+          {/* <img src={Pet}></img> */}
+          <Typography
+            style={{
+              color: "#FFF",
+              fontSize: "48px",
+              textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            {time}
+          </Typography>
+        </Grid>
         <Grid item container style={{ justifyContent: "center" }}>
           <Typography
             style={{
@@ -60,35 +103,12 @@ function ModeDialog({ open, onClose, customButton, rankButton }) {
               textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
             }}
           >
-            Mode
+            Waiting Time
           </Typography>
-        </Grid>
-        <Grid
-          item
-          container
-          direction="row"
-          style={{ justifyContent: "center" }}
-        >
-          <Grid item xs="2">
-            <Button
-              text="Rank"
-              className={classes.Button}
-              style="primary"
-              onClick={rankButton}
-            ></Button>
-          </Grid>
-          <Grid item xs="2" style={{ marginLeft: "100px" }}>
-            <Button
-              text="Custom"
-              className={classes.Button}
-              style="secondary"
-              onClick={customButton}
-            ></Button>
-          </Grid>
         </Grid>
       </Grid>
     </Dialog>
   );
 }
 
-export default ModeDialog;
+export default RankDialog;
