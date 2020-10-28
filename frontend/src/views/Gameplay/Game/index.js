@@ -562,10 +562,7 @@ function Game(props) {
           insertExplodingPuppy(userId, idx);
         }}
       />
-      <GameResultDialog
-        result={result}
-        userId={userId}
-      />
+      <GameResultDialog result={result} userId={userId} />
       {isSelectingPlayer && <div className={classes.backdrop} />}
       <Button
         text={"Exit"}

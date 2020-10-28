@@ -29,7 +29,7 @@ const usestyle = makeStyles((theme) => ({
   },
 }));
 
-function ModeDialog({ open, onClose, customButton }) {
+function CustomDialog({ open, onClose }) {
   const classes = usestyle();
   // console.log("open",openDialog)
 
@@ -60,7 +60,7 @@ function ModeDialog({ open, onClose, customButton }) {
               textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
             }}
           >
-            Mode
+            Custom Mode
           </Typography>
         </Grid>
         <Grid
@@ -71,17 +71,16 @@ function ModeDialog({ open, onClose, customButton }) {
         >
           <Grid item xs="2">
             <Button
-              text="Rank"
+              text="Create Room"
               className={classes.Button}
               style="primary"
             ></Button>
           </Grid>
           <Grid item xs="2" style={{ marginLeft: "100px" }}>
             <Button
-              text="Custom"
+              text="Join Room"
               className={classes.Button}
               style="secondary"
-              onClick={customButton}
             ></Button>
           </Grid>
         </Grid>
@@ -90,4 +89,4 @@ function ModeDialog({ open, onClose, customButton }) {
   );
 }
 
-export default ModeDialog;
+export default CustomDialog;
