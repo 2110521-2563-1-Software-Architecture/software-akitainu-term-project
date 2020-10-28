@@ -51,6 +51,7 @@ export class UserService {
   }
 
   async loginUser(loginUser: loginUserDto): Promise<userDto> {
+    // console.log("login",loginUser)
     const { snsId, loginType } = loginUser;
     const userWithAccess = await this.checkUser(snsId, loginType);
     if (!userWithAccess) {
