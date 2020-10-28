@@ -189,6 +189,7 @@ export class CustomGameRoomService {
     this.setRoomByRoomId(roomId, {
       nextUserIndex: nextUserIndexTmp,
       nextTurnLeft: nextTurnLeftTmp,
+      lastUserIndex: nextUserIndex,
       deck,
     });
 
@@ -304,9 +305,12 @@ export class CustomGameRoomService {
       result,
       deck,
       nextTurnLeft,
+      lastUserIndex,
     } = this.rooms[roomId];
 
     const index = aliveUsersId.indexOf(userId);
+    const deadUser = aliveUsersId[lastUserIndex];
+
     result.push(aliveUsersId[index]);
     if (index > -1) {
       aliveUsersId.splice(index, 1);
@@ -318,7 +322,11 @@ export class CustomGameRoomService {
     }
 
     let nextUserIndexTmp = nextUserIndex;
-    if (aliveUsersId[nextUserIndex] !== userId) {
+    console.log('lastUserIndex: ', lastUserIndex);
+    console.log('dead user: ', deadUser);
+    console.log('now user: ', userId);
+    if (deadUser !== userId) {
+      console.log('user exit');
       const deckIndex = deck.indexOf(Card.explodingPuppy);
       if (deckIndex > -1) {
         deck.splice(deckIndex, 1);
@@ -333,13 +341,14 @@ export class CustomGameRoomService {
         lastUserIndex: nextUserIndexTmp,
       });
     }
-    this.setRoomByRoomId(roomId, {
-      aliveUsersId,
-    });
     const gameLose = {
       nextUserId: aliveUsersId[nextUserIndexTmp],
       nextTurnLeft,
     };
+    console.log('nextUserIndexTmp: ', nextUserIndexTmp);
+    console.log('aliveUsersId: ', aliveUsersId);
+    console.log('nextUsersId: ', aliveUsersId[nextUserIndexTmp]);
+    console.log('gameLose: ', gameLose);
     return gameLose;
   }
 
