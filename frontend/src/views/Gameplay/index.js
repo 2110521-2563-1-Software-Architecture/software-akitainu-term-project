@@ -609,12 +609,10 @@ class Gameplay extends React.Component {
       const { result } = data;
       this.addLogs("Game end");
       this.setState({
-        result: result
-          .reverse()
-          .map((userId) => ({
-            userId,
-            userName: this.getUserNameByUserId(userId),
-          })),
+        result: result.reverse().map((userId) => ({
+          userId,
+          userName: this.getUserNameByUserId(userId),
+        })),
       });
     });
   }
