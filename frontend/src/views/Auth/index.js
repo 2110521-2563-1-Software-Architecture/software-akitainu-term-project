@@ -209,7 +209,10 @@ function Auth() {
   };
 
   const googleAuthen = (profile, loginType) => {
-    sessionStorage.setItem("profileImgUrl", profile.imageUrl || profile.getImageUrl())
+    sessionStorage.setItem(
+      "profileImgUrl",
+      profile.imageUrl || profile.getImageUrl()
+    );
     return new Promise((resolve, reject) => {
       let user = {
         snsId: profile.id || profile.getId(),
@@ -260,7 +263,7 @@ function Auth() {
     let profile = {
       id: response.id,
       name: response.name,
-      imageUrl : response.picture.data.url,
+      imageUrl: response.picture.data.url,
     };
     if (response.accessToken) {
       const userData = await googleAuthen(profile, "facebook");
@@ -336,19 +339,34 @@ function Auth() {
         )}
       </div>
       <div className={classes.loadingScreen}>
-        <div className={clsx(classes.loadingContent,classes.gradien1)} style={{height:loading?"100vh":"0"}}>
+        <div
+          className={clsx(classes.loadingContent, classes.gradien1)}
+          style={{ height: loading ? "100vh" : "0" }}
+        >
           &nbsp;
         </div>
-        <div className={clsx(classes.loadingContent,classes.gradien2)} style={{height:loading?"100vh":"0"}}>
+        <div
+          className={clsx(classes.loadingContent, classes.gradien2)}
+          style={{ height: loading ? "100vh" : "0" }}
+        >
           &nbsp;
         </div>
-        <div className={clsx(classes.loadingContent,classes.gradien3)} style={{height:loading?"100vh":"0"}}>
+        <div
+          className={clsx(classes.loadingContent, classes.gradien3)}
+          style={{ height: loading ? "100vh" : "0" }}
+        >
           &nbsp;
         </div>
-        <div className={clsx(classes.loadingContent,classes.gradien4)} style={{height:loading?"100vh":"0"}}>
+        <div
+          className={clsx(classes.loadingContent, classes.gradien4)}
+          style={{ height: loading ? "100vh" : "0" }}
+        >
           &nbsp;
         </div>
-        <div className={clsx(classes.loadingContent,classes.gradien5)} style={{height:loading?"100vh":"0"}}>
+        <div
+          className={clsx(classes.loadingContent, classes.gradien5)}
+          style={{ height: loading ? "100vh" : "0" }}
+        >
           &nbsp;
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import {
   Dialog,
   Slide,
@@ -7,6 +7,7 @@ import {
   Typography,
   IconButton,
   InputBase,
+  ClickAwayListener,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import { ShibaFoot, LogoutIcon } from "./components/icon";
@@ -35,10 +36,12 @@ const useStyles = makeStyles((theme) => ({
   detailContent: {
     minWidth: "200px",
     background: "#B6C5E0",
-    margin: "16px",
+    margin: "16px 32px 16px 16px",
     padding: "16px 16px 16px 16px",
     borderRadius: "16px",
     border: "3px solid black",
+    display: "flex",
+    flexDirection: "column",
   },
   detailText: {
     fontFamily: "Kanit",
@@ -58,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
   editButton: {
     padding: "8px",
-    marginLeft: "256px",
+    // marginLeft:"256px",
     height: "64px",
     width: "64px",
   },
@@ -80,7 +83,10 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
 
   useEffect(() => {}, []);
 
-  const handleChangeName = (name) => {};
+  const handleChangeName = (name) => {
+    setUsername(name);
+    sessionStorage.setItem("userName", name);
+  };
 
   const Title = () => (
     <Grid>
@@ -94,27 +100,54 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
     setFootColor(color);
   };
 
-  const Detail = () => (
+  const ProfileImage = React.memo(() => (
+    <img
+      className={classes.detailImage}
+      src={profileResouce.imgSrc}
+      alt="alternatetext"
+    />
+  ));
+
+  const isListenClickAway = () => {
+    return nameEditing ? "onClick" : false;
+  };
+
+  const detail = () => (
     <Grid container>
       <Grid style={{ padding: "16px 32px 32px 32px", marginTop: "16px" }}>
-        <img
+        {/* <img 
           className={classes.detailImage}
           src={profileResouce.imgSrc}
           alt="alternatetext"
-        />
+        /> */}
+        <ProfileImage />
       </Grid>
       <Grid className={classes.detailContent}>
         <Grid container>
           <Typography className={classes.detailText}>Name : </Typography>
-          <InputBase
-            className={classes.detailText}
-            style={{ margin: "-6px 0 0 8px" }}
-            value={userName}
-            disabled={!nameEditing}
-            onChange={(e) => handleChangeName(e.target.value)}
-          ></InputBase>
+          <ClickAwayListener
+            onClickAway={() => {
+              setNameEditing(false);
+              console.log("click");
+            }}
+            mouseEvent={isListenClickAway()}
+            touchEvent={false}
+          >
+            <InputBase
+              className={classes.detailText}
+              style={{ margin: "-6px 0 0 8px" }}
+              value={userName}
+              disabled={!nameEditing}
+              onChange={(e) => handleChangeName(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") setNameEditing(false);
+              }}
+              onDoubleClick={() => setNameEditing(true)}
+            ></InputBase>
+          </ClickAwayListener>
           <IconButton
             className={classes.editButton}
+            style={{ alignSelf: "flex-end" }}
             onClick={() => setNameEditing((status) => !status)}
           >
             <EditIcon style={{ fontSize: "40px" }} />
@@ -133,7 +166,7 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
           className={classes.detailText}
         >{`Exp ${profileResouce.userLevel}`}</Typography>
         <ShibaFoot
-          style={{ marginLeft: "600px", fill: footColor, cursor: "pointer" }}
+          style={{ alignSelf: "flex-end", fill: footColor, cursor: "pointer" }}
           onClick={randomColor}
         />
       </Grid>
@@ -175,7 +208,7 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
     >
       <Grid className={classes.container}>
         <Title />
-        <Detail />
+        {detail()}
         <Logout />
       </Grid>
     </Dialog>

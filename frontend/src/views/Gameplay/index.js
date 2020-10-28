@@ -617,8 +617,7 @@ class Gameplay extends React.Component {
         result: result.reverse().map((userId) => ({
           userId,
           userName: this.getUserNameByUserId(userId),
-          profileImgUrl: this.state.usersData[this.findUserIdx(userId)]
-            .profileImgUrl,
+          profileImgUrl: this.state.usersData[this.findUserIdx(userId)].profileImgUrl,
         })),
       });
     });
