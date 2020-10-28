@@ -14,6 +14,7 @@ import logo from "../../shiba-inu.svg";
 import { useHistory } from "react-router-dom";
 import Button from "components/Button";
 import ModeDialog from "./ModeDialog";
+import CustomDialog from "./CustomDialog";
 // import logo from '../logo.svg'
 
 const usestyle = makeStyles((theme) => ({
@@ -46,6 +47,7 @@ function Welcome() {
   const classes = usestyle();
   const history = useHistory();
   const [openModeDialog, setModeDialog] = useState(false);
+  const [openCustomDialog, setCustomDialog] = useState(false);
 
   const joinRoom100001 = () => {
     // todo:
@@ -64,8 +66,17 @@ function Welcome() {
     setModeDialog(true);
   };
 
+  const handleClickCustomButton = () => {
+    console.log("click");
+    setCustomDialog(true);
+  };
+
   const closeModeDialog = () => {
     setModeDialog(false);
+  };
+
+  const closeCustomDialog = () => {
+    setCustomDialog(false);
   };
 
   return (
@@ -108,7 +119,12 @@ function Welcome() {
       <Grid item xs="3" className={classes.mainSection}>
         <Typography style={{ textAlign: "center" }}>Leader Board</Typography>
       </Grid>
-      <ModeDialog open={openModeDialog} onClose={closeModeDialog} />
+      <ModeDialog
+        open={openModeDialog}
+        onClose={closeModeDialog}
+        customButton={handleClickCustomButton}
+      />
+      <CustomDialog open={openCustomDialog} onClose={closeCustomDialog} />
     </Grid>
   );
 }
