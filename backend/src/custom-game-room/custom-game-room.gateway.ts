@@ -188,6 +188,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     const loseResult = await this.customGameRoomService.loseGame(
       roomId,
       userId,
+      false,
     );
     this.server.to(roomId).emit('new-lose', { ...data, ...loseResult });
 
@@ -252,8 +253,14 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     const exitResult = await this.customGameRoomService.loseGame(
       roomId,
       userId,
+      true,
     );
     this.server.to(roomId).emit('new-exit', { ...data, ...exitResult });
+
+    const result = await this.customGameRoomService.resultGame(roomId);
+    if (result) {
+      this.server.to(roomId).emit('new-win', { result });
+    }
   }
 
   // chat service
