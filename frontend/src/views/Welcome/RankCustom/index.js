@@ -30,6 +30,20 @@ const usestyle = makeStyles((theme) => ({
     padding: "50px 0px 50px 0px",
     position: "center",
   },
+  text: {
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+  },
 }));
 
 function RankDialog({ open, onClose, time, settime }) {
@@ -86,10 +100,9 @@ function RankDialog({ open, onClose, time, settime }) {
         >
           {/* <img src={Pet}></img> */}
           <Typography
+            className={classes.text}
             style={{
-              color: "#FFF",
               fontSize: "48px",
-              textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
             }}
           >
             {time}
@@ -97,10 +110,9 @@ function RankDialog({ open, onClose, time, settime }) {
         </Grid>
         <Grid item container style={{ justifyContent: "center" }}>
           <Typography
+            className={classes.text}
             style={{
-              color: "#fff",
               fontSize: "48px",
-              textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
             }}
           >
             Waiting Time

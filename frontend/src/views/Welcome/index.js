@@ -45,6 +45,21 @@ const usestyle = makeStyles((theme) => ({
     width: "128px",
     alignSelf: "center",
   },
+  text: {
+    fontSize: "72px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+  },
 }));
 
 function Welcome() {
@@ -115,11 +130,12 @@ function Welcome() {
           <img src={logo} className="App-logo" alt="logo" />
         </Grid>
         <Typography
+          className={classes.text}
           style={{
             textAlign: "center",
-            color: "#ffffff",
-            textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
-            fontSize: "72px",
+            // color: "#ffffff",
+            // textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
+            // fontSize: "72px",
             marginTop: "5px",
           }}
         >
