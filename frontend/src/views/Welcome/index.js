@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import Button from "components/Button";
 import ModeDialog from "./ModeDialog";
 import CustomDialog from "./CustomDialog";
+import RankDialog from "./RankCustom";
 // import logo from '../logo.svg'
 
 const usestyle = makeStyles((theme) => ({
@@ -48,6 +49,8 @@ function Welcome() {
   const history = useHistory();
   const [openModeDialog, setModeDialog] = useState(false);
   const [openCustomDialog, setCustomDialog] = useState(false);
+  const [openRankDialog, setRankDialog] = useState(false);
+  const [time, settime] = useState(1);
 
   const joinRoom100001 = () => {
     // todo:
@@ -71,12 +74,22 @@ function Welcome() {
     setCustomDialog(true);
   };
 
+  const handleClickRankButton = () => {
+    console.log("click");
+    settime(0);
+    setRankDialog(true);
+  };
+
   const closeModeDialog = () => {
     setModeDialog(false);
   };
 
   const closeCustomDialog = () => {
     setCustomDialog(false);
+  };
+
+  const closeRankDialog = () => {
+    setRankDialog(false);
   };
 
   return (
@@ -123,8 +136,15 @@ function Welcome() {
         open={openModeDialog}
         onClose={closeModeDialog}
         customButton={handleClickCustomButton}
+        rankButton={handleClickRankButton}
       />
       <CustomDialog open={openCustomDialog} onClose={closeCustomDialog} />
+      <RankDialog
+        open={openRankDialog}
+        onClose={closeRankDialog}
+        time={time}
+        settime={settime}
+      />
     </Grid>
   );
 }
