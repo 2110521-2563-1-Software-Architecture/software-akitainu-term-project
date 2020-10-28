@@ -303,6 +303,7 @@ export class CustomGameRoomService {
 
     const index = aliveUsersId.indexOf(userId);
     const deadUser = aliveUsersId[lastUserIndex];
+    console.log('aliveUsersId', aliveUsersId);
 
     result.push(aliveUsersId[index]);
     if (index > -1) {
@@ -314,7 +315,8 @@ export class CustomGameRoomService {
       aliveUsersId.splice(0, 1);
     }
 
-    const nextUserIndexTmp = (index) % aliveUsersId.length;
+    const nextUserIndexTmp = nextUserIndex > index ? (nextUserIndex-1 + aliveUsersId.length) % aliveUsersId.length : nextUserIndex % aliveUsersId.length;
+    console.log('index: ', index);
     console.log('lastUserIndex: ', lastUserIndex);
     console.log('dead user: ', deadUser);
     console.log('now user: ', userId);
@@ -332,6 +334,7 @@ export class CustomGameRoomService {
         lastUserIndex: nextUserIndexTmp,
       });
     }
+    console.log('aaa', nextUserIndex, nextUserIndexTmp, index);
     const gameLose = {
       nextUserId: aliveUsersId[nextUserIndexTmp],
       nextTurnLeft,
