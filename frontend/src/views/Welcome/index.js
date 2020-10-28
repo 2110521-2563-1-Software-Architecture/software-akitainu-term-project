@@ -28,8 +28,10 @@ const usestyle = makeStyles((theme) => ({
   profileSection: {
     height: "20vh",
     backgroundColor: "#B6C5E0",
+    borderRadius:"16px",
+    border:"4px solid black",
   },
-  roomSection: {
+  friendSection: {
     height: "60vh",
     backgroundColor: "#B6C5E0",
     marginTop: "50px",
@@ -100,7 +102,7 @@ function Welcome() {
           {/* <Typography style={{ textAlign: "center" }}>Profile</Typography> */}
           <Profile />
         </Grid>
-        <Grid item xs="12" className={classes.roomSection}>
+        <Grid item xs="12" className={classes.friendSection}>
           <Typography style={{ textAlign: "center" }}>Room</Typography>
         </Grid>
       </Grid>
