@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import Button from "components/Button";
 import ModeDialog from "./ModeDialog";
 import CustomDialog from "./CustomDialog";
+import Profile from './Profile';
 // import logo from '../logo.svg'
 
 const usestyle = makeStyles((theme) => ({
@@ -83,7 +84,8 @@ function Welcome() {
     <Grid container direction="row" className={classes.root}>
       <Grid item container direction="row" xs="3">
         <Grid item xs="12" className={classes.profileSection}>
-          <Typography style={{ textAlign: "center" }}>Profile</Typography>
+          {/* <Typography style={{ textAlign: "center" }}>Profile</Typography> */}
+          <Profile/>
         </Grid>
         <Grid item xs="12" className={classes.roomSection}>
           <Typography style={{ textAlign: "center" }}>Room</Typography>
