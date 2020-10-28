@@ -1,19 +1,24 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
-import { Card, getCardImage } from "../../../components/type";
+import { getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
+import exit from "../../../image/exit.png";
 import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
+import GameResultDialog from "../GameResultDialog";
+import Button from "../../../components/Button";
 import Otherhand from "../Otherhand";
-import { gameTestData } from "./mock";
+import Countdown from "react-countdown";
+import classNames from "classnames";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    height: "calc(100% - 64px)",
-    backgroundColor: "#522A00",
+    height: "100%",
+    backgroundColor: "#465A74",
   },
 
   topSection: {
@@ -52,41 +57,24 @@ const useStyles = makeStyles((theme) => ({
   topPlayerWrapper: {
     height: "100%",
     width: "20%",
-    backgroundColor: "lightblue", //tmp
     position: "relative",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   middlePlayerWrapper: {
     height: "40%",
     width: "100%",
-    backgroundColor: "lightblue", //tmp
     position: "relative",
-  },
-
-  selectableTopPlayerWrapper: {
-    height: "100%",
-    width: "20%",
-    backgroundColor: "lightblue", //tmp
-    position: "relative",
-    zIndex: "101",
-    "&:hover": { boxShadow: "0px 0px 10px 4px rgba(255,255,255,0.75)" },
-    cursor: "pointer",
-  },
-
-  selectableMiddlePlayerWrapper: {
-    height: "40%",
-    width: "100%",
-    backgroundColor: "lightblue", //tmp
-    position: "relative",
-    zIndex: "101",
-    "&:hover": { boxShadow: "0px 0px 10px 4px rgba(255,255,255,0.75)" },
-    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   cardWrapper: {
     width: "25%",
     height: "100%",
-    backgroundColor: "yellow", //tmp
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -95,7 +83,6 @@ const useStyles = makeStyles((theme) => ({
   logWrapper: {
     width: "50%",
     height: "100%",
-    backgroundColor: "green", //tmp
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -106,26 +93,52 @@ const useStyles = makeStyles((theme) => ({
     height: "50%",
     position: "relative",
     zIndex: "101",
-    backgroundColor: "white",
-    borderRadius: "24px",
-    border: "16px double gray",
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderRadius: "16px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    color: "white",
     fontWeight: "500",
     fontSize: "24px",
     padding: "16px",
   },
 
+  logsList: {
+    width: "100%",
+    height: "100%",
+    overflow: "auto",
+  },
+
+  logItem: {
+    width: "100%",
+    fontSize: "20px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+    padding: "8px 0px",
+    listStyle: "none",
+    borderBottom: "solid 1px white",
+  },
+
   deck: {
-    height: "250px",
+    width: "10vw",
     cursor: "pointer",
     borderRadius: "16px",
     boxShadow: theme.shadows[5],
   },
 
   usedCard: {
-    height: "250px",
+    width: "10vw",
     borderRadius: "16px",
     boxShadow: theme.shadows[5],
     position: "relative",
@@ -134,11 +147,45 @@ const useStyles = makeStyles((theme) => ({
 
   backdrop: {
     width: "100%",
-    height: "calc(100% - 64px)",
+    height: "100%",
     backgroundColor: "rgba(0, 0, 0, 0.8)",
     position: "absolute",
-    top: "64px",
+    top: "0",
     zIndex: "100",
+  },
+
+  timeLeft: {
+    fontFamily: "Roboto",
+    color: "white",
+    fontSize: "32px",
+    marginBottom: "16px",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+  },
+
+  timeLeftBelowFiveSeconds: {
+    color: "red",
+    fontWeight: "bold",
+  },
+
+  exitButton: {
+    position: "absolute",
+    top: "8px",
+    left: "8px",
+    padding: "8px 16px",
+    "& > div": {
+      "& > div": {
+        fontSize: "16px",
+      },
+    },
   },
 }));
 
@@ -166,25 +213,37 @@ function Game(props) {
     cardSelectorCards,
     usersData,
     numberOfDeckCards,
+    nextUserId,
+    showCardSelectorBackCard,
+    userCards,
+    canNope,
+    handleUseNope,
+    countDownTime,
+    newCountDown,
+    handleCompleteNopeCountdown,
+    logs,
+    result,
+    handleExit,
   } = props;
   const classes = useStyles();
 
   const userId = window.sessionStorage.getItem("userId"); // todo:
   const roomId = "100001"; // todo:
-
-  // const [userCards, setUserCards] = useState([]);
-  const { userCards } = props;
-  const isSelectingPlayer = isSelectingPlayerId === userId
+  // console.log(props)
+  // const roomId = this.props.match.params.roomId
+  const timePerTurn = 30; // seconds
+  const [isMyTurn, setIsMyTurn] = useState(false);
+  const isSelectingPlayer = isSelectingPlayerId === userId;
 
   let users = usersData;
-  
-  for(let i=0;i<users.length;i++) {
+
+  for (let i = 0; i < users.length; i++) {
     const firstUser = users[0];
-    if(firstUser.userId === userId) break;
-    users.splice(0,1);
+    if (firstUser.userId === userId) break;
+    users.splice(0, 1);
     users.push(firstUser);
   }
-  
+
   const getUsersToRender = () => {
     switch (users.length) {
       case 1:
@@ -283,53 +342,158 @@ function Game(props) {
   const usersToRender = getUsersToRender();
 
   const _handleUseCard = (cardsIdx) => {
-    handleUseCard(userId, cardsIdx)
+    handleUseCard(userId, cardsIdx);
   };
 
   const _handleCloseCardSelectorDialog = (selectedCardIdx) => {
-    setSelectedCardIdx(isSelectingPlayerId, cardSelectorId, selectedCardIdx);
-  }
+    setSelectedCardIdx(userId, selectedCardIdx);
+  };
 
   const getTopPlayer = (user) => {
     return (
-      <div
-        className={
-          isSelectingPlayer && user
-            ? classes.selectableTopPlayerWrapper
-            : classes.topPlayerWrapper
-        }
-        onClick={
-          isSelectingPlayer
-            ? () => {
-                selectPlayer(userId, user.userId);
-              }
-            : undefined
-        }
-      >
-        {user && <Otherhand user={user} />}
+      <div className={classes.topPlayerWrapper}>
+        {user && (
+          <Otherhand
+            user={user}
+            clickable={isSelectingPlayer}
+            nextUserId={nextUserId}
+            onClick={
+              isSelectingPlayer
+                ? () => {
+                    selectPlayer(userId, user.userId);
+                  }
+                : undefined
+            }
+          />
+        )}
       </div>
     );
   };
 
   const getMiddlePlayer = (user) => {
     return (
-      <div
-        className={
-          isSelectingPlayer && user
-            ? classes.selectableMiddlePlayerWrapper
-            : classes.middlePlayerWrapper
-        }
-        onClick={
-          isSelectingPlayer
-            ? () => {
-                selectPlayer(userId, user.userId);
-              }
-            : undefined
-        }
-      >
-        {user && <Otherhand user={user} />}
+      <div className={classes.middlePlayerWrapper}>
+        {user && (
+          <Otherhand
+            user={user}
+            clickable={isSelectingPlayer}
+            nextUserId={nextUserId}
+            onClick={
+              isSelectingPlayer
+                ? () => {
+                    selectPlayer(userId, user.userId);
+                  }
+                : undefined
+            }
+          />
+        )}
       </div>
     );
+  };
+
+  const handleDrawCard = () => {
+    if (nextUserId !== userId || cardSelectorId !== -1 || canNope) return;
+    drawCard(userId, roomId);
+    newCountDown(timePerTurn);
+  };
+
+  const normalRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <span></span>;
+    } else {
+      // Render a countdown
+      return (
+        <div
+          className={classNames(classes.timeLeft, {
+            [classes.timeLeftBelowFiveSeconds]: seconds <= 5,
+          })}
+        >
+          {seconds}
+        </div>
+      );
+    }
+  };
+
+  const nopeRenderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return <span></span>;
+    } else {
+      // Render a countdown
+      return (
+        <div
+          className={classNames(
+            classes.timeLeft,
+            classes.timeLeftBelowFiveSeconds
+          )}
+        >
+          {seconds}
+        </div>
+      );
+    }
+  };
+
+  const countDownComponent = canNope ? (
+    <Countdown
+      key={countDownTime}
+      date={countDownTime}
+      renderer={nopeRenderer}
+      onComplete={handleCompleteNopeCountdown}
+    />
+  ) : userId === nextUserId ? (
+    <Countdown
+      key={countDownTime}
+      date={countDownTime}
+      renderer={normalRenderer}
+      onComplete={handleDrawCard}
+    />
+  ) : (
+    <div></div>
+  );
+
+  if (!isMyTurn && nextUserId === userId) {
+    // my turn
+    setIsMyTurn(true);
+    newCountDown(timePerTurn);
+  } else if (isMyTurn && nextUserId !== userId) {
+    // other turn
+    setIsMyTurn(false);
+    newCountDown(0);
+  }
+
+  const _handleUseNope = () => {
+    handleUseNope(userId);
+  };
+
+  const logItems = logs.map((item, idx) => (
+    <li
+      key={`log-${idx}`}
+      className={classes.logItem}
+      style={
+        idx === 0
+          ? { paddingTop: "0" }
+          : idx === logs.length - 1
+          ? { paddingButtom: "0", border: "none" }
+          : undefined
+      }
+    >
+      {item}
+    </li>
+  ));
+
+  const updateLogsScroll = () => {
+    const element = document.getElementById("logs");
+    element.scrollTop = element.scrollHeight;
+  };
+
+  useEffect(() => {
+    updateLogsScroll();
+  });
+
+  const history = useHistory();
+  const _handleExit = () => {
+    handleExit(userId);
+    history.push("/home");
+    history.go(0);
   };
 
   return (
@@ -353,17 +517,21 @@ function Game(props) {
               <img
                 src={card_back}
                 className={classes.deck}
-                onClick={() => drawCard(userId, roomId)}
+                onClick={handleDrawCard}
               />
             </div>
             <div className={classes.cardWrapper}>
               <img
-                src={topDiscardPile? getCardImage(topDiscardPile): undefined}
+                src={topDiscardPile ? getCardImage(topDiscardPile) : undefined}
                 className={classes.usedCard}
               />
             </div>
             <div className={classes.logWrapper}>
-              <div className={classes.log}>log</div>
+              <div className={classes.log}>
+                <ui id="logs" className={classes.logsList}>
+                  {logItems}
+                </ui>
+              </div>
             </div>
           </div>
           <div className={classes.middlePlayerSection}>
@@ -376,32 +544,47 @@ function Game(props) {
           <PlayerHand
             cards={userCards}
             handleUseCard={_handleUseCard}
+            nextUserId={nextUserId}
+            countDownComponent={countDownComponent}
+            canNope={canNope}
+            cardSelectorId={cardSelectorId}
           />
         </div>
       </div>
       <SeeTheFutureDialog
-        open={seeTheFutureId===userId}
+        open={seeTheFutureId === userId}
         handleClose={() => closeSeeTheFutureDialog()}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog
-        open={cardSelectorId===userId}
-        handleClose={(selelctedCardIdx) => _handleCloseCardSelectorDialog(selelctedCardIdx)}
+        open={cardSelectorId === userId}
+        handleClose={(selelctedCardIdx) =>
+          _handleCloseCardSelectorDialog(selelctedCardIdx)
+        }
         cardSelectorCards={cardSelectorCards}
-        showBackCard={false}
+        showBackCard={showCardSelectorBackCard}
       />
       <ExplodingPuppyDialog
         open={explodeId === userId}
         hasDefuse={hasDefuse(userId)}
         numberOfDeckCards={numberOfDeckCards}
         onClickSpectate={() => {
-          gameLose(userId)
+          gameLose(userId);
         }}
         onClickHideExplodingPuppy={(idx) => {
-          insertExplodingPuppy(userId, idx)
+          insertExplodingPuppy(userId, idx);
         }}
       />
+      <GameResultDialog result={result} userId={userId} />
       {isSelectingPlayer && <div className={classes.backdrop} />}
+      <Button
+        text={"Exit"}
+        icon={exit}
+        iconPosition={"top"}
+        style={"secondary"}
+        onClick={_handleExit}
+        className={classes.exitButton}
+      />
       <div>
         <button onClick={() => createCustomRoom(userId)}>
           createCustomRoom
@@ -413,6 +596,7 @@ function Game(props) {
         <button onClick={() => console.log(getPropsFromUserId(userId))}>
           getProps
         </button>
+        <button onClick={() => _handleUseNope()}>use nope</button>
       </div>
     </>
   );

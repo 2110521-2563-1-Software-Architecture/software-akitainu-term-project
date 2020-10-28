@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { Card, getCardImage } from "../../../components/type";
 import ScrollContainer from "react-indiana-drag-scroll";
-import Button from "@material-ui/core/Button";
+import Button from "../../../components/Button";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     paddingTop: "10px",
     overflow: "hidden",
-    backgroundColor: "wheat", //tmp
   },
 
   list: {
@@ -29,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
   listItem: {
     listStyle: "none",
+    width: "7vw",
   },
 
   card: {
@@ -41,31 +41,54 @@ const useStyles = makeStyles((theme) => ({
     width: "10%",
     height: "100%",
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 5,
+    paddingRight: "10px",
   },
 
-  disabledButton: {
-    color: "#494949 !important",
-    backgroundColor: "#9E9E9E !important",
+  useCardButton: {
+    width: "60%",
   },
 }));
 
 export default function PlayerHand(props) {
   const classes = useStyles();
-  const { cards, handleUseCard } = props;
-  console.log("cards", cards);
+  const {
+    cards,
+    handleUseCard,
+    nextUserId,
+    countDownComponent,
+    canNope,
+    cardSelectorId,
+  } = props;
   const [selectedCards, setSelectedCards] = useState([]);
+  const userId = window.sessionStorage.getItem("userId");
+
   const canUseSelectedCards = () => {
+    if (nextUserId !== userId && !canNope) return false;
+    if (cardSelectorId !== -1) return false;
+    if (canNope) {
+      if (selectedCards.length === 1 && cards[selectedCards[0]] === Card.nope)
+        return true;
+      return false;
+    }
     if (selectedCards.length === 1) {
       const card = cards[selectedCards[0]];
-      if (card === Card.common1) return false;
-      else if (card === Card.common2) return false;
-      else if (card === Card.common3) return false;
-      else if (card === Card.common4) return false;
-      else if (card === Card.common5) return false;
-      else if (card === Card.defuse) return false;
-      else return true;
+      const cantUseCard = [
+        Card.common1,
+        Card.common2,
+        Card.common3,
+        Card.common4,
+        Card.common5,
+        Card.defuse,
+        Card.explodingPuppy,
+        Card.backCard,
+        Card.nope,
+      ];
+      if (cantUseCard.indexOf(card) !== -1) return false;
+      return true;
     } else if (
       selectedCards.length === 2 &&
       cards[selectedCards[0]] === cards[selectedCards[1]]
@@ -79,16 +102,12 @@ export default function PlayerHand(props) {
     ) {
       return true;
     } else if (selectedCards.length === 5) {
-      let hasC1, hasC2, hasC3, hasC4, hasC5;
-      for (let i = 0; i < selectedCards.length; i++) {
-        const card = cards[selectedCards[i]];
-        if (card === Card.common1) hasC1 = true;
-        if (card === Card.common2) hasC2 = true;
-        if (card === Card.common3) hasC3 = true;
-        if (card === Card.common4) hasC4 = true;
-        if (card === Card.common5) hasC5 = true;
+      const selectingCard = selectedCards.map((cardIdx) => cards[cardIdx]);
+      selectingCard.sort();
+      for (let i = 0; i < 4; i++) {
+        if (selectingCard[i] === selectingCard[i + 1]) return false;
       }
-      return hasC1 && hasC2 && hasC3 && hasC4 && hasC5;
+      return true;
     } else {
       return false;
     }
@@ -97,9 +116,8 @@ export default function PlayerHand(props) {
   const getNthCardStyle = (n) => ({
     position: "relative",
     zIndex: `${n + 1}`,
-    marginLeft: n === 0 ? "0px" : `-50px`,
     marginTop: selectedCards.includes(n) ? "-40px" : "0px",
-    height: "250px",
+    width: "10vw",
     boxShadow:
       // equal to theme.shadows[5]
       "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
@@ -135,33 +153,26 @@ export default function PlayerHand(props) {
   const _handleUseCard = (selectedCards) => {
     handleUseCard(selectedCards);
     setSelectedCards([]);
-  } 
+  };
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.cardsWrapper}>
-        <ScrollContainer className="scroll-container">
+        <ScrollContainer
+          className="scroll-container"
+          style={{ paddingBottom: "16px" }}
+        >
           <ul className={classes.list}>{getCardsToRender(cards)}</ul>
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
-        {canUseSelectedCards() ? (
-          <Button
-          variant="contained"
-          color="primary"
+        {countDownComponent}
+        <Button
+          disabled={!canUseSelectedCards()}
+          text={selectedCards.length <= 1 ? "Use card" : "Use cards"}
           onClick={() => _handleUseCard(selectedCards)}
-        >
-          Use cards
-        </Button>
-        ) : (
-          <Button
-            variant="contained"
-            disabled
-            className={classes.disabledButton}
-          >
-            Use card(s)
-          </Button>
-        )}
+          className={classes.useCardButton}
+        />
       </div>
     </div>
   );

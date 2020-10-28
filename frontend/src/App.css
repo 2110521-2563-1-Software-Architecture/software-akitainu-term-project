@@ -27,6 +27,8 @@
 
 .App-link {
   color: #61dafb;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 @keyframes App-logo-spin {
@@ -40,4 +42,14 @@
 
 .akitainu {
   color: yellow;
+}
+
+@font-face {
+  font-family: "Quick";
+  src: local("Quick"), url(./components/Fonts/Quick.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Kanit";
+  src: local("Kanit"), url(./components/Fonts/Kanit.ttf) format("truetype");
 }

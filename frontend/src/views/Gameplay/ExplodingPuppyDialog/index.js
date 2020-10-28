@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { Card, getCardImage } from "../../../components/type";
 import TransitionsModal from "../../../components/TransitionsModal";
-import Button from "@material-ui/core/Button";
+import Button from "../../../components/Button";
 import Slider from "@material-ui/core/Slider";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "fit-content",
+    width: "50vw",
     height: "fit-content",
     padding: "0 75px 25px",
     textAlign: "center",
@@ -15,28 +15,53 @@ const useStyles = makeStyles((theme) => ({
 
   body: {
     display: "flex",
+    width: "100%",
   },
 
   title: {
-    fontWeight: "1000",
+    fontWeight: "bold",
     fontSize: "36px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
   },
 
   card: {
-    height: "250px",
+    width: "10vw",
     borderRadius: "16px",
     boxShadow: theme.shadows[5],
+    alignSelf: "flex-start",
+    margin: "auto 16px",
   },
 
   label: {
-    fontWeight: "bold",
     fontSize: "24px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
     marginTop: "0",
     marginBottom: "40px",
   },
 
   withDefuse: {
-    width: "400px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -48,16 +73,40 @@ const useStyles = makeStyles((theme) => ({
     padding: "0 16px",
     display: "flex",
     marginBottom: "40px",
+    "& > span": {
+      color: "#FF6D9F",
+      fontFamily: "Roboto",
+      textShadow:
+        "2px 0 0 black, \
+        -2px 0 0 black, \
+        0 2px 0 black, \
+        0 -2px 0 black, \
+        1px 1px 0 black, \
+        -1px -1px 0 black, \
+        1px -1px 0 black, \
+        -1px 1px 0 black, \
+        1px 1px 5px black;",
+    },
   },
 
   sliderLabel: {
-    fontWeight: "500",
     fontSize: "16px",
     margin: "auto 16px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
   },
 
   withoutDefuse: {
-    width: "300px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -76,7 +125,6 @@ export default function ExplodingPuppyDialog(props) {
     handleClose,
   } = props;
   const [selectedIdx, setSelectedIdx] = useState(0);
-  console.log('exploding',open,hasDefuse);
 
   return (
     <TransitionsModal
@@ -90,14 +138,9 @@ export default function ExplodingPuppyDialog(props) {
           <img
             src={getCardImage(Card.explodingPuppy)}
             className={classes.card}
-            style={{ margin: "16px" }}
           />
           {!!hasDefuse && (
-            <img
-              src={getCardImage(Card.defuse)}
-              className={classes.card}
-              style={{ margin: "16px" }}
-            />
+            <img src={getCardImage(Card.defuse)} className={classes.card} />
           )}
           {!!hasDefuse && (
             <div className={classes.withDefuse}>
@@ -120,11 +163,8 @@ export default function ExplodingPuppyDialog(props) {
               </div>
               <Button
                 onClick={() => onClickHideExplodingPuppy(selectedIdx)}
-                variant="contained"
-                color="primary"
-              >
-                Hide Exploding Puppy!
-              </Button>
+                text={"Hide Exploding Puppy!"}
+              />
             </div>
           )}
           {!hasDefuse && (
@@ -132,13 +172,7 @@ export default function ExplodingPuppyDialog(props) {
               <p className={classes.label}>
                 Sadly, you don't have any Defuse card left!
               </p>
-              <Button
-                onClick={() => onClickSpectate()}
-                variant="contained"
-                color="primary"
-              >
-                Spectate
-              </Button>
+              <Button onClick={() => onClickSpectate()} text={"Spectate"} />
             </div>
           )}
         </div>

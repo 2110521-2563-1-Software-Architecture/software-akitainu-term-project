@@ -1,0 +1,52 @@
+.title {
+  display: flex;
+  justify-content: center;
+  font-family: "Roboto";
+  font-weight: "bold";
+  font-size: 36px;
+  color: #ffffff;
+  text-shadow: 2px 0 0 black, -2px 0 0 black, 0 2px 0 black, 0 -2px 0 black,
+    1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black,
+    1px 1px 5px black;
+}
+
+.playerList {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  margin-top: 36px;
+  margin-bottom: 24px;
+  grid-gap: 36px;
+  grid-column-gap: 80px;
+}
+
+.avatarAndUserName {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  padding: 36px 80px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userName {
+  font-family: "Roboto";
+  font-size: 30px;
+  color: white;
+  text-shadow: -1px -1px 0 #000, 0 -1px 0 #000, 1px -1px 0 #000, 1px 0 0 #000,
+    1px 1px 0 #000, 0 1px 0 #000, -1px 1px 0 #000, -1px 0 0 #000;
+  margin-top: 4px;
+}
+
+.userUserName {
+  font-family: "Roboto";
+  font-size: 30px;
+  color: #ff9ac5;
+  text-shadow: -1px -1px 0 #000, 0 -1px 0 #000, 1px -1px 0 #000, 1px 0 0 #000,
+    1px 1px 0 #000, 0 1px 0 #000, -1px 1px 0 #000, -1px 0 0 #000;
+  margin-top: 4px;
+}

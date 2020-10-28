@@ -4,10 +4,14 @@ import { Switch, Route } from "react-router-dom";
 import LoadingScreen from "components/LoadingScreen";
 import Redirect from "components/Redirect";
 import Home from "views/Home";
+import Welcome from "views/Welcome";
 import NotFound from "views/NotFound";
 import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
+import AuthGaurd from "components/AuthGaurd";
+import Authen from "views/Auth";
 
+// const ENDPOINT = "18.141.138.13:10001";
 const ENDPOINT = "localhost:10001";
 const socket = socketIOClient(ENDPOINT);
 
@@ -42,8 +46,14 @@ const routesConfig = [
   //add more path ...
   {
     exact: true,
+    guard: AuthGaurd,
     path: "/gameplay/:roomId",
-    component: () => <Gameplay socket={socket} />,
+    component: (rest) => <Gameplay socket={socket} {...rest} />,
+  },
+  {
+    exact: true,
+    path: "/login",
+    component: () => <Authen />,
   },
   //add more path
   {
@@ -51,8 +61,15 @@ const routesConfig = [
     routes: [
       {
         exact: true,
+        guard: AuthGaurd,
         path: "/home",
         component: Home,
+      },
+      {
+        exact: true,
+        guard: AuthGaurd,
+        path: "/welcome",
+        component: () => <Welcome />,
       },
       {
         exact: true,
@@ -85,11 +102,14 @@ const renderRoutes = (routes) =>
               render={(props) => (
                 <Guard>
                   <Layout>
-                    {route.routes ? (
-                      renderRoutes(route.routes)
-                    ) : (
-                      <Component {...props} />
-                    )}
+                    {
+                      route.routes ? (
+                        renderRoutes(route.routes)
+                      ) : (
+                        <Component {...props} />
+                      )
+                      // console.log("route",props)
+                    }
                   </Layout>
                 </Guard>
               )}

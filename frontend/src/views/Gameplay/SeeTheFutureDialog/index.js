@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { getCardImage } from "../../../components/type";
 import TransitionsModal from "../../../components/TransitionsModal";
-import Button from "@material-ui/core/Button";
+import Button from "../../../components/Button";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,8 +13,20 @@ const useStyles = makeStyles((theme) => ({
   },
 
   title: {
-    fontWeight: "1000",
+    fontWeight: "bold",
     fontSize: "36px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
   },
 
   list: {
@@ -28,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   card: {
-    height: "250px",
+    width: "10vw",
     borderRadius: "16px",
     boxShadow: theme.shadows[5],
   },
@@ -37,13 +49,30 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     textAlign: "center",
+    fontSize: "24px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+  },
+
+  okayButton: {
+    width: "fit-content",
+    margin: "auto",
   },
 }));
 
 export default function SeeTheFutureDialog(props) {
   const classes = useStyles();
   const { seeTheFutureCards, open, handleClose } = props;
-  console.log(seeTheFutureCards);
   return (
     <TransitionsModal open={open} handleClose={handleClose}>
       <div className={classes.root}>
@@ -92,9 +121,11 @@ export default function SeeTheFutureDialog(props) {
               );
           })}
         </ul>
-        <Button onClick={handleClose} variant="contained" color="primary">
-          Okay
-        </Button>
+        <Button
+          text={"Okay"}
+          onClick={handleClose}
+          className={classes.okayButton}
+        />
       </div>
     </TransitionsModal>
   );
