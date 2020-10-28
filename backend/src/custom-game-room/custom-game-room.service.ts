@@ -1,17 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { NewUserJoinCustomRoomDto, Card } from './custom-game-room.dto';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { User } from 'src/entities/user.entity';
-
-const mockUsers = { '1': 'test1', '2': 'test2', '3': 'test3' };
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class CustomGameRoomService {
-  // constructor(
-  //   @InjectRepository(User)
-  //   private readonly userRepository: Repository<User>,
-  // ) {}
+  constructor(private readonly userService: UsersService) {}
 
   rooms = {};
 
@@ -49,7 +42,7 @@ export class CustomGameRoomService {
   }
 
   async getJoinedUserName(userId: string) {
-    return mockUsers[userId];
+    return this.userService.getUserName(userId);
   }
 
   async joinCustomRoom(newUserJoinRoom: NewUserJoinCustomRoomDto) {
@@ -335,7 +328,7 @@ export class CustomGameRoomService {
         deck,
       });
     } else {
-      nextUserIndexTmp = nextUserIndex % aliveUsersId.length;
+      nextUserIndexTmp = (nextUserIndex - 1) % aliveUsersId.length;
       this.setRoomByRoomId(roomId, {
         nextUserIndex: nextUserIndexTmp,
         lastUserIndex: nextUserIndexTmp,

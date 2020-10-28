@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomGameRoomModule } from './custom-game-room/custom-game-room.module';
-import { UserModule } from './users/users.module';
+import { UsersModule } from './users/users.module';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -11,7 +11,7 @@ require('dotenv').config();
 @Module({
   imports: [
     CustomGameRoomModule,
-    UserModule,
+    UsersModule,
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'mysql',

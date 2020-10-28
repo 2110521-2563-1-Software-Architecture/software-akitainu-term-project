@@ -6,7 +6,7 @@ import { newUserDto, userDto, LoginType, loginUserDto } from './users.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -66,5 +66,17 @@ export class UserService {
     };
     console.log('login user: ', userName);
     return user;
+  }
+
+  async getUserName(userId: string): Promise<string> {
+    const user = await this.userRepository.findOne({
+      where: {
+        userId,
+      },
+    });
+    if (!user) {
+      return 'test:' + userId;
+    }
+    return user.userName;
   }
 }
