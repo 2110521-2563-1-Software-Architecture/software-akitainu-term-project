@@ -1,12 +1,7 @@
-import React, { useState } from "react";
-import {
-  Grid,
-  makeStyles,
-  Typography,
-  Avatar,
-  Tooltip,
-} from "@material-ui/core";
+import React from "react";
+import { Grid, makeStyles, Avatar } from "@material-ui/core";
 import card_back from "../../../image/card_back.png";
+import classNames from "classnames";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,15 +12,13 @@ const useStyles = makeStyles((theme) => ({
     padding: "8px",
   },
   rootClickable: {
-    width: "90%",
-    height: "90%",
-    backgroundColor: "rgba(182,197,224,0.3)",
-    borderRadius: "16px",
-    padding: "8px",
     position: "relative",
     zIndex: "101",
     "&:hover": { boxShadow: "0px 0px 10px 4px rgba(255,255,255,0.75)" },
     cursor: "pointer",
+  },
+  rootCurrentTurn: {
+    boxShadow: "0px 0px 10px 4px rgba(100,60,77,0.75)",
   },
   cardsection: {
     width: "100%",
@@ -59,6 +52,14 @@ const useStyles = makeStyles((theme) => ({
       1px -1px 0 black, \
       -1px 1px 0 black, \
       1px 1px 5px black;",
+  },
+  playerNameCurrentTurn: {
+    color: "#FF9AC5",
+  },
+  dead: {
+    fontSize: "140%",
+    color: "red",
+    textAlign: "center",
   },
   cardList: {
     width: "100%",
@@ -94,9 +95,11 @@ const getNthCardStyle = (n) => ({
 
 function Otherhand(props) {
   const classes = useStyles();
-  const { user, clickable, onClick } = props;
+  const { user, clickable, nextUserId, onClick } = props;
   const name = user.userName ? user.userName : `Player ${user.userId}`;
   const numberOfCards = user.numberOfCards;
+  const isDead = user.isDead;
+  const currentTurn = nextUserId === user.userId;
   function gencard(numberofcards) {
     let tmp = Array();
     if (numberOfCards <= 10) {
@@ -140,18 +143,31 @@ function Otherhand(props) {
     <Grid
       container
       direction="row"
-      className={clickable ? classes.rootClickable : classes.root}
+      className={classNames(
+        classes.root,
+        { [classes.rootClickable]: clickable },
+        { [classes.rootCurrentTurn]: currentTurn }
+      )}
       onClick={onClick}
     >
       <Grid container item xs="12" className={classes.nameAndAvatar}>
         <Avatar alt={name} src="/broken-image.jpg"></Avatar>
-        <Grid item className={classes.playerName}>
+        <Grid
+          item
+          className={classNames(classes.playerName, {
+            [classes.playerNameCurrentTurn]: currentTurn,
+          })}
+        >
           {name}
         </Grid>
       </Grid>
-      <div className={classes.cardcontainer}>
-        <ui className={classes.cardList}>{gencard(numberOfCards)}</ui>
-      </div>
+      {isDead ? (
+        <div className={classNames(classes.playerName, classes.dead)}>DEAD</div>
+      ) : (
+        <div className={classes.cardcontainer}>
+          <ui className={classes.cardList}>{gencard(numberOfCards)}</ui>
+        </div>
+      )}
     </Grid>
   );
 }

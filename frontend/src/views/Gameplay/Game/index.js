@@ -356,6 +356,7 @@ function Game(props) {
           <Otherhand
             user={user}
             clickable={isSelectingPlayer}
+            nextUserId={nextUserId}
             onClick={
               isSelectingPlayer
                 ? () => {
