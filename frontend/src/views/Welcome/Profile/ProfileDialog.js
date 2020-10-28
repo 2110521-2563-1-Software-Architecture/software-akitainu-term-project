@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react'
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import {
   Dialog,
   Slide,
@@ -7,10 +7,10 @@ import {
   Typography,
   IconButton,
   InputBase,
-  ClickAwayListener ,
-} from '@material-ui/core'
-import EditIcon from '@material-ui/icons/Edit';
-import { ShibaFoot, LogoutIcon }  from './components/icon'
+  ClickAwayListener,
+} from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
+import { ShibaFoot, LogoutIcon } from "./components/icon";
 import { useHistory } from "react-router-dom";
 import { isElement } from "react-dom/test-utils";
 
@@ -33,15 +33,15 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "100%",
     width: "415px",
   },
-  detailContent : {
-    minWidth:"200px",
-    background:"#B6C5E0",
-    margin:"16px 32px 16px 16px",
-    padding:"16px 16px 16px 16px",
-    borderRadius:"16px",
-    border:"3px solid black",
-    display:"flex",
-    flexDirection:"column",
+  detailContent: {
+    minWidth: "200px",
+    background: "#B6C5E0",
+    margin: "16px 32px 16px 16px",
+    padding: "16px 16px 16px 16px",
+    borderRadius: "16px",
+    border: "3px solid black",
+    display: "flex",
+    flexDirection: "column",
   },
   detailText: {
     fontFamily: "Kanit",
@@ -60,12 +60,12 @@ const useStyles = makeStyles((theme) => ({
     margin: "16px auto 0px 512px",
   },
   editButton: {
-    padding:"8px",
+    padding: "8px",
     // marginLeft:"256px",
-    height:"64px",
-    width:"64px",
-  }
-}))
+    height: "64px",
+    width: "64px",
+  },
+}));
 
 function ProfileDialog({ open, handleClose, profileResouce }) {
   const classes = useStyles();
@@ -81,14 +81,12 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
     history.go(0);
   };
 
-  useEffect(()=>{
-
-  },[])
+  useEffect(() => {}, []);
 
   const handleChangeName = (name) => {
-    setUsername(name)
-    sessionStorage.setItem("userName",name)
-  }
+    setUsername(name);
+    sessionStorage.setItem("userName", name);
+  };
 
   const Title = () => (
     <Grid>
@@ -97,56 +95,80 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
   );
 
   const randomColor = () => {
-    let color = '#'+(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
-    setFootColor(color)
-  }
+    let color =
+      "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
+    setFootColor(color);
+  };
 
-  const ProfileImage = React.memo(
-    () => <img 
-    className={classes.detailImage}
-    src={profileResouce.imgSrc} 
-    alt="alternatetext"
-  />
-    );
+  const ProfileImage = React.memo(() => (
+    <img
+      className={classes.detailImage}
+      src={profileResouce.imgSrc}
+      alt="alternatetext"
+    />
+  ));
 
   const isListenClickAway = () => {
-    return nameEditing ? "onClick":false
-  }
-
+    return nameEditing ? "onClick" : false;
+  };
 
   const detail = () => (
     <Grid container>
-      <Grid style={{padding:"16px 32px 32px 32px",marginTop:"16px"}}>       
+      <Grid style={{ padding: "16px 32px 32px 32px", marginTop: "16px" }}>
         {/* <img 
           className={classes.detailImage}
           src={profileResouce.imgSrc}
           alt="alternatetext"
         /> */}
-        <ProfileImage/>
+        <ProfileImage />
       </Grid>
       <Grid className={classes.detailContent}>
-        <Grid container >
-          <Typography className={classes.detailText} >Name : </Typography>
-          <ClickAwayListener onClickAway={()=>{setNameEditing(false);console.log("click")}} mouseEvent={isListenClickAway()} touchEvent={false}>
-          <InputBase 
-            className={classes.detailText} 
-            style={{margin:"-6px 0 0 8px"}} 
-            value={userName} 
-            disabled={!nameEditing} 
-            onChange={(e)=>handleChangeName(e.target.value)}
-            onKeyPress={(e)=>{
-              if (e.key === "Enter") setNameEditing(false)
+        <Grid container>
+          <Typography className={classes.detailText}>Name : </Typography>
+          <ClickAwayListener
+            onClickAway={() => {
+              setNameEditing(false);
+              console.log("click");
             }}
-            onDoubleClick={()=>setNameEditing(true)}
-          ></InputBase>
+            mouseEvent={isListenClickAway()}
+            touchEvent={false}
+          >
+            <InputBase
+              className={classes.detailText}
+              style={{ margin: "-6px 0 0 8px" }}
+              value={userName}
+              disabled={!nameEditing}
+              onChange={(e) => handleChangeName(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") setNameEditing(false);
+              }}
+              onDoubleClick={() => setNameEditing(true)}
+            ></InputBase>
           </ClickAwayListener>
-          <IconButton className={classes.editButton} style={{alignSelf:"flex-end"}} onClick={()=>setNameEditing((status)=>!status)}><EditIcon style={{fontSize:"40px"}}/></IconButton>
+          <IconButton
+            className={classes.editButton}
+            style={{ alignSelf: "flex-end" }}
+            onClick={() => setNameEditing((status) => !status)}
+          >
+            <EditIcon style={{ fontSize: "40px" }} />
+          </IconButton>
         </Grid>
-        <Typography className={classes.detailText}>{`Rank ${profileResouce.userRank}`}</Typography>
-        <Typography className={classes.detailText}>{`Level ${profileResouce.userLevel}`}</Typography>
-        <Typography className={classes.detailText}>{`Win rate ${profileResouce.userLevel}`}</Typography>
-        <Typography className={classes.detailText}>{`Exp ${profileResouce.userLevel}`}</Typography>
-        <ShibaFoot style={{alignSelf:"flex-end",fill:footColor,cursor:"pointer"}} onClick={randomColor}/>
+        <Typography
+          className={classes.detailText}
+        >{`Rank ${profileResouce.userRank}`}</Typography>
+        <Typography
+          className={classes.detailText}
+        >{`Level ${profileResouce.userLevel}`}</Typography>
+        <Typography
+          className={classes.detailText}
+        >{`Win rate ${profileResouce.userLevel}`}</Typography>
+        <Typography
+          className={classes.detailText}
+        >{`Exp ${profileResouce.userLevel}`}</Typography>
+        <ShibaFoot
+          style={{ alignSelf: "flex-end", fill: footColor, cursor: "pointer" }}
+          onClick={randomColor}
+        />
       </Grid>
     </Grid>
   );
@@ -185,9 +207,9 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
       classes={PaperProps}
     >
       <Grid className={classes.container}>
-        <Title/>
+        <Title />
         {detail()}
-        <Logout/>
+        <Logout />
       </Grid>
     </Dialog>
   );
