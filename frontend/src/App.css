@@ -48,3 +48,8 @@
   font-family: "Quick";
   src: local("Quick"), url(./components/Fonts/Quick.ttf) format("truetype");
 }
+
+@font-face {
+  font-family: "Kanit";
+  src: local("Kanit"), url(./components/Fonts/Kanit.ttf) format("truetype");
+}

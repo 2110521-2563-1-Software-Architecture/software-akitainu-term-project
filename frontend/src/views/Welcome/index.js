@@ -27,6 +27,8 @@ const usestyle = makeStyles((theme) => ({
   profileSection: {
     height: "20vh",
     backgroundColor: "#B6C5E0",
+    borderRadius:"8px",
+    border:"4px solid black",
   },
   roomSection: {
     height: "60vh",
