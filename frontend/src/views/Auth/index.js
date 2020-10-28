@@ -209,6 +209,7 @@ function Auth() {
   };
 
   const googleAuthen = (profile, loginType) => {
+    sessionStorage.setItem("profileImgUrl", profile.imageUrl || profile.getImageUrl())
     return new Promise((resolve, reject) => {
       let user = {
         snsId: profile.id || profile.getId(),
@@ -246,6 +247,7 @@ function Auth() {
     // console.log("Image URL: " + profile.getImageUrl());
     // console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
     // console.log(googleUser);
+    // console.log(googleUser)
     if (googleUser.accessToken) {
       // mockUserId()
       const userData = await googleAuthen(profile, "google");
@@ -258,6 +260,7 @@ function Auth() {
     let profile = {
       id: response.id,
       name: response.name,
+      imageUrl : response.picture.data.url,
     };
     if (response.accessToken) {
       const userData = await googleAuthen(profile, "facebook");
@@ -332,7 +335,7 @@ function Auth() {
           </Button>
         )}
       </div>
-      {/* <div className={classes.loadingScreen}>
+      <div className={classes.loadingScreen}>
         <div className={clsx(classes.loadingContent,classes.gradien1)} style={{height:loading?"100vh":"0"}}>
           &nbsp;
         </div>
@@ -348,7 +351,7 @@ function Auth() {
         <div className={clsx(classes.loadingContent,classes.gradien5)} style={{height:loading?"100vh":"0"}}>
           &nbsp;
         </div>
-      </div> */}
+      </div>
       {/* <div className={classes.loadingScreen}>
         nbsp;
       </div> */}
