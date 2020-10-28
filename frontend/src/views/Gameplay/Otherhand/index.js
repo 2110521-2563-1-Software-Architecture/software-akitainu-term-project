@@ -97,6 +97,7 @@ function Otherhand(props) {
   const { user, clickable, onClick } = props;
   const name = user.userName ? user.userName : `Player ${user.userId}`;
   const numberOfCards = user.numberOfCards;
+  const profileImgUrl = user.profileImgUrl;
   function gencard(numberofcards) {
     let tmp = Array();
     if (numberOfCards <= 10) {
@@ -144,7 +145,7 @@ function Otherhand(props) {
       onClick={onClick}
     >
       <Grid container item xs="12" className={classes.nameAndAvatar}>
-        <Avatar alt={name} src="/broken-image.jpg"></Avatar>
+        <Avatar alt={name} src={profileImgUrl}></Avatar>
         <Grid item className={classes.playerName}>
           {name}
         </Grid>

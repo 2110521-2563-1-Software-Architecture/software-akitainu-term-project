@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 export default function GameResultDialog(props) {
   const { result, userId } = props;
   const open = result.length > 0;
+  console.log("GameResultDialog", result);
   let userRank = 0;
   result.map((user, idx) => {
     if (userId === user.userId) userRank = idx + 1;
@@ -47,24 +48,26 @@ export default function GameResultDialog(props) {
       <div className="modal">
         <div className="userRankText">You are {userRankText}</div>
         <div className="playerList">
-          {result.map(({ userId, userName }, idx) => {
+          {result.map(({ userId, userName, profileImgUrl }, idx) => {
             if (idx !== userRank - 1)
+              // other player
               return (
                 <div className="avatarAndUserName">
                   <Avatar
                     className={classes.avatar}
                     alt={userName}
-                    src="/broken-image.jpg"
+                    src={profileImgUrl}
                   />
                   <span className="userName">{userName}</span>
                 </div>
               );
             return (
+              // player
               <div className="avatarAndUserName">
                 <Avatar
                   className={classes.userAvatar}
                   alt={userName}
-                  src="/broken-image.jpg"
+                  src={profileImgUrl}
                 />
                 <span className="userUserName">{userName}</span>
               </div>

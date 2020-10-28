@@ -28,8 +28,8 @@ const usestyle = makeStyles((theme) => ({
   profileSection: {
     height: "20vh",
     backgroundColor: "#B6C5E0",
-    borderRadius:"16px",
-    border:"4px solid black",
+    borderRadius: "16px",
+    border: "4px solid black",
   },
   friendSection: {
     height: "60vh",

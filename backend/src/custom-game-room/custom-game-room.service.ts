@@ -169,7 +169,9 @@ export class CustomGameRoomService {
 
     const card = deck.shift();
     const leftCardNumber = deck.length;
-    console.log('nextUser: ', aliveUsersId[nextUserIndex]);
+    console.log('userId: ', userId);
+    console.log('nextUserIndex: ', nextUserIndex);
+    console.log('aliveUsersId: ', aliveUsersId);
     console.log('nextTurnLeft: ', nextTurnLeft);
     let nextTurnLeftTmp = nextTurnLeft - 1;
 
@@ -328,12 +330,11 @@ export class CustomGameRoomService {
       this.setRoomByRoomId(roomId, {
         deck,
       });
-    } else {
-      this.setRoomByRoomId(roomId, {
-        nextUserIndex: nextUserIndexTmp,
-        lastUserIndex: nextUserIndexTmp,
-      });
-    }
+    } 
+    this.setRoomByRoomId(roomId, {
+      nextUserIndex: nextUserIndexTmp,
+      lastUserIndex: nextUserIndexTmp,
+    });
     console.log('aaa', nextUserIndex, nextUserIndexTmp, index);
     const gameLose = {
       nextUserId: aliveUsersId[nextUserIndexTmp],

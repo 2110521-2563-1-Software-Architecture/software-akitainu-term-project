@@ -17,7 +17,7 @@ class Gameplay extends React.Component {
     this.state = {
       socket: props.socket,
       roomId: props.match.params.roomId, // room Id
-      usersData: [], // {userId, userName, userCards, isDead}
+      usersData: [], // {userId, userName, userCards, isDead, profileImgUrl}
       createdTime: new Date(),
       leftCardNumber: -1, // left card number in the card pile
       nextUserId: -1,
@@ -56,6 +56,8 @@ class Gameplay extends React.Component {
         sessionStorage.getItem("userName") ||
         window.sessionStorage.getItem("userName") ||
         userId;
+      const profileImgUrl =
+        sessionStorage.getItem("profileImgUrl") || "/broken-image.jpg";
       const usersData = [
         {
           userId,
@@ -63,6 +65,7 @@ class Gameplay extends React.Component {
           userCards: [],
           numberOfCards: 0,
           isDead: false,
+          profileImgUrl: profileImgUrl,
         },
       ];
 
@@ -76,7 +79,7 @@ class Gameplay extends React.Component {
       console.log("new-join-custom-other", data);
       if (!data) return;
 
-      const { userId, roomId, userName } = data;
+      const { userId, roomId, userName, profileImgUrl } = data;
       const { usersData } = this.state;
       console.log(usersData, userId);
       if (userId === this.state.userId) return;
@@ -86,6 +89,7 @@ class Gameplay extends React.Component {
         userCards: [],
         numberOfCards: 0,
         isDead: false,
+        profileImgUrl,
       };
       usersData.push(newUserData);
       this.addLogs(userName + " joined this room");
@@ -98,7 +102,7 @@ class Gameplay extends React.Component {
       console.log("new-join-custom-joiner", data);
       if (!data) return;
       const usersData = [];
-      const { usersId, usersName } = data;
+      const { usersId, usersName, profileImgUrls } = data;
       usersId.forEach((userId, idx) => {
         const newUserData = {
           userId,
@@ -106,6 +110,7 @@ class Gameplay extends React.Component {
           userCards: 0,
           numberOfCards: 0,
           isDead: false,
+          // profileImgUrl: profileImgUrls[idx], todo:
         };
         usersData.push(newUserData);
       });
@@ -609,12 +614,12 @@ class Gameplay extends React.Component {
       const { result } = data;
       this.addLogs("Game end");
       this.setState({
-        result: result
-          .reverse()
-          .map((userId) => ({
-            userId,
-            userName: this.getUserNameByUserId(userId),
-          })),
+        result: result.reverse().map((userId) => ({
+          userId,
+          userName: this.getUserNameByUserId(userId),
+          profileImgUrl: this.state.usersData[this.findUserIdx(userId)]
+            .profileImgUrl,
+        })),
       });
     });
   }

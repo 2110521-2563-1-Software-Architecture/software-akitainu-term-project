@@ -226,7 +226,6 @@ function Game(props) {
     handleExit,
   } = props;
   const classes = useStyles();
-  
 
   const userId = window.sessionStorage.getItem("userId"); // todo:
   const roomId = "100001"; // todo:
