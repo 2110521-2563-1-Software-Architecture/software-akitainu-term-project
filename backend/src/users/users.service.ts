@@ -74,6 +74,9 @@ export class UsersService {
         userId,
       },
     });
+    if (!user) {
+      return 'test:' + userId;
+    }
     return user.userName;
   }
 }
