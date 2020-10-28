@@ -16,7 +16,7 @@ import Button from "components/Button";
 import ModeDialog from "./ModeDialog";
 import CustomDialog from "./CustomDialog";
 import RankDialog from "./RankCustom";
-import Profile from './Profile';
+import Profile from "./Profile";
 // import logo from '../logo.svg'
 
 const usestyle = makeStyles((theme) => ({
@@ -28,8 +28,8 @@ const usestyle = makeStyles((theme) => ({
   profileSection: {
     height: "20vh",
     backgroundColor: "#B6C5E0",
-    borderRadius:"16px",
-    border:"4px solid black",
+    borderRadius: "16px",
+    border: "4px solid black",
   },
   friendSection: {
     height: "60vh",
@@ -100,7 +100,7 @@ function Welcome() {
       <Grid item container direction="row" xs="3">
         <Grid item xs="12" className={classes.profileSection}>
           {/* <Typography style={{ textAlign: "center" }}>Profile</Typography> */}
-          <Profile/>
+          <Profile />
         </Grid>
         <Grid item xs="12" className={classes.friendSection}>
           <Typography style={{ textAlign: "center" }}>Room</Typography>

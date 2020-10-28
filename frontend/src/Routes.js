@@ -48,7 +48,7 @@ const routesConfig = [
     exact: true,
     guard: AuthGaurd,
     path: "/gameplay/:roomId",
-    component: (rest) => <Gameplay socket={socket} {...rest}/>,
+    component: (rest) => <Gameplay socket={socket} {...rest} />,
   },
   {
     exact: true,
@@ -102,13 +102,13 @@ const renderRoutes = (routes) =>
               render={(props) => (
                 <Guard>
                   <Layout>
-                    {route.routes ? (
-                      renderRoutes(route.routes)
-                    ) : (
-    
-                      <Component {...props} />
-                    )
-                    // console.log("route",props)
+                    {
+                      route.routes ? (
+                        renderRoutes(route.routes)
+                      ) : (
+                        <Component {...props} />
+                      )
+                      // console.log("route",props)
                     }
                   </Layout>
                 </Guard>

@@ -12,27 +12,26 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 import { ShibaFoot, LogoutIcon }  from './components/icon'
 import { useHistory } from "react-router-dom";
-import { isElement } from 'react-dom/test-utils';
-
+import { isElement } from "react-dom/test-utils";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const useStyles = makeStyles((theme)=>({
-  root : {
+const useStyles = makeStyles((theme) => ({
+  root: {
     // "& .MuiDialog-paper" : {
     //   background:"red",
     // }
   },
-  container : {
-    background:"#465A74",
-    borderRadius:"16px",
+  container: {
+    background: "#465A74",
+    borderRadius: "16px",
     // width:"800px",
   },
-  detailImage : {
-    borderRadius:"100%",
-    width:"415px",
+  detailImage: {
+    borderRadius: "100%",
+    width: "415px",
   },
   detailContent : {
     minWidth:"200px",
@@ -44,21 +43,21 @@ const useStyles = makeStyles((theme)=>({
     display:"flex",
     flexDirection:"column",
   },
-  detailText : {
+  detailText: {
     fontFamily: "Kanit",
-    fontSize:"48px",
-    lineHeight:"56px",
-    transition:"all 0.2s ease-in-out"
+    fontSize: "48px",
+    lineHeight: "56px",
+    transition: "all 0.2s ease-in-out",
   },
   dialogPaper: {
-    background:"none",
-    maxWidth:"1800px",
+    background: "none",
+    maxWidth: "1800px",
   },
-  title : {
+  title: {
     fontFamily: "Kanit",
-    fontSize:"72px",
-    color:"white",
-    margin:"16px auto 0px 512px",
+    fontSize: "72px",
+    color: "white",
+    margin: "16px auto 0px 512px",
   },
   editButton: {
     padding:"8px",
@@ -68,13 +67,13 @@ const useStyles = makeStyles((theme)=>({
   }
 }))
 
-function ProfileDialog({open, handleClose, profileResouce}) {
-  const classes = useStyles()
-  const offsetTitle = useRef(0)
-  const [footColor,setFootColor] = useState("#000000");
+function ProfileDialog({ open, handleClose, profileResouce }) {
+  const classes = useStyles();
+  const offsetTitle = useRef(0);
+  const [footColor, setFootColor] = useState("#000000");
   const history = useHistory();
-  const [nameEditing,setNameEditing] = useState(false);
-  const [userName,setUsername] = useState(profileResouce.userName)
+  const [nameEditing, setNameEditing] = useState(false);
+  const [userName, setUsername] = useState(profileResouce.userName);
 
   const onLogout = () => {
     sessionStorage.clear();
@@ -91,10 +90,11 @@ function ProfileDialog({open, handleClose, profileResouce}) {
     sessionStorage.setItem("userName",name)
   }
 
-
   const Title = () => (
-    <Grid><Typography className={classes.title}>Profile</Typography></Grid>
-  )
+    <Grid>
+      <Typography className={classes.title}>Profile</Typography>
+    </Grid>
+  );
 
   const randomColor = () => {
     let color = '#'+(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
@@ -119,7 +119,7 @@ function ProfileDialog({open, handleClose, profileResouce}) {
       <Grid style={{padding:"16px 32px 32px 32px",marginTop:"16px"}}>       
         {/* <img 
           className={classes.detailImage}
-          src={profileResouce.imgSrc} 
+          src={profileResouce.imgSrc}
           alt="alternatetext"
         /> */}
         <ProfileImage/>
@@ -148,20 +148,33 @@ function ProfileDialog({open, handleClose, profileResouce}) {
         <Typography className={classes.detailText}>{`Exp ${profileResouce.userLevel}`}</Typography>
         <ShibaFoot style={{alignSelf:"flex-end",fill:footColor,cursor:"pointer"}} onClick={randomColor}/>
       </Grid>
-  </Grid>
-  )
+    </Grid>
+  );
 
   const Logout = () => (
-    <Grid container >
-      <IconButton style={{marginLeft:"32px",marginBottom:"32px"}} onClick={onLogout}><LogoutIcon/></IconButton>
-      <Typography className={classes.detailText} onClick={onLogout} style={{marginTop:"16px",marginLeft:"16px",color:"white", cursor:"pointer"}}>{`Logout`}</Typography>
+    <Grid container>
+      <IconButton
+        style={{ marginLeft: "32px", marginBottom: "32px" }}
+        onClick={onLogout}
+      >
+        <LogoutIcon />
+      </IconButton>
+      <Typography
+        className={classes.detailText}
+        onClick={onLogout}
+        style={{
+          marginTop: "16px",
+          marginLeft: "16px",
+          color: "white",
+          cursor: "pointer",
+        }}
+      >{`Logout`}</Typography>
     </Grid>
-  )
-
+  );
 
   const PaperProps = {
-      paper : classes.dialogPaper
-  }
+    paper: classes.dialogPaper,
+  };
 
   return (
     <Dialog
@@ -177,6 +190,6 @@ function ProfileDialog({open, handleClose, profileResouce}) {
         <Logout/>
       </Grid>
     </Dialog>
-  )
+  );
 }
-export default ProfileDialog
+export default ProfileDialog;
