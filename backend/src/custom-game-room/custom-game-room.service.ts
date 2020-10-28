@@ -291,7 +291,7 @@ export class CustomGameRoomService {
     return newEffectCard;
   }
 
-  async loseGame(roomId: string, userId: string) {
+  async loseGame(roomId: string, userId: string, isExit: boolean) {
     const {
       nextUserIndex,
       aliveUsersId,
@@ -314,12 +314,11 @@ export class CustomGameRoomService {
       aliveUsersId.splice(0, 1);
     }
 
-    let nextUserIndexTmp = nextUserIndex;
+    const nextUserIndexTmp = (index) % aliveUsersId.length;
     console.log('lastUserIndex: ', lastUserIndex);
     console.log('dead user: ', deadUser);
     console.log('now user: ', userId);
-    if (deadUser !== userId) {
-      console.log('user exit');
+    if (isExit) {
       const deckIndex = deck.indexOf(Card.explodingPuppy);
       if (deckIndex > -1) {
         deck.splice(deckIndex, 1);
@@ -328,7 +327,6 @@ export class CustomGameRoomService {
         deck,
       });
     } else {
-      nextUserIndexTmp = (nextUserIndex - 1) % aliveUsersId.length;
       this.setRoomByRoomId(roomId, {
         nextUserIndex: nextUserIndexTmp,
         lastUserIndex: nextUserIndexTmp,

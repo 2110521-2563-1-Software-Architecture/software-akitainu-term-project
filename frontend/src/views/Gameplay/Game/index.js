@@ -12,6 +12,7 @@ import Button from "../../../components/Button";
 import Otherhand from "../Otherhand";
 import Countdown from "react-countdown";
 import classNames from "classnames";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -222,6 +223,7 @@ function Game(props) {
     handleCompleteNopeCountdown,
     logs,
     result,
+    handleExit,
   } = props;
   const classes = useStyles();
 
@@ -483,6 +485,13 @@ function Game(props) {
     updateLogsScroll();
   });
 
+  const history = useHistory();
+  const _handleExit = () => {
+    handleExit(userId);
+    history.push("/home");
+    history.go(0);
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -569,7 +578,7 @@ function Game(props) {
         icon={exit}
         iconPosition={"top"}
         style={"secondary"}
-        onClick={() => console.log("exit room")}
+        onClick={_handleExit}
         className={classes.exitButton}
       />
       <div>

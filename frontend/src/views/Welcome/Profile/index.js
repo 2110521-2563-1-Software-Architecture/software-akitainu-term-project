@@ -1,14 +1,8 @@
-import React from 'react'
-import {
-  Grid,
-  Typography,
-  Dialog,
-} from '@material-ui/core'
+import React from "react";
+import { Grid, Typography, Dialog } from "@material-ui/core";
 
 function Profile() {
-  return (
-    <p>Profile</p>
-  )
+  return <p>Profile</p>;
 }
 
-export default Profile
+export default Profile;

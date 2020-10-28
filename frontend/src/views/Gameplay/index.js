@@ -13,10 +13,10 @@ const timeForNope = 5; // seconds
 
 class Gameplay extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       socket: props.socket,
-      roomId: -1, // room Id
+      roomId: props.match.params.roomId, // room Id
       usersData: [], // {userId, userName, userCards, isDead}
       createdTime: new Date(),
       leftCardNumber: -1, // left card number in the card pile
@@ -51,14 +51,18 @@ class Gameplay extends React.Component {
       console.log("new-custom-room", data);
 
       const { userId, roomId } = data;
-      const userName = this.getUserNameByUserId(userId);
+      if (userId !== this.state.userId) return; // Should not possible?
+      const userName =
+        sessionStorage.getItem("userName") ||
+        window.sessionStorage.getItem("userName") ||
+        userId;
       const usersData = [
         {
           userId,
           userName,
           userCards: [],
           numberOfCards: 0,
-          isDead: 0,
+          isDead: false,
         },
       ];
 
@@ -72,8 +76,7 @@ class Gameplay extends React.Component {
       console.log("new-join-custom-other", data);
       if (!data) return;
 
-      const { userId, roomId } = data;
-      const userName = this.getUserNameByUserId(userId);
+      const { userId, roomId, userName } = data;
       const { usersData } = this.state;
       console.log(usersData, userId);
       if (userId === this.state.userId) return;
@@ -82,7 +85,7 @@ class Gameplay extends React.Component {
         userName,
         userCards: [],
         numberOfCards: 0,
-        isDead: 0,
+        isDead: false,
       };
       usersData.push(newUserData);
       this.addLogs(userName + " joined this room");
@@ -95,14 +98,14 @@ class Gameplay extends React.Component {
       console.log("new-join-custom-joiner", data);
       if (!data) return;
       const usersData = [];
-      const { usersId } = data;
-      usersId.forEach((userId) => {
+      const { usersId, usersName } = data;
+      usersId.forEach((userId, idx) => {
         const newUserData = {
           userId,
-          userName: this.getUserNameByUserId(userId),
+          userName: usersName[idx],
           userCards: 0,
           numberOfCards: 0,
-          isDead: 0,
+          isDead: false,
         };
         usersData.push(newUserData);
       });
@@ -130,8 +133,6 @@ class Gameplay extends React.Component {
         this.drawExplodingPuppy(userId, roomId);
         this.setState({
           leftCardNumber,
-          newNextUserId: nextUserId,
-          newNnextTurnLeft: nextTurnLeft,
         });
         return;
       }
@@ -171,10 +172,10 @@ class Gameplay extends React.Component {
       usersId.forEach((userId, idx) => {
         const newUserData = {
           userId,
-          userName: "", // todo:
+          userName: this.getUserNameByUserId(userId),
           userCards: usersCard[idx],
           numberOfCards: usersCard[idx].length,
-          isDead: 0,
+          isDead: false,
         };
         usersData.push(newUserData);
       });
@@ -414,8 +415,17 @@ class Gameplay extends React.Component {
       const { userId, roomId, nextUserId } = data;
       if (this.state.roomId !== roomId) return;
       const userName = this.getUserNameByUserId(userId);
-      this.addLogs(userId + " lose the game");
-      this.setState({ explodeId: -1, hasDefuse: 0, nextUserId });
+      this.addLogs(userName + " lose the game");
+      const { usersData } = this.state;
+      const userIdx = this.findUserIdx(userId);
+      usersData[userIdx].isDead = true;
+      this.setState({
+        explodeId: -1,
+        hasDefuse: 0,
+        nextUserId,
+        nextTurnLeft: 1,
+        usersData,
+      });
     });
     this.state.socket.on("new-effect", (data) => {
       console.log("new-effect", data);
@@ -583,17 +593,29 @@ class Gameplay extends React.Component {
     });
     this.state.socket.on("new-exit", (data) => {
       console.log("new-exit", data);
-      const { userId, roomId } = data;
+      const { userId, roomId, nextUserId } = data;
+      if (roomId != this.state.roomId) return;
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(
         userName + " exited from this room; Removed 1 exploding puppy"
       );
+      const { usersData } = this.state;
+      const userIdx = this.findUserIdx(userId);
+      usersData[userIdx].isDead = true;
+      this.setState({ usersData, nextUserId, nextTurnLeft: 1 });
     });
     this.state.socket.on("new-win", (data) => {
       console.log("new-win", data);
       const { result } = data;
       this.addLogs("Game end");
-      this.setState({ result });
+      this.setState({
+        result: result
+          .reverse()
+          .map((userId) => ({
+            userId,
+            userName: this.getUserNameByUserId(userId),
+          })),
+      });
     });
   }
 
@@ -613,9 +635,14 @@ class Gameplay extends React.Component {
       isNoped: this.state.isNoped,
       countDownTime: this.state.countDownTime,
       cardSelectorId: this.state.cardSelectorId,
+      userId: this.state.userId,
     };
     if (this.state.usersData[userIdx]?.userCards && userIdx >= 0)
       data.userCards = this.state.usersData[userIdx].userCards[userIdx];
+    console.log(
+      sessionStorage.getItem("userId"),
+      sessionStorage.getItem("userName")
+    );
     return data;
   };
 
@@ -644,6 +671,7 @@ class Gameplay extends React.Component {
 
   joinCustomRoom = (userId) => {
     const userIdx = this.findUserIdx(userId);
+    console.log(userIdx, this.state.leftCardNumber);
     if (userIdx !== -1) return;
     if (this.state.leftCardNumber !== -1) return; // cant join after game started
     const data = {
@@ -953,7 +981,9 @@ class Gameplay extends React.Component {
   };
 
   getUserNameByUserId = (userId) => {
-    // todo:
+    const { usersData } = this.state;
+    const userIdx = this.findUserIdx(userId);
+    if (userIdx !== -1) return usersData[userIdx].userName;
     return userId;
   };
 
@@ -962,7 +992,7 @@ class Gameplay extends React.Component {
       userId,
       roomId: this.state.roomId,
     };
-    this.state.emit("player-exit", data);
+    this.state.socket.emit("player-exit", data);
   };
 
   render() {
@@ -1045,6 +1075,7 @@ class Gameplay extends React.Component {
           handleCompleteNopeCountdown={this.handleCompleteNopeCountdown}
           logs={logs}
           result={result}
+          handleExit={this.handleExit}
         />
       </div>
     );

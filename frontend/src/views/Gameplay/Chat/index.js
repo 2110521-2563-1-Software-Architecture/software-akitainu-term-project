@@ -324,7 +324,9 @@ function Chat({
 
   useEffect(() => {
     console.log(socket);
-    var person = prompt("Please enter your name:", "wannakan");
+    var person =
+      sessionStorage.getItem("userName") ||
+      window.sessionStorage.getItem("userId");
     setUsername(person);
     socket.on("message-get-room", (data) => {
       console.log("message-get-room-hook", data);
