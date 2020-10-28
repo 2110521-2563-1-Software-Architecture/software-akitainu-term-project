@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import GoogleLogin from "react-google-login";
-import { Button, makeStyles, Typography } from "@material-ui/core";
+import { Button, makeStyles, Typography, Grid } from "@material-ui/core";
 import { Palette } from "components";
 import Redirect from "components/Redirect";
 import { useHistory } from "react-router";
@@ -15,7 +15,7 @@ const useStlyes = makeStyles((the) => ({
   root: {
     display: "flex",
     justifyContent: "flex-start",
-    height: "100vh",
+    minHeight: "100vh",
     alignItems: "center",
     flexDirection: "column",
     backgroundColor: "#465A74",
@@ -119,6 +119,48 @@ const useStlyes = makeStyles((the) => ({
   //     boxShadow: "inset 6.5em 0 0 0 var(--hover)",
   //   }
   // }
+  loadingScreen : {
+    position:"absolute",
+    bottom:"0",
+    display:"flex",
+    flexDirection:"row",
+    // background:"rgba(0,0,0,0.5)",
+    // filter:"blur(4px)",
+    // backdropFilter:"blur(20px)",
+    width:"100vw",
+    // borderRadius:"100% 100% 0 0",
+    // height:"10px",
+  },
+  loadingContent : {
+    // background:"black",
+    // filter:"blur(4px)",
+    // height:"100vh",
+    fontSize:"0px",
+    transition:"height 0.5s ease-in",
+    width:"20vw",
+    marginTop:"auto",
+  },
+  gradien1 : {
+    background: "linear-gradient(to bottom, #ED213A, #93291E);",
+    transitionDelay:"0s",
+  },
+  gradien2 : {
+    background: "linear-gradient(to bottom, #FDC830, #F37335);",
+    transitionDelay:"0.3s",
+  },
+  gradien3 : {
+    background: "linear-gradient(to bottom, #ad5389, #3c1053);",
+    transitionDelay:"0.6s",
+  },
+  gradien4 : {
+    background: "linear-gradient(to bottom, #a8c0ff, #3f2b96);",
+    transitionDelay:"0.9s",
+  },
+  gradien5 : {
+    background: "linear-gradient(to bottom, #11998e, #38ef7d);",
+    transitionDelay:"1.2s",
+  },
+
 }));
 
 var userId_tmp;
@@ -130,7 +172,7 @@ function Auth() {
     "315916359879-9hc3ac4snn53s7cma3rbfbotm84q6tfl.apps.googleusercontent.com";
   const history = useHistory();
   const classes = useStlyes();
-  // const [showNoti,setShowNoti] = useState(false)
+  const [loading,setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
   const isDevEnv =
     !process.env.NODE_ENV || process.env.NODE_ENV === "development";
@@ -147,6 +189,7 @@ function Auth() {
     }
     setTimeout(function () {
       enqueueSnackbar(`Entering the game`);
+      setLoading(true)
     }, 1000);
     setTimeout(function () {
       history.push("/home");
@@ -254,7 +297,7 @@ function Auth() {
         </Typography>
         <FacebookLogin
           appId="508150123401725"
-          autoLoad
+          // autoLoad
           render={(renderProps) => (
             <Button
               className={classes.loginButton}
@@ -292,6 +335,26 @@ function Auth() {
           </Button>
         )}
       </div>
+      {/* <div className={classes.loadingScreen}>
+        <div className={clsx(classes.loadingContent,classes.gradien1)} style={{height:loading?"100vh":"0"}}>
+          &nbsp;
+        </div>
+        <div className={clsx(classes.loadingContent,classes.gradien2)} style={{height:loading?"100vh":"0"}}>
+          &nbsp;
+        </div>
+        <div className={clsx(classes.loadingContent,classes.gradien3)} style={{height:loading?"100vh":"0"}}>
+          &nbsp;
+        </div>
+        <div className={clsx(classes.loadingContent,classes.gradien4)} style={{height:loading?"100vh":"0"}}>
+          &nbsp;
+        </div>
+        <div className={clsx(classes.loadingContent,classes.gradien5)} style={{height:loading?"100vh":"0"}}>
+          &nbsp;
+        </div>
+      </div> */}
+      {/* <div className={classes.loadingScreen}>
+        nbsp;
+      </div> */}
     </div>
   );
 }
