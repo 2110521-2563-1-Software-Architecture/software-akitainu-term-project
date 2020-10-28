@@ -43,6 +43,7 @@ class Gameplay extends React.Component {
       isNoped: false, // false mean 0/2/4/... nope, true mean 1/3/5/... nope
       logs: [],
       result: [],
+      hasDefuse: false,
     };
   }
 
@@ -81,8 +82,8 @@ class Gameplay extends React.Component {
 
       const { userId, roomId, userName, profileImgUrl } = data;
       const { usersData } = this.state;
-      console.log(usersData, userId);
       if (userId === this.state.userId) return;
+      if (this.findUserIdx(userId) !== -1) return;
       const newUserData = {
         userId,
         userName,
@@ -103,7 +104,11 @@ class Gameplay extends React.Component {
       if (!data) return;
       const usersData = [];
       const { usersId, usersName, profileImgUrls } = data;
+      let alreadyJoin = false;
       usersId.forEach((userId, idx) => {
+        console.log(userId, this.state.userId, idx);
+        if (userId === this.state.userId && idx !== usersId.length - 1)
+          alreadyJoin = true;
         const newUserData = {
           userId,
           userName: usersName[idx],
@@ -114,6 +119,10 @@ class Gameplay extends React.Component {
         };
         usersData.push(newUserData);
       });
+      if (alreadyJoin) {
+        console.log("Error: You already joined this room.");
+        return;
+      }
 
       if (this.state.userId !== usersId[usersId.length - 1]) return;
       this.addLogs("You joined room number " + data.roomId);
@@ -145,7 +154,7 @@ class Gameplay extends React.Component {
       const userIdx = this.findUserIdx(userId);
       const { usersData } = this.state;
       usersData[userIdx].userCards.push(card);
-      usersData[userIdx].numberOfCards++;
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
 
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(userName + " draw new card");
@@ -204,7 +213,7 @@ class Gameplay extends React.Component {
       if (usersData[userIdx].userCards[cardIdx] !== card) return;
       discardPile.push(card);
       usersData[userIdx].userCards.splice(cardIdx, 1);
-      usersData[userIdx].numberOfCards--;
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
 
       this.setState({
         usersData,
@@ -241,7 +250,7 @@ class Gameplay extends React.Component {
         else discardPile.push(card);
       });
       usersData[userIdx].userCards = newUserCards;
-      usersData[userIdx].numberOfCards -= 2;
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
 
       this.setState({
         usersData,
@@ -269,7 +278,10 @@ class Gameplay extends React.Component {
       );
       const targetCard = usersData[targetIdx].userCards[randomCardIdx];
       usersData[userIdx].userCards.push(targetCard);
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
       usersData[targetIdx].userCards.splice(randomCardIdx, 1);
+      usersData[targetIdx].numberOfCards =
+        usersData[targetIdx].userCards.length;
 
       this.setState({
         usersData,
@@ -293,7 +305,7 @@ class Gameplay extends React.Component {
         else discardPile.push(card);
       });
       usersData[userIdx].userCards = newUserCard;
-      usersData[userIdx].numberOfCards -= 3;
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
 
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(userName + " use 3 of " + usingCard);
@@ -319,11 +331,14 @@ class Gameplay extends React.Component {
       const targetCardIdx = usersData[targetIdx].userCards.indexOf(selectCard);
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(userName + " want " + selectCard);
-      if (targetCardIdx === -1) return;
+      if (targetCardIdx === -1) return; // target doesnot have wanting card
 
       const targetCard = usersData[targetIdx].userCards[targetCardIdx];
       usersData[userIdx].userCards.push(targetCard);
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
       usersData[targetIdx].userCards.splice(targetCardIdx, 1);
+      usersData[targetIdx].numberOfCards =
+        usersData[targetIdx].userCards.length;
 
       this.setState({
         usersData,
@@ -351,7 +366,7 @@ class Gameplay extends React.Component {
         else discardPile.push(card);
       });
       usersData[userIdx].userCards = newUserCard;
-      usersData[userIdx].numberOfCards -= 5;
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
 
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(userName + " use 5 different cards");
@@ -379,6 +394,7 @@ class Gameplay extends React.Component {
 
       const userIdx = this.findUserIdx(userId);
       usersData[userIdx].userCards.push(selectCard);
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
       discardPile.splice(selectCardIdx, 1);
 
       this.setState({
@@ -405,28 +421,36 @@ class Gameplay extends React.Component {
       if (this.state.roomId !== roomId) return;
 
       const userIdx = this.findUserIdx(userId);
-      const { usersData } = this.state;
+      const { usersData, discardPile } = this.state;
       const defuseIdx = usersData[userIdx].userCards.indexOf(Card.defuse);
+      if (defuseIdx === -1) return;
       usersData[userIdx].userCards.splice(defuseIdx, 1);
-      usersData[userIdx].numberOfCards--;
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
+      discardPile.push(Card.defuse);
 
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(userName + " use defuse");
-      this.setState({ explodeId: -1, hasDefuse: 0, nextUserId });
+      this.setState({
+        explodeId: -1,
+        hasDefuse: false,
+        nextUserId,
+        discardPile,
+      });
     });
     this.state.socket.on("new-lose", (data) => {
       console.log("new-lose", data);
 
       const { userId, roomId, nextUserId } = data;
-      if (this.state.roomId !== roomId) return;
-      const userName = this.getUserNameByUserId(userId);
-      this.addLogs(userName + " lose the game");
       const { usersData } = this.state;
       const userIdx = this.findUserIdx(userId);
+      if (this.state.roomId !== roomId) return;
+      if (usersData[userIdx].isDead) return;
+      const userName = this.getUserNameByUserId(userId);
+      this.addLogs(userName + " lose the game");
       usersData[userIdx].isDead = true;
       this.setState({
         explodeId: -1,
-        hasDefuse: 0,
+        hasDefuse: false,
         nextUserId,
         nextTurnLeft: 1,
         usersData,
@@ -450,9 +474,11 @@ class Gameplay extends React.Component {
           const targetIdx = this.findUserIdx(targetId);
           const favorCard = usersData[targetIdx].userCards[favorCardIdx];
           usersData[userIdx].userCards.push(favorCard);
-          usersData[userIdx].numberOfCards++;
+          usersData[userIdx].numberOfCards =
+            usersData[userIdx].userCards.length;
           usersData[targetIdx].userCards.splice(favorCardIdx, 1);
-          usersData[targetIdx].numberOfCards--;
+          usersData[targetIdx].numberOfCards =
+            usersData[targetIdx].userCards.length;
           this.setState({ usersData });
           this.newCountDown(timePerTurn);
           break;
@@ -535,7 +561,7 @@ class Gameplay extends React.Component {
       if (usersData[userIdx].userCards[cardIdx] !== card) return;
       discardPile.push(card);
       usersData[userIdx].userCards.splice(cardIdx, 1);
-      usersData[userIdx].numberOfCards--;
+      usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
 
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(userName + " use nope");
@@ -598,14 +624,17 @@ class Gameplay extends React.Component {
     });
     this.state.socket.on("new-exit", (data) => {
       console.log("new-exit", data);
+
+      if (data.roomId != this.state.roomId) return;
       const { userId, roomId, nextUserId } = data;
+      const { usersData } = this.state;
+      const userIdx = this.findUserIdx(userId);
       if (roomId != this.state.roomId) return;
+      if (usersData[userIdx].isDead) return;
       const userName = this.getUserNameByUserId(userId);
       this.addLogs(
         userName + " exited from this room; Removed 1 exploding puppy"
       );
-      const { usersData } = this.state;
-      const userIdx = this.findUserIdx(userId);
       usersData[userIdx].isDead = true;
       this.setState({ usersData, nextUserId, nextTurnLeft: 1 });
     });
@@ -617,7 +646,8 @@ class Gameplay extends React.Component {
         result: result.reverse().map((userId) => ({
           userId,
           userName: this.getUserNameByUserId(userId),
-          profileImgUrl: this.state.usersData[this.findUserIdx(userId)].profileImgUrl,
+          profileImgUrl: this.state.usersData[this.findUserIdx(userId)]
+            .profileImgUrl,
         })),
       });
     });
@@ -675,7 +705,6 @@ class Gameplay extends React.Component {
 
   joinCustomRoom = (userId) => {
     const userIdx = this.findUserIdx(userId);
-    console.log(userIdx, this.state.leftCardNumber);
     if (userIdx !== -1) return;
     if (this.state.leftCardNumber !== -1) return; // cant join after game started
     const data = {
@@ -949,11 +978,11 @@ class Gameplay extends React.Component {
   hasDefuse = (userId) => {
     const userIdx = this.findUserIdx(userId);
     const { usersData } = this.state;
-    if (userIdx === -1) return 0;
-    if (!usersData[userIdx].userCards) return 0;
+    if (userIdx === -1) return false;
+    if (!usersData[userIdx].userCards) return false;
     const defuseIdx = usersData[userIdx].userCards.indexOf(Card.defuse);
-    if (defuseIdx !== -1) return 1;
-    return 0;
+    if (defuseIdx !== -1) return true;
+    return false;
   };
 
   handleUseNope = (userId) => {

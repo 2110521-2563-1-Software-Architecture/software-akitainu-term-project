@@ -1,14 +1,13 @@
-.userRankText {
+.title {
   display: flex;
   justify-content: center;
   font-family: "Roboto";
-  font-size: 48px;
+  font-weight: "bold";
+  font-size: 36px;
   color: #ffffff;
-  text-shadow: 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black,
-    0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black,
-    0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black,
-    0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black,
-    0 0 4px black;
+  text-shadow: 2px 0 0 black, -2px 0 0 black, 0 2px 0 black, 0 -2px 0 black,
+    1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black,
+    1px 1px 5px black;
 }
 
 .playerList {

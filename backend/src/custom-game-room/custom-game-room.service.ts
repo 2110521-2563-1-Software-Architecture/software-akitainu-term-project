@@ -48,6 +48,7 @@ export class CustomGameRoomService {
   async joinCustomRoom(newUserJoinRoom: NewUserJoinCustomRoomDto) {
     const { userId, roomId } = newUserJoinRoom;
     const { usersId } = this.rooms[roomId];
+    if (this.rooms[roomId]['nextTurnLeft']) return false;
     usersId.push(userId);
 
     const usersName = [];
@@ -304,6 +305,7 @@ export class CustomGameRoomService {
     } = this.rooms[roomId];
 
     const index = aliveUsersId.indexOf(userId);
+    if (index === -1) return false;
     const deadUser = aliveUsersId[lastUserIndex];
     console.log('aliveUsersId', aliveUsersId);
 
@@ -317,7 +319,10 @@ export class CustomGameRoomService {
       aliveUsersId.splice(0, 1);
     }
 
-    const nextUserIndexTmp = nextUserIndex > index ? (nextUserIndex-1 + aliveUsersId.length) % aliveUsersId.length : nextUserIndex % aliveUsersId.length;
+    const nextUserIndexTmp =
+      nextUserIndex > index
+        ? (nextUserIndex - 1 + aliveUsersId.length) % aliveUsersId.length
+        : nextUserIndex % aliveUsersId.length;
     console.log('index: ', index);
     console.log('lastUserIndex: ', lastUserIndex);
     console.log('dead user: ', deadUser);
@@ -330,7 +335,7 @@ export class CustomGameRoomService {
       this.setRoomByRoomId(roomId, {
         deck,
       });
-    } 
+    }
     this.setRoomByRoomId(roomId, {
       nextUserIndex: nextUserIndexTmp,
       lastUserIndex: nextUserIndexTmp,
@@ -353,6 +358,12 @@ export class CustomGameRoomService {
       return false;
     }
     return result;
+  }
+
+  async isAlreadyJoin(userId: string, roomId: string) {
+    const { usersId } = this.rooms[roomId];
+    if (usersId.indexOf(userId) === -1) return false;
+    return true;
   }
 
   // async onPlayerExit(roomId: string, userId: string) {

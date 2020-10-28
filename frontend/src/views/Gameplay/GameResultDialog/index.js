@@ -46,7 +46,7 @@ export default function GameResultDialog(props) {
   return (
     <TransitionsModal open={open} showCloseButton={false}>
       <div className="modal">
-        <div className="userRankText">You are {userRankText}</div>
+        <div className="title">You are {userRankText}</div>
         <div className="playerList">
           {result.map(({ userId, userName, profileImgUrl }, idx) => {
             if (idx !== userRank - 1)

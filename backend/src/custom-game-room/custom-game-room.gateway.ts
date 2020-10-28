@@ -52,12 +52,18 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     const userId = data.userId;
     const roomId = data.roomId;
     console.log('[userId] :\t', userId, ' [roomId] :', roomId);
+    const isAlreadyJoin = await this.customGameRoomService.isAlreadyJoin(
+      userId,
+      roomId,
+    );
+    if (isAlreadyJoin) return;
 
     socket.join(roomId);
     const allUsersInRoom = await this.customGameRoomService.joinCustomRoom({
       userId,
       roomId,
     });
+    if (!allUsersInRoom) return; // cant join started room
 
     const newJoinedUserName = await this.customGameRoomService.getJoinedUserName(
       userId,
@@ -190,6 +196,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
       userId,
       false,
     );
+    if (!loseResult) return; // Error : player already die
     this.server.to(roomId).emit('new-lose', { ...data, ...loseResult });
 
     const result = await this.customGameRoomService.resultGame(roomId);
