@@ -9,7 +9,7 @@ import background from "image/shibaBackground.svg";
 import clsx from "clsx";
 import logo from "../../shiba-inu.svg";
 import axios from "axios";
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 const useStlyes = makeStyles((the) => ({
   root: {
@@ -178,8 +178,8 @@ function Auth() {
     !process.env.NODE_ENV || process.env.NODE_ENV === "development";
 
   const onLoginSuccess = () => {
-    let userName = sessionStorage.getItem("userName")
-    let userId = sessionStorage.getItem("userId")
+    let userName = sessionStorage.getItem("userName");
+    let userId = sessionStorage.getItem("userId");
     if (userName) {
       enqueueSnackbar(`Welcome ${userName} (${userId})`, {
         variant: "success",
@@ -201,13 +201,13 @@ function Auth() {
     window.sessionStorage.setItem("userId", userId_tmp);
   };
 
-  const setLoginSession = (loginData,type) => {
+  const setLoginSession = (loginData, type) => {
     // console.log(loginData)
     window.sessionStorage.setItem("userId", loginData.userId);
     window.sessionStorage.setItem("userName", loginData.userName);
     window.sessionStorage.setItem("userRank", loginData.userRank);
     window.sessionStorage.setItem("userLevel", loginData.userLevel);
-  }
+  };
 
   const googleAuthen = (profile, loginType) => {
     return new Promise((resolve, reject) => {
@@ -218,28 +218,26 @@ function Auth() {
       };
       try {
         axios
-        .get(`http://localhost:10000/users`,{
-          params: user
-        })
-        .then((res) => {
-          setLoginSession(res.data,"login")
-          resolve(res.data)
-        })
-        .catch((err) => {
-          // console.log(err.response.data);
-          axios
-          .post(`http://localhost:10000/users`, user)
-          .then((res) => {
-            setLoginSession(res.data,"regis")
-            resolve(res.data)
+          .get(`http://localhost:10000/users`, {
+            params: user,
           })
-            .catch((err) => {});
-        });
-      } catch(err) {
-  
-      }
-    })}
-  
+          .then((res) => {
+            setLoginSession(res.data, "login");
+            resolve(res.data);
+          })
+          .catch((err) => {
+            // console.log(err.response.data);
+            axios
+              .post(`http://localhost:10000/users`, user)
+              .then((res) => {
+                setLoginSession(res.data, "regis");
+                resolve(res.data);
+              })
+              .catch((err) => {});
+          });
+      } catch (err) {}
+    });
+  };
 
   async function onSignIn(googleUser) {
     // console.log("success");
@@ -252,19 +250,19 @@ function Auth() {
     if (googleUser.accessToken) {
       // mockUserId()
       const userData = await googleAuthen(profile, "google");
-      onLoginSuccess()
+      onLoginSuccess();
     }
   }
 
   const responseFacebook = async (response) => {
     // console.log(response);
     let profile = {
-      id : response.id,
-      name : response.name,
-    }
+      id: response.id,
+      name: response.name,
+    };
     if (response.accessToken) {
       const userData = await googleAuthen(profile, "facebook");
-      onLoginSuccess()
+      onLoginSuccess();
     }
   };
 
@@ -308,8 +306,8 @@ function Auth() {
             </Button>
           )}
           fields="name,email,picture"
-          callback={responseFacebook} 
-          />
+          callback={responseFacebook}
+        />
         <GoogleLogin
           clientId={clientId}
           render={(renderProps) => (

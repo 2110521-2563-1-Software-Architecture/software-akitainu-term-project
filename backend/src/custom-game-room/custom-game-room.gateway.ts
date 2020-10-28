@@ -189,8 +189,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
       roomId,
       userId,
     );
-    const { nextUserId } = loseResult;
-    this.server.to(roomId).emit('new-lose', { ...data, nextUserId });
+    this.server.to(roomId).emit('new-lose', { ...data, ...loseResult });
 
     const result = await this.customGameRoomService.resultGame(roomId);
     if (result) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import { getCardImage } from "../../../components/type";
 import card_back from "../../../image/card_back.png";
@@ -7,6 +7,7 @@ import PlayerHand from "../PlayerHand";
 import SeeTheFutureDialog from "../SeeTheFutureDialog";
 import CardSelectorDialog from "../CardSelectorDialog";
 import ExplodingPuppyDialog from "../ExplodingPuppyDialog";
+import GameResultDialog from "../GameResultDialog";
 import Button from "../../../components/Button";
 import Otherhand from "../Otherhand";
 import Countdown from "react-countdown";
@@ -219,16 +220,8 @@ function Game(props) {
     countDownTime,
     newCountDown,
     handleCompleteNopeCountdown,
-    logs = [
-      "a very very very very very very very very long log",
-      "a short log",
-      "more log to test overflow",
-      "more log to test overflow",
-      "more log to test overflow",
-      "more log to test overflow",
-      "more log to test overflow",
-      "more log to test overflow",
-    ],
+    logs,
+    result,
   } = props;
   const classes = useStyles();
 
@@ -486,6 +479,10 @@ function Game(props) {
     element.scrollTop = element.scrollHeight;
   };
 
+  useEffect(() => {
+    updateLogsScroll();
+  });
+
   return (
     <>
       <div className={classes.root}>
@@ -565,6 +562,7 @@ function Game(props) {
           insertExplodingPuppy(userId, idx);
         }}
       />
+      <GameResultDialog result={result} userId={userId} />
       {isSelectingPlayer && <div className={classes.backdrop} />}
       <Button
         text={"Exit"}
