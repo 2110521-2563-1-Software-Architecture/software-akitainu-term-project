@@ -13,6 +13,9 @@ import EditIcon from "@material-ui/icons/Edit";
 import { ShibaFoot, LogoutIcon } from "./components/icon";
 import { useHistory } from "react-router-dom";
 import { isElement } from "react-dom/test-utils";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import avatarBoy from 'image/avatar-boy.svg'
+import clsx from 'clsx'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -27,26 +30,31 @@ const useStyles = makeStyles((theme) => ({
   container: {
     background: "#465A74",
     borderRadius: "16px",
+    display:"flex",
+    flexDirection:"column",
+    // alignContent:"center",
     // width:"800px",
   },
   detailImage: {
     borderRadius: "100%",
-    width: "415px",
+    // borderRadius:"16px",
+    width: "200px",
   },
   detailContent: {
-    minWidth: "200px",
+    // minWidth: "180px",
     background: "#B6C5E0",
-    margin: "16px 32px 16px 16px",
+    margin: "0px 32px 16px 16px",
     padding: "16px 16px 16px 16px",
     borderRadius: "16px",
     border: "3px solid black",
     display: "flex",
     flexDirection: "column",
+    // maxHeight:"100px",
   },
   detailText: {
     fontFamily: "Kanit",
-    fontSize: "48px",
-    lineHeight: "56px",
+    fontSize: "32px",
+    lineHeight: "48px",
     transition: "all 0.2s ease-in-out",
   },
   dialogPaper: {
@@ -55,16 +63,29 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontFamily: "Kanit",
-    fontSize: "72px",
+    fontSize: "48px",
+    // lineHeight:"80px",
     color: "white",
-    margin: "16px auto 0px 512px",
+    margin: "16px auto 0px 297px",
   },
   editButton: {
     padding: "8px",
     // marginLeft:"256px",
-    height: "64px",
-    width: "64px",
+    height: "48px",
+    width: "48px",
   },
+  logoutIcon : {
+    color:"white",
+    fontSize:"32px",
+  },
+  contentResponsive : {
+    display:"flex",
+    flexDirection:"column",
+    justifyContent:"center",
+    alignContent:"center",
+    alignItems:"center",
+
+  }
 }));
 
 function ProfileDialog({ open, handleClose, profileResouce }) {
@@ -103,7 +124,7 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
   const ProfileImage = React.memo(() => (
     <img
       className={classes.detailImage}
-      src={profileResouce.imgSrc}
+      src={avatarBoy}
       alt="alternatetext"
     />
   ));
@@ -114,15 +135,10 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
 
   const detail = () => (
     <Grid container>
-      <Grid style={{ padding: "16px 32px 32px 32px", marginTop: "16px" }}>
-        {/* <img 
-          className={classes.detailImage}
-          src={profileResouce.imgSrc}
-          alt="alternatetext"
-        /> */}
+      <Grid className={classes.contentResponsive} style={{ padding: "16px 32px 32px 32px", marginTop: "16px" }}>
         <ProfileImage />
       </Grid>
-      <Grid className={classes.detailContent}>
+      <Grid className={clsx(classes.detailContent,classes.contentResponsive)} >
         <Grid container>
           <Typography className={classes.detailText}>Name : </Typography>
           <ClickAwayListener
@@ -135,7 +151,7 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
           >
             <InputBase
               className={classes.detailText}
-              style={{ margin: "-6px 0 0 8px" }}
+              style={{ margin: "0px 0 0 8px" }}
               value={userName}
               disabled={!nameEditing}
               onChange={(e) => handleChangeName(e.target.value)}
@@ -150,10 +166,12 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
             style={{ alignSelf: "flex-end" }}
             onClick={() => setNameEditing((status) => !status)}
           >
-            <EditIcon style={{ fontSize: "40px" }} />
+            <EditIcon style={{ fontSize: "32px" }} />
           </IconButton>
         </Grid>
-        <Typography
+        <Grid container>
+          <Grid item xs={8}>
+          <Typography
           className={classes.detailText}
         >{`Rank ${profileResouce.userRank}`}</Typography>
         <Typography
@@ -165,28 +183,37 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
         <Typography
           className={classes.detailText}
         >{`Exp ${profileResouce.userLevel}`}</Typography>
-        <ShibaFoot
-          style={{ alignSelf: "flex-end", fill: footColor, cursor: "pointer" }}
-          onClick={randomColor}
+          </Grid>
+          <Grid item xs={4} style={{display:"flex"}}>
+          <ShibaFoot
+            style={{ alignSelf: "flex-end", fill: footColor, cursor: "pointer",margin:"0px 0 0 32px" }}
+            onClick={randomColor}
         />
+          </Grid>
+        </Grid>
+        {/* <ShibaFoot
+          style={{ alignSelf: "flex-end", fill: footColor, cursor: "pointer", transform:"scale(0.8)" }}
+          onClick={randomColor}
+        /> */}
       </Grid>
     </Grid>
   );
 
   const Logout = () => (
-    <Grid container>
+    <Grid container style={{marginTop:"-32px"}}>
       <IconButton
-        style={{ marginLeft: "32px", marginBottom: "32px" }}
+        style={{ marginLeft: "32px", marginBottom: "16px" }}
         onClick={onLogout}
       >
-        <LogoutIcon />
+        <ExitToAppIcon className={classes.logoutIcon}/>
       </IconButton>
       <Typography
         className={classes.detailText}
         onClick={onLogout}
         style={{
-          marginTop: "16px",
-          marginLeft: "16px",
+          marginTop: "4px",
+          // marginLeft: "16px",
+          fontSize:"24px",
           color: "white",
           cursor: "pointer",
         }}
