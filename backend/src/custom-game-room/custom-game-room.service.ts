@@ -335,7 +335,7 @@ export class CustomGameRoomService {
         deck,
       });
     } else {
-      nextUserIndexTmp = (nextUserIndex + 1) % aliveUsersId.length;
+      nextUserIndexTmp = nextUserIndex % aliveUsersId.length;
       this.setRoomByRoomId(roomId, {
         nextUserIndex: nextUserIndexTmp,
         lastUserIndex: nextUserIndexTmp,
