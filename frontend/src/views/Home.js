@@ -13,7 +13,7 @@ function Home() {
     // window.sessionStorage.setItem("userId", userId);
   };
   const onLogout = () => {
-    sessionStorage.setItem("userId", null);
+    sessionStorage.clear()
     history.push("/home");
     history.go(0);
   };

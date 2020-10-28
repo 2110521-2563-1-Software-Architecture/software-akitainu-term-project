@@ -13,9 +13,9 @@ function AuthGaurd({ children }) {
   if (!userId) {
     return <Redirect to="/login" />;
   }
-  if (!isNumeric(userId)) {
-    return <Redirect to="/login" />;
-  }
+  // if (!isNumeric(userId)) {
+  //   return <Redirect to="/login" />;
+  // }
 
   return <div>{children}</div>;
 }

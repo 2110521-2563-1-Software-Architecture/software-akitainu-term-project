@@ -9,6 +9,7 @@ import background from "image/shibaBackground.svg";
 import clsx from "clsx";
 import logo from "../../shiba-inu.svg";
 import axios from "axios";
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 
 const useStlyes = makeStyles((the) => ({
   root: {
@@ -51,7 +52,7 @@ const useStlyes = makeStyles((the) => ({
     "text-shadow": "rgba(17, 12, 46, 0.15) 0px 48px 100px 0px",
     border: "3px solid #78ffd6",
     padding: "4px 24px",
-    width: "280px",
+    width: "320px",
     margin: "16px 0",
     fontFamily: "Quick",
     fontSize: "24px",
@@ -131,17 +132,18 @@ function Auth() {
   const classes = useStlyes();
   // const [showNoti,setShowNoti] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
-  const [userName, setUserName] = useState("");
   const isDevEnv =
     !process.env.NODE_ENV || process.env.NODE_ENV === "development";
 
-  const onLoginSuccess = (userName) => {
+  const onLoginSuccess = () => {
+    let userName = sessionStorage.getItem("userName")
+    let userId = sessionStorage.getItem("userId")
     if (userName) {
-      enqueueSnackbar(`Welcome ${userName} (${userId_tmp})`, {
+      enqueueSnackbar(`Welcome ${userName} (${userId})`, {
         variant: "success",
       });
     } else {
-      enqueueSnackbar(`logged in as ${userId_tmp}`, { variant: "success" });
+      enqueueSnackbar(`logged in as ${userId}`, { variant: "success" });
     }
     setTimeout(function () {
       enqueueSnackbar(`Entering the game`);
@@ -150,40 +152,54 @@ function Auth() {
       history.push("/home");
     }, 3000);
   };
-  // useEffect(()=>{
-  //   console.log(userName)
-  // },[userName])
 
   const mockUserId = () => {
     userId_tmp = Math.floor(100000 + Math.random() * 900000);
     window.sessionStorage.setItem("userId", userId_tmp);
   };
 
-  const googleAuthen = (profile, googleUser) => {
-    let user = {
-      accessToken: profile.getId(),
-      userName: profile.getName(),
-      googleId: profile.getId(),
-      googleToken: googleUser.accessToken,
-    };
-    console.log(user);
-    axios
-      .post(`http://localhost:10000/users`, user)
-      .then((res) => {
-        console.log("regis success", res.data);
-      })
-      .catch((err) => {
-        axios
-          .get(`http://localhost:10000/users`)
-          .then((res) => {
-            console.log("login", res.data);
-          })
-          .catch((err) => {});
-      });
-  };
+  const setLoginSession = (loginData,type) => {
+    // console.log(loginData)
+    window.sessionStorage.setItem("userId", loginData.userId);
+    window.sessionStorage.setItem("userName", loginData.userName);
+    window.sessionStorage.setItem("userRank", loginData.userRank);
+    window.sessionStorage.setItem("userLevel", loginData.userLevel);
+  }
 
-  function onSignIn(googleUser) {
-    console.log("success");
+  const googleAuthen = (profile, loginType) => {
+    return new Promise((resolve, reject) => {
+      let user = {
+        snsId: profile.id || profile.getId(),
+        userName: profile.name || profile.getName(),
+        loginType: loginType,
+      };
+      try {
+        axios
+        .get(`http://localhost:10000/users`,{
+          params: user
+        })
+        .then((res) => {
+          setLoginSession(res.data,"login")
+          resolve(res.data)
+        })
+        .catch((err) => {
+          // console.log(err.response.data);
+          axios
+          .post(`http://localhost:10000/users`, user)
+          .then((res) => {
+            setLoginSession(res.data,"regis")
+            resolve(res.data)
+          })
+            .catch((err) => {});
+        });
+      } catch(err) {
+  
+      }
+    })}
+  
+
+  async function onSignIn(googleUser) {
+    // console.log("success");
     var profile = googleUser.getBasicProfile();
     // console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
     // console.log("Name: " + profile.getName());
@@ -192,10 +208,22 @@ function Auth() {
     // console.log(googleUser);
     if (googleUser.accessToken) {
       // mockUserId()
-      const userData = googleAuthen(profile, googleUser);
-      // onLoginSuccess(profile.getName())
+      const userData = await googleAuthen(profile, "google");
+      onLoginSuccess()
     }
   }
+
+  const responseFacebook = async (response) => {
+    // console.log(response);
+    let profile = {
+      id : response.id,
+      name : response.name,
+    }
+    if (response.accessToken) {
+      const userData = await googleAuthen(profile, "facebook");
+      onLoginSuccess()
+    }
+  };
 
   function onDevSignIn() {
     mockUserId();
@@ -224,6 +252,21 @@ function Auth() {
         >
           Exploding Puppy
         </Typography>
+        <FacebookLogin
+          appId="508150123401725"
+          autoLoad
+          render={(renderProps) => (
+            <Button
+              className={classes.loginButton}
+              onClick={renderProps.onClick}
+              disabled={renderProps.disabled}
+            >
+              Facebook Login
+            </Button>
+          )}
+          fields="name,email,picture"
+          callback={responseFacebook} 
+          />
         <GoogleLogin
           clientId={clientId}
           render={(renderProps) => (
