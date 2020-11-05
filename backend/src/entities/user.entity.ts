@@ -20,4 +20,7 @@ export class User {
 
   @Column('text')
   loginType: LoginType;
+
+  @Column('integer')
+  userExp: number;
 }

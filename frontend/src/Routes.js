@@ -12,7 +12,7 @@ import AuthGaurd from "components/AuthGaurd";
 import Authen from "views/Auth";
 
 // const ENDPOINT = "18.141.138.13:10001";
-const ENDPOINT = "localhost:10001";
+const ENDPOINT = "http://localhost:10001";
 const socket = socketIOClient(ENDPOINT);
 
 const routesConfig = [

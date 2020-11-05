@@ -11,6 +11,9 @@ import logo from "../../shiba-inu.svg";
 import axios from "axios";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
+// const ENDPOINT = "http://18.141.138.13:10000";
+const ENDPOINT = "http://localhost:10000";
+
 const useStlyes = makeStyles((the) => ({
   root: {
     display: "flex",
@@ -221,7 +224,7 @@ function Auth() {
       };
       try {
         axios
-          .get(`http://localhost:10000/users`, {
+          .get(`${ENDPOINT}/users`, {
             params: user,
           })
           .then((res) => {
@@ -231,7 +234,7 @@ function Auth() {
           .catch((err) => {
             // console.log(err.response.data);
             axios
-              .post(`http://localhost:10000/users`, user)
+              .post(`${ENDPOINT}/users`, user)
               .then((res) => {
                 setLoginSession(res.data, "regis");
                 resolve(res.data);
@@ -244,6 +247,7 @@ function Auth() {
 
   async function onSignIn(googleUser) {
     // console.log("success");
+    if (googleUser.error) return;
     var profile = googleUser.getBasicProfile();
     // console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
     // console.log("Name: " + profile.getName());

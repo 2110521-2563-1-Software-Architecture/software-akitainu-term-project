@@ -44,6 +44,7 @@ class Gameplay extends React.Component {
       logs: [],
       result: [],
       hasDefuse: false,
+      userExp: -1,
     };
   }
 
@@ -673,10 +674,6 @@ class Gameplay extends React.Component {
     };
     if (this.state.usersData[userIdx]?.userCards && userIdx >= 0)
       data.userCards = this.state.usersData[userIdx].userCards[userIdx];
-    console.log(
-      sessionStorage.getItem("userId"),
-      sessionStorage.getItem("userName")
-    );
     return data;
   };
 
@@ -995,7 +992,6 @@ class Gameplay extends React.Component {
   };
 
   newCountDown = (second) => {
-    console.log("newCountDown", Date.now() + second * 1000);
     this.setState({ countDownTime: Date.now() + second * 1000 });
   };
 

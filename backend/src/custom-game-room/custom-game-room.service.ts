@@ -50,16 +50,11 @@ export class CustomGameRoomService {
     const { usersId } = this.rooms[roomId];
     if (this.rooms[roomId]['nextTurnLeft']) return false;
     usersId.push(userId);
-
-    const usersName = [];
-
-    await usersId.map(async userId =>
-      usersName.push(await this.getJoinedUserName(userId)),
+    const usersName: string[] = await Promise.all(
+      usersId.map(async userId => await this.getJoinedUserName(userId)),
     );
 
-    console.log('usersName: ', usersName);
-
-    const allUsersTnRoom = {
+    const allUsersInRoom = {
       usersId: usersId,
       usersName,
       roomId,
@@ -68,7 +63,7 @@ export class CustomGameRoomService {
     this.setRoomByRoomId(roomId, { usersId });
 
     console.log('[AllCustomRooms] :\t', this.rooms);
-    return allUsersTnRoom;
+    return allUsersInRoom;
   }
 
   async shuffle(array: string[]) {

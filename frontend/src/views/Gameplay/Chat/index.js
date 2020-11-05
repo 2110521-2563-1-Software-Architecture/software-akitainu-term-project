@@ -304,7 +304,7 @@ function Chat({
   };
 
   useEffect(() => {
-    console.log(usersData);
+    // console.log(usersData);
     if (usersData.length !== 0) {
       thisUserId = sessionStorage.getItem("userId");
       usersData.forEach((user) => {
@@ -323,7 +323,7 @@ function Chat({
   // }
 
   useEffect(() => {
-    console.log(socket);
+    // console.log(socket);
     var person =
       sessionStorage.getItem("userName") ||
       window.sessionStorage.getItem("userId");

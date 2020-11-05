@@ -35,6 +35,7 @@ export class UsersService {
       userName,
       userRank: 1,
       userLevel: 1,
+      userExp: 0,
     };
     this.userRepository
       .insert({
@@ -57,12 +58,13 @@ export class UsersService {
     if (!userWithAccess) {
       throw new BadRequestException('This user has not registered yet!');
     }
-    const { userId, userName, userRank, userLevel } = userWithAccess;
+    const { userId, userName, userRank, userLevel, userExp } = userWithAccess;
     const user: userDto = {
       userId,
       userName,
       userLevel,
       userRank,
+      userExp,
     };
     console.log('login user: ', userName);
     return user;
@@ -78,5 +80,16 @@ export class UsersService {
       return userId;
     }
     return user.userName;
+  }
+
+  async getUserByUserId(userId: string) {
+    const ret = await this.userRepository.findOne({
+      select: ['userId', 'userName', 'userRank', 'userLevel', 'userExp'],
+      where: {
+        userId: userId,
+      },
+    });
+    if (!ret) throw new BadRequestException('Invalid UserId');
+    return ret;
   }
 }

@@ -64,6 +64,7 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
       roomId,
     });
     if (!allUsersInRoom) return; // cant join started room
+    console.log('allUsersInRoom', allUsersInRoom);
 
     const newJoinedUserName = await this.customGameRoomService.getJoinedUserName(
       userId,

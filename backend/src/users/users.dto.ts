@@ -7,6 +7,7 @@ export class userDto {
   userName: string;
   userRank: number;
   userLevel: number;
+  userExp: number;
 }
 
 export class newUserDto {

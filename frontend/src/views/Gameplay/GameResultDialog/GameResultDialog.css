@@ -3,7 +3,7 @@
   justify-content: center;
   font-family: "Roboto";
   font-weight: "bold";
-  font-size: 36px;
+  font-size: 48px;
   color: #ffffff;
   text-shadow: 2px 0 0 black, -2px 0 0 black, 0 2px 0 black, 0 -2px 0 black,
     1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black,
@@ -31,6 +31,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 65vh;
 }
 
 .userName {
@@ -49,4 +50,61 @@
   text-shadow: -1px -1px 0 #000, 0 -1px 0 #000, 1px -1px 0 #000, 1px 0 0 #000,
     1px 1px 0 #000, 0 1px 0 #000, -1px 1px 0 #000, -1px 0 0 #000;
   margin-top: 4px;
+}
+
+.levelRow {
+  align-items: center;
+  justify-content: space-between;
+  font-size: 28px;
+  margin-left: 60px;
+  width: 100%;
+}
+
+.expText {
+  font-size: 24px;
+  text-shadow: none;
+  align-self: center;
+}
+
+.rankRow {
+  font-size: 28px;
+  margin-top: 12px;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 30px;
+  margin-left: 60px;
+}
+
+.greaterNextRank {
+  font-size: 40px;
+  color: #77dd76;
+}
+
+.lessNextRank {
+  font-size: 40px;
+  color: #ff6962;
+}
+
+.resultBody {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  row-gap: 16px;
+  margin-top: 50px;
+  margin-bottom: 30px;
+  font-size: 36px;
+}
+
+.levelText {
+  justify-self: center;
+}
+
+.rankText {
+  justify-self: center;
+}
+
+.progressAndEXPText {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

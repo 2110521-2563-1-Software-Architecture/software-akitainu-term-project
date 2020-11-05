@@ -13,6 +13,9 @@ import Otherhand from "../Otherhand";
 import Countdown from "react-countdown";
 import classNames from "classnames";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+
+const ENDPOINT = "http://localhost:10000";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -485,8 +488,35 @@ function Game(props) {
     element.scrollTop = element.scrollHeight;
   };
 
+  const [exp, setExp] = useState(0);
+  const [rank, setRank] = useState(0);
+  const [level, setLevel] = useState(0);
+
   useEffect(() => {
     updateLogsScroll();
+
+    const getUser = (userId) => {
+      return new Promise((resolve, reject) => {
+        try {
+          axios
+            .get(`${ENDPOINT}/users/${userId}`)
+            .then((res) => {
+              resolve(res.data);
+            })
+            .catch((err) => {
+              console.err(err);
+            });
+        } catch (err) {}
+      });
+    };
+
+    const setUserData = async () => {
+      const resp = await getUser(userId);
+      setExp(resp.userExp);
+      setRank(resp.userRank);
+      setLevel(resp.userLevel);
+    };
+    if (level === 0) setUserData();
   });
 
   const history = useHistory();
@@ -495,7 +525,6 @@ function Game(props) {
     history.push("/home");
     history.go(0);
   };
-
   return (
     <>
       <div className={classes.root}>
@@ -575,7 +604,15 @@ function Game(props) {
           insertExplodingPuppy(userId, idx);
         }}
       />
-      <GameResultDialog result={result} userId={userId} />
+      <GameResultDialog
+        result={result}
+        userId={userId}
+        exp={exp}
+        plusExp={250} // todo: Rank will give 500 exp, custom will give 250
+        level={level}
+        rank={rank}
+        // plusRank={2} // todo: pass this if rank mode; 2 for 1st, 1 for 2nd, 0 for 3rd, -1 for 4th, -2 for 5th
+      />
       {isSelectingPlayer && <div className={classes.backdrop} />}
       <Button
         text={"Exit"}
