@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { newUserDto, userDto, LoginType, loginUserDto } from './users.dto';
+import { newUserDto, userDto, LoginType, loginUserDto, userProgressDto, editUserDto } from './users.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -89,6 +89,26 @@ export class UsersService {
         userId: userId,
       },
     });
+    if (!ret) throw new BadRequestException('Invalid UserId');
+    return ret;
+  }
+
+  async updateUserProgress(userId: string, userProgressDto: userProgressDto) {
+    const { userExp, userRank, userLevel } = userProgressDto; // new EXP and new rank
+
+    const user = await this.getUserByUserId(userId);
+    if(userLevel < user.userLevel) 
+      throw new BadRequestException('Error: new level cannot be less than old level');
+    if(userRank && Math.abs(user.userRank-userRank) > 2) 
+      throw new BadRequestException('Error: invalid rank');
+
+    const editUserDto: editUserDto = {
+      userId,
+      userRank,
+      userLevel,
+      userExp,
+    };
+    const ret = await this.userRepository.save(editUserDto);
     if (!ret) throw new BadRequestException('Invalid UserId');
     return ret;
   }

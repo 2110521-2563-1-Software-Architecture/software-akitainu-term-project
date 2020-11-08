@@ -128,7 +128,7 @@ export default function GameResultDialog(props) {
   return (
     <>
       <TransitionsModal
-        open={true || (open && !showEXPResultModal)}
+        open={open && !showEXPResultModal}
         showCloseButton={false}
       >
         <div className="modal">

@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
-import { newUserDto } from './users.dto';
+import { Controller, Get, Post, Body, Query, Param, Patch } from '@nestjs/common';
+import { newUserDto, userProgressDto } from './users.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -20,5 +20,11 @@ export class UsersController {
   @Get(':userId')
   async getUserByUserId(@Param('userId') userId: string) {
     return this.userService.getUserByUserId(userId);
+  }
+
+  @Patch('progress/:userId')
+  async updateUserProgress(@Param('userId') userId: string, @Body() userProgressDto: userProgressDto) {
+    console.log(userProgressDto);
+    return this.userService.updateUserProgress(userId, userProgressDto);
   }
 }

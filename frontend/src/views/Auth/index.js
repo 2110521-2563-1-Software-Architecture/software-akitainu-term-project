@@ -12,7 +12,7 @@ import axios from "axios";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 // const ENDPOINT = "http://18.141.138.13:10000";
-const ENDPOINT = "http://localhost:10000";
+const ENDPOINT = process.env.REACT_APP_BACKEND_API || "http://localhost:10000";
 
 const useStlyes = makeStyles((the) => ({
   root: {

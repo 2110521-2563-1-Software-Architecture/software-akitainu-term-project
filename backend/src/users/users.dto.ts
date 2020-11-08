@@ -20,3 +20,17 @@ export class loginUserDto {
   snsId: string;
   loginType: LoginType;
 }
+
+export class userProgressDto {
+  userExp: number;
+  userRank?: number;
+  userLevel: number;
+}
+
+export class editUserDto {
+  userId: string;
+  userRank?: number;
+  userExp?: number;
+  userLevel?: number;
+  userName?: string;
+}

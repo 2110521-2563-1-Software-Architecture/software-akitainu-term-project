@@ -13,9 +13,6 @@ import Otherhand from "../Otherhand";
 import Countdown from "react-countdown";
 import classNames from "classnames";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
-
-const ENDPOINT = "http://localhost:10000";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -227,6 +224,7 @@ function Game(props) {
     logs,
     result,
     handleExit,
+    userProgress,
   } = props;
   const classes = useStyles();
 
@@ -487,36 +485,10 @@ function Game(props) {
     const element = document.getElementById("logs");
     element.scrollTop = element.scrollHeight;
   };
-
-  const [exp, setExp] = useState(0);
-  const [rank, setRank] = useState(0);
-  const [level, setLevel] = useState(0);
-
+  
+  const {exp, rank, level } = userProgress;
   useEffect(() => {
     updateLogsScroll();
-
-    const getUser = (userId) => {
-      return new Promise((resolve, reject) => {
-        try {
-          axios
-            .get(`${ENDPOINT}/users/${userId}`)
-            .then((res) => {
-              resolve(res.data);
-            })
-            .catch((err) => {
-              console.err(err);
-            });
-        } catch (err) {}
-      });
-    };
-
-    const setUserData = async () => {
-      const resp = await getUser(userId);
-      setExp(resp.userExp);
-      setRank(resp.userRank);
-      setLevel(resp.userLevel);
-    };
-    if (level === 0) setUserData();
   });
 
   const history = useHistory();
