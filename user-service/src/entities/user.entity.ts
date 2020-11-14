@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
-import { LoginType } from '../users/users.dto';
+import { LoginType } from '../users.dto';
 
 @Entity()
 export class User {

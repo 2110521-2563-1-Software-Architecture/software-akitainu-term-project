@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto, Card } from './custom-game-room.dto';
-import { UsersService } from '../users/users.service';
+import { NewUserJoinCustomRoomDto, Card } from './game.dto';
+import { UsersService } from './users.service';
 
 @Injectable()
-export class CustomGameRoomService {
+export class GameService {
   constructor(private readonly userService: UsersService) {}
 
   rooms = {};

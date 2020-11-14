@@ -1,8 +1,42 @@
-version: "3.8"
+version: '3.8'
+
 services:
-    frontend:
-        build: frontend
-        container_name: exploding_puppy_frontend
-        ports:
-            - 3000:3000
-        stdin_open: true
+  login-service:
+    build: './login-service'
+    environment:
+      MYSQL_URL: 'db'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'akitainu'
+      MYSQL_DB: 'exploding_puppy'
+      SERVER_PORT: '8000'
+    ports:
+      - 8000:8000
+    restart: always
+  game-service:
+    build: './game-service'
+    environment:
+      MYSQL_URL: 'db'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'akitainu'
+      MYSQL_DB: 'exploding_puppy'
+      SOCKET_PORT: '10002'
+    ports:
+      - 10002:10002
+    restart: always
+  db:
+    image: 'mysql:5.7'
+    environment:
+      MYSQL_ROOT_PASSWORD: akitainu
+      MYSQL_DATABASE: exploding_puppy
+    command: --init-file /data/application/init.sql
+    volumes:
+      - ./db:/data/application
+      - db-data:/var/lib/mysql
+    restart: always
+  nginx:
+    build: './nginx'
+    ports:
+      - 10000:10000
+      - 10001:10001
+volumes:
+  db-data:

@@ -6,9 +6,8 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { Card, CreatedIdCustomGameRoomDto } from './custom-game-room.dto';
-import { CustomGameRoomService } from './custom-game-room.service';
-import { ChatService } from './chat.service';
+import { Card, CreatedIdCustomGameRoomDto } from './game.dto';
+import { GameService } from './game.service';
 
 type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 
@@ -16,11 +15,8 @@ type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 require('dotenv').config();
 const socket_port = parseInt(process.env.SOCKET_SERVER) || 10001;
 @WebSocketGateway(socket_port)
-export class CustomGameRoomGateway implements OnGatewayInterface {
-  constructor(
-    private readonly customGameRoomService: CustomGameRoomService,
-    private readonly chatService: ChatService,
-  ) {}
+export class GameGateway implements OnGatewayInterface {
+  constructor(private readonly customGameRoomService: GameService) {}
 
   @WebSocketServer() server;
   users = 0;
