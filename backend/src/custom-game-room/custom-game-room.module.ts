@@ -4,9 +4,10 @@ import { CustomGameRoomService } from './custom-game-room.service';
 import { ChatService } from './chat.service';
 import { CustomGameRoomController } from './custom-game-room.controller';
 import { UsersModule } from '../users/users.module';
+import { GameMatchModule } from 'src/game-match/game-match/game-match.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, GameMatchModule],
   controllers: [CustomGameRoomController],
   providers: [CustomGameRoomGateway, CustomGameRoomService, ChatService],
   exports: [],

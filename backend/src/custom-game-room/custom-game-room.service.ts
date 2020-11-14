@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { NewUserJoinCustomRoomDto, Card } from './custom-game-room.dto';
 import { UsersService } from '../users/users.service';
+import { GameMatchService } from 'src/game-match/game-match/game-match.service';
 
 @Injectable()
 export class CustomGameRoomService {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+    private readonly gameMatchService: GameMatchService,
+  ) {}
 
   rooms = {};
 
@@ -352,6 +356,9 @@ export class CustomGameRoomService {
     if (aliveUsersId.length !== 0) {
       return false;
     }
+
+    // this mean game will end
+    this.gameMatchService.addGameMatch(result);
     return result;
   }
 

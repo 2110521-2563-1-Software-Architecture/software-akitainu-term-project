@@ -2,10 +2,10 @@ import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity()
 export class GameMatch {
-  @PrimaryColumn('integer')
+  @PrimaryColumn('char', { length: 36 })
   userId: number;
 
-  @PrimaryColumn('integer')
+  @PrimaryColumn('char', { length: 36 })
   matchId: number;
 
   @Column('integer')
