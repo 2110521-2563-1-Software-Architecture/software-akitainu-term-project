@@ -24,11 +24,6 @@ export class UsersController {
     return this.userService.createNewUser(newUser);
   }
 
-  @Get(':userId')
-  async getUserByUserId(@Param('userId') userId: string) {
-    return this.userService.getUserByUserId(userId);
-  }
-
   @Patch('progress/:userId')
   async updateUserProgress(
     @Param('userId') userId: string,
@@ -40,5 +35,15 @@ export class UsersController {
   @Patch('changeUserName/:userId')
   async changeUserName(@Param('userId') userId: string, @Body() { userName }) {
     return this.userService.changeUserName(userId, userName);
+  }
+
+  @Get('leaderboard')
+  async getServerLeaderBoard() {
+    return this.userService.getServerLeaderBoard();
+  }
+
+  @Get(':userId')
+  async getUserByUserId(@Param('userId') userId: string) {
+    return this.userService.getUserByUserId(userId);
   }
 }

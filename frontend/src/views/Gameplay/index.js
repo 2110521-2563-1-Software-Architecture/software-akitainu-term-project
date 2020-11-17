@@ -1075,7 +1075,6 @@ class Gameplay extends React.Component {
       exp -= maxExp;
       level += 1;
       maxExp = this.getMaxExp(level);
-      console.log("a");
     }
 
     const newUserProgress = {

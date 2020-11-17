@@ -158,4 +158,16 @@ export class UsersService {
     if (!ret) throw new BadRequestException('Invalid UserId');
     return ret;
   }
+
+  async getServerLeaderBoard() {
+    const ret = await this.userRepository.find({
+      select: ['userName', 'userRank', 'rankGameMatches', 'rankGameWinMatches'],
+    });
+    return ret.sort((b, a) => {
+      if (a.userRank !== b.userRank) return a.userRank - b.userRank;
+      const winRateA = a.rankGameWinMatches / a.rankGameMatches + 1;
+      const winRateB = b.rankGameWinMatches / b.rankGameMatches + 1;
+      return winRateA - winRateB;
+    });
+  }
 }
