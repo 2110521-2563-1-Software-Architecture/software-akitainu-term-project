@@ -66,7 +66,6 @@ const usestyle = (theme) => ({
 class Welcome extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       matchmakingSocket: props.matchmakingSocket,
       openModeDialog: false,
@@ -78,7 +77,10 @@ class Welcome extends React.Component {
 
   componentDidMount() {
     const { matchmakingSocket } = this.state;
-    // define socket.on
+    matchmakingSocket.on("ranked-found", (data) => {
+      console.log("ranked-found");
+      console.log(data);
+    });
   }
 
   joinRoom100001 = () => {
@@ -122,6 +124,9 @@ class Welcome extends React.Component {
   };
 
   closeRankDialog = () => {
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("quit-search-ranked", { userId });
     this.setState({ openRankDialog: false });
   };
 
