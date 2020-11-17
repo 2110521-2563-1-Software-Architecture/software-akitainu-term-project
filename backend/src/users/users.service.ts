@@ -163,11 +163,22 @@ export class UsersService {
     const ret = await this.userRepository.find({
       select: ['userName', 'userRank', 'rankGameMatches', 'rankGameWinMatches'],
     });
-    return ret.sort((b, a) => {
+    const leaderboard = await ret.sort((b, a) => {
       if (a.userRank !== b.userRank) return a.userRank - b.userRank;
       const winRateA = a.rankGameWinMatches / a.rankGameMatches + 1;
       const winRateB = b.rankGameWinMatches / b.rankGameMatches + 1;
       return winRateA - winRateB;
     });
+
+    return leaderboard.map(
+      ({ userName, userRank, rankGameMatches, rankGameWinMatches }) => {
+        const winRate = (rankGameWinMatches / rankGameMatches) * 100;
+        return {
+          userName,
+          userRank,
+          winRate: winRate ? winRate : 0,
+        };
+      },
+    );
   }
 }
