@@ -12,7 +12,8 @@ allSelectableCards.splice(allSelectableCards.indexOf(Card.backCard), 1);
 const timePerTurn = 30; // seconds
 const timeForNope = 5; // seconds
 
-const ENDPOINT = process.env.REACT_APP_BACKEND_API || "http://localhost:10000";
+const ENDPOINT =
+  process.env.REACT_APP_BACKEND_API || "http://18.141.138.13:10000";
 
 class Gameplay extends React.Component {
   constructor(props) {
@@ -52,7 +53,7 @@ class Gameplay extends React.Component {
         rank: 0,
         exp: -1,
         level: 0,
-      }
+      },
     };
     this.setUserProgress();
   }
@@ -661,7 +662,7 @@ class Gameplay extends React.Component {
         })),
       });
 
-      const {userProgress, userId} = this.state;
+      const { userProgress, userId } = this.state;
       this.updateUserProgress(userId, result, userProgress);
     });
   }
@@ -1058,11 +1059,11 @@ class Gameplay extends React.Component {
       exp: resp.userExp,
       rank: resp.userRank,
       level: resp.userLevel,
-    }
-    this.setState({userProgress});
+    };
+    this.setState({ userProgress });
   };
 
-  getMaxExp = (level) => 100+level*level*5;
+  getMaxExp = (level) => 100 + level * level * 5;
 
   updateUserProgress = (userId, result, userProgress) => {
     const plusExp = 250; // todo: will +500 if rank
@@ -1070,20 +1071,22 @@ class Gameplay extends React.Component {
     let maxExp = this.getMaxExp(level);
     let exp = userProgress.exp + plusExp;
 
-    while(exp>=maxExp) {
-      exp-=maxExp;
-      level+=1;
+    while (exp >= maxExp) {
+      exp -= maxExp;
+      level += 1;
       maxExp = this.getMaxExp(level);
-      console.log('a');
+      console.log("a");
     }
 
     const newUserProgress = {
       // userRank: userProgress.rank + ???, todo: add this if rank
       userExp: exp,
       userLevel: level,
-    }
-    axios.patch(`${ENDPOINT}/users/progress/${userId}`, newUserProgress );
-  }
+    };
+    sessionStorage.setItem("userExp", exp);
+    sessionStorage.setItem("userLevel", level);
+    axios.patch(`${ENDPOINT}/users/progress/${userId}`, newUserProgress);
+  };
 
   render() {
     // const classes = useStyles();

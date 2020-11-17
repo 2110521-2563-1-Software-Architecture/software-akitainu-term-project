@@ -201,14 +201,17 @@ function Auth() {
   const mockUserId = () => {
     userId_tmp = Math.floor(100000 + Math.random() * 900000);
     window.sessionStorage.setItem("userId", userId_tmp);
+    return userId_tmp;
   };
 
   const setLoginSession = (loginData, type) => {
-    // console.log(loginData)
     window.sessionStorage.setItem("userId", loginData.userId);
     window.sessionStorage.setItem("userName", loginData.userName);
     window.sessionStorage.setItem("userRank", loginData.userRank);
     window.sessionStorage.setItem("userLevel", loginData.userLevel);
+    window.sessionStorage.setItem("userExp", loginData.userExp);
+    window.sessionStorage.setItem("winRate", loginData.winRate);
+    window.sessionStorage.setItem("loginType", type);
   };
 
   const googleAuthen = (profile, loginType) => {
@@ -276,8 +279,19 @@ function Auth() {
   };
 
   function onDevSignIn() {
-    mockUserId();
+    const userId = mockUserId();
     onLoginSuccess();
+    setLoginSession(
+      {
+        userId,
+        userName: userId,
+        userRank: 1,
+        userLevel: 1,
+        userExp: 0,
+        winRate: 0,
+      },
+      "dev"
+    );
   }
 
   // const handleClose = (event, reason) => {
@@ -314,7 +328,7 @@ function Auth() {
               Facebook Login
             </Button>
           )}
-          fields="name,email,picture"
+          fields="name,email,picture.type(large)"
           callback={responseFacebook}
         />
         <GoogleLogin

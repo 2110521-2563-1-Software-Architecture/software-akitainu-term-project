@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { NewUserJoinCustomRoomDto, Card } from './custom-game-room.dto';
 import { UsersService } from '../users/users.service';
-import { GameMatchService } from 'src/game-match/game-match/game-match.service';
+import { GameMatchService } from 'src/game-match/game-match.service';
+import { GameType } from 'src/entities/game-match.entity';
 
 @Injectable()
 export class CustomGameRoomService {
@@ -358,7 +359,7 @@ export class CustomGameRoomService {
     }
 
     // this mean game will end
-    this.gameMatchService.addGameMatch(result);
+    this.gameMatchService.addGameMatch(result, GameType.custom);
     return result;
   }
 

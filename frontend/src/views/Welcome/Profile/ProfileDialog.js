@@ -10,12 +10,14 @@ import {
   ClickAwayListener,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
-import { ShibaFoot, LogoutIcon } from "./components/icon";
+import { ShibaFoot } from "./components/icon";
 import { useHistory } from "react-router-dom";
-import { isElement } from "react-dom/test-utils";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import avatarBoy from "image/avatar-boy.svg";
 import clsx from "clsx";
+import axios from "axios";
+
+const ENDPOINT = process.env.REACT_APP_BACKEND_API || "http://localhost:10000";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -128,6 +130,17 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
     return nameEditing ? "onClick" : false;
   };
 
+  const handleUserNameChange = () => {
+    setNameEditing(false);
+    const userId = sessionStorage.getItem("userId");
+    const loginType = sessionStorage.getItem("loginType");
+    if (loginType !== "dev")
+      axios.patch(`${ENDPOINT}/users/changeUserName/${userId}`, { userName });
+    else {
+      setUsername(userId);
+    }
+  };
+
   const detail = () => (
     <Grid container>
       <Grid
@@ -141,8 +154,7 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
           <Typography className={classes.detailText}>Name : </Typography>
           <ClickAwayListener
             onClickAway={() => {
-              setNameEditing(false);
-              console.log("click");
+              handleUserNameChange();
             }}
             mouseEvent={isListenClickAway()}
             touchEvent={false}
@@ -154,7 +166,7 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
               disabled={!nameEditing}
               onChange={(e) => handleChangeName(e.target.value)}
               onKeyPress={(e) => {
-                if (e.key === "Enter") setNameEditing(false);
+                if (e.key === "Enter") handleUserNameChange();
               }}
               onDoubleClick={() => setNameEditing(true)}
             ></InputBase>
@@ -162,7 +174,15 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
           <IconButton
             className={classes.editButton}
             style={{ alignSelf: "flex-end" }}
-            onClick={() => setNameEditing((status) => !status)}
+            onClick={() =>
+              setNameEditing((status) => {
+                if (status) {
+                  handleUserNameChange();
+                  return false;
+                }
+                return true;
+              })
+            }
           >
             <EditIcon style={{ fontSize: "32px" }} />
           </IconButton>
@@ -175,12 +195,12 @@ function ProfileDialog({ open, handleClose, profileResouce }) {
             <Typography
               className={classes.detailText}
             >{`Level ${profileResouce.userLevel}`}</Typography>
+            <Typography className={classes.detailText}>{`Win rate ${Number(
+              profileResouce.winRate
+            ).toFixed(2)}%`}</Typography>
             <Typography
               className={classes.detailText}
-            >{`Win rate ${profileResouce.userLevel}`}</Typography>
-            <Typography
-              className={classes.detailText}
-            >{`Exp ${profileResouce.userLevel}`}</Typography>
+            >{`Exp ${profileResouce.userExp}`}</Typography>
           </Grid>
           <Grid item xs={4} style={{ display: "flex" }}>
             <ShibaFoot

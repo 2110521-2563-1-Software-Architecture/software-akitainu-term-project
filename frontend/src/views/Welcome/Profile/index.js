@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Dialog, makeStyles } from "@material-ui/core";
-import profileBox from "./components/profileBox.svg";
+import { Grid, Typography, makeStyles, Avatar } from "@material-ui/core";
 import ProfileDialog from "./ProfileDialog";
 
 const useStyles = makeStyles((theme) => ({
@@ -11,8 +10,8 @@ const useStyles = makeStyles((theme) => ({
     // background: `url(${profileBox})  no-repeat` ,
   },
   profileImage: {
-    borderRadius: "100%",
     width: "100px",
+    height: "100px",
   },
   profileText: {
     fontFamily: "Kanit",
@@ -52,6 +51,8 @@ function Profile() {
     userName: sessionStorage.getItem("userName"),
     userRank: sessionStorage.getItem("userRank"),
     userLevel: sessionStorage.getItem("userLevel"),
+    userExp: sessionStorage.getItem("userExp"),
+    winRate: sessionStorage.getItem("winRate"),
   };
   const [openProfile, setOpenProfile] = useState(false);
 
@@ -88,11 +89,7 @@ function Profile() {
         justify="center"
         onClick={handleOpenDialog}
       >
-        <img
-          className={classes.profileImage}
-          src={profileResouce.imgSrc}
-          alt="alternatetext"
-        />
+        <Avatar className={classes.profileImage} src={profileResouce.imgSrc} />
       </Grid>
       <Grid
         container

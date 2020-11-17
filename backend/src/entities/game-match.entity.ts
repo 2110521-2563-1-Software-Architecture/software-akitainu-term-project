@@ -1,5 +1,10 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
 
+export enum GameType {
+  rank = 'rank',
+  custom = 'custom',
+}
+
 @Entity()
 export class GameMatch {
   @PrimaryColumn('char', { length: 36 })
@@ -13,4 +18,10 @@ export class GameMatch {
 
   @Column('timestamp')
   finishedTime: Date;
+
+  @Column('enum', {
+    enum: GameType,
+    default: GameType.custom,
+  })
+  type: GameType;
 }

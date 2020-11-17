@@ -12,7 +12,8 @@ import AuthGaurd from "components/AuthGaurd";
 import Authen from "views/Auth";
 
 // const ENDPOINT = "18.141.138.13:10001";
-const SOCKET_ENDPOINT = process.env.REACT_APP_BACKEND_SOCKET || "http://localhost:10001";
+const SOCKET_ENDPOINT =
+  process.env.REACT_APP_BACKEND_SOCKET || "http://18.141.138.13:10001";
 const socket = socketIOClient(SOCKET_ENDPOINT);
 
 const routesConfig = [

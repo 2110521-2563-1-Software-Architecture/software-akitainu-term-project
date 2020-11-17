@@ -2,7 +2,14 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { newUserDto, userDto, LoginType, loginUserDto, userProgressDto, editUserDto } from './users.dto';
+import {
+  newUserDto,
+  userDto,
+  LoginType,
+  loginUserDto,
+  UserProgressDto,
+  EditUserDto,
+} from './users.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -36,6 +43,7 @@ export class UsersService {
       userRank: 1,
       userLevel: 1,
       userExp: 0,
+      winRate: 0,
     };
     this.userRepository
       .insert({
@@ -58,13 +66,22 @@ export class UsersService {
     if (!userWithAccess) {
       throw new BadRequestException('This user has not registered yet!');
     }
-    const { userId, userName, userRank, userLevel, userExp } = userWithAccess;
+    const {
+      userId,
+      userName,
+      userRank,
+      userLevel,
+      userExp,
+      rankGameWinMatches,
+      rankGameMatches,
+    } = userWithAccess;
     const user: userDto = {
       userId,
       userName,
       userLevel,
       userRank,
       userExp,
+      winRate: await this.getWinRate(rankGameWinMatches, rankGameMatches),
     };
     console.log('login user: ', userName);
     return user;
@@ -84,29 +101,58 @@ export class UsersService {
 
   async getUserByUserId(userId: string) {
     const ret = await this.userRepository.findOne({
-      select: ['userId', 'userName', 'userRank', 'userLevel', 'userExp'],
+      select: [
+        'userId',
+        'userName',
+        'userRank',
+        'userLevel',
+        'userExp',
+        'rankGameMatches',
+        'rankGameWinMatches',
+      ],
       where: {
         userId: userId,
       },
     });
     if (!ret) throw new BadRequestException('Invalid UserId');
+    ret['winRate'] = this.getWinRate(
+      ret.rankGameWinMatches,
+      ret.rankGameMatches,
+    );
     return ret;
   }
 
-  async updateUserProgress(userId: string, userProgressDto: userProgressDto) {
+  async updateUserProgress(userId: string, userProgressDto: UserProgressDto) {
     const { userExp, userRank, userLevel } = userProgressDto; // new EXP and new rank
 
     const user = await this.getUserByUserId(userId);
-    if(userLevel < user.userLevel) 
-      throw new BadRequestException('Error: new level cannot be less than old level');
-    if(userRank && Math.abs(user.userRank-userRank) > 2) 
+    if (userLevel < user.userLevel)
+      throw new BadRequestException(
+        'Error: new level cannot be less than old level',
+      );
+    if (userRank && Math.abs(user.userRank - userRank) > 2)
       throw new BadRequestException('Error: invalid rank');
 
-    const editUserDto: editUserDto = {
+    const editUserDto: EditUserDto = {
       userId,
       userRank,
       userLevel,
       userExp,
+    };
+    const ret = await this.userRepository.save(editUserDto);
+    if (!ret) throw new BadRequestException('Invalid UserId');
+    return ret;
+  }
+
+  async getWinRate(rankGameWinMatches, rankGameMatches) {
+    if (rankGameMatches === 0) return 0;
+    return (rankGameWinMatches / rankGameMatches) * 100;
+  }
+
+  async changeUserName(userId: string, userName: string) {
+    const editUserDto: EditUserDto = {
+      userId,
+      userName,
     };
     const ret = await this.userRepository.save(editUserDto);
     if (!ret) throw new BadRequestException('Invalid UserId');

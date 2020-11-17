@@ -5,10 +5,7 @@ import { GameMatch } from 'src/entities/game-match.entity';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([GameMatch]),
-    UsersModule,
-  ],
+  imports: [TypeOrmModule.forFeature([GameMatch]), UsersModule],
   providers: [GameMatchService],
   exports: [GameMatchService],
 })

@@ -485,8 +485,8 @@ function Game(props) {
     const element = document.getElementById("logs");
     element.scrollTop = element.scrollHeight;
   };
-  
-  const {exp, rank, level } = userProgress;
+
+  const { exp, rank, level } = userProgress;
   useEffect(() => {
     updateLogsScroll();
   });
