@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
+  withStyles,
   makeStyles,
   Grid,
   Typography,
@@ -19,7 +20,7 @@ import RankDialog from "./RankCustom";
 import Profile from "./Profile";
 // import logo from '../logo.svg'
 
-const usestyle = makeStyles((theme) => ({
+const usestyle = (theme) => ({
   root: {
     height: "100vh",
     backgroundColor: "#465A74",
@@ -60,112 +61,155 @@ const usestyle = makeStyles((theme) => ({
       -1px 1px 0 black, \
       1px 1px 5px black;",
   },
-}));
+});
 
-function Welcome() {
-  const classes = usestyle();
-  const history = useHistory();
-  const [openModeDialog, setModeDialog] = useState(false);
-  const [openCustomDialog, setCustomDialog] = useState(false);
-  const [openRankDialog, setRankDialog] = useState(false);
-  const [time, settime] = useState(1);
+class Welcome extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log(props);
+    this.state = {
+      matchmakingSocket: props.matchmakingSocket,
+      openModeDialog: false,
+      openCustomDialog: false,
+      openRankDialog: false,
+      time: 0,
+    };
+  }
 
-  const joinRoom100001 = () => {
+  componentDidMount() {
+    const { matchmakingSocket } = this.state;
+    // define socket.on
+  }
+
+  joinRoom100001 = () => {
     // todo:
     // var userIdPlaceholder = Math.floor(100000 + Math.random() * 900000);
     // const userId = prompt("Please enter your user Id", userIdPlaceholder);
     // window.sessionStorage.setItem("userId", userId);
   };
-  const onLogout = () => {
+
+  onLogout = () => {
+    const history = useHistory();
     sessionStorage.setItem("userId", null);
     history.push("/home");
     history.go(0);
   };
 
-  const handleClickPlayButton = () => {
+  handleClickPlayButton = () => {
     console.log("click");
-    setModeDialog(true);
+    this.setState({ openModeDialog: true });
   };
 
-  const handleClickCustomButton = () => {
+  handleClickCustomButton = () => {
     console.log("click");
-    setCustomDialog(true);
+    this.setState({ openCustomDialog: true });
   };
 
-  const handleClickRankButton = () => {
-    console.log("click");
-    settime(0);
-    setRankDialog(true);
+  handleClickRankButton = () => {
+    // console.log("click");
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("search-ranked", { userId });
+    this.setState({ time: 0, openRankDialog: true });
   };
 
-  const closeModeDialog = () => {
-    setModeDialog(false);
+  closeModeDialog = () => {
+    this.setState({ openModeDialog: false });
   };
 
-  const closeCustomDialog = () => {
-    setCustomDialog(false);
+  closeCustomDialog = () => {
+    this.setState({ openCustomDialog: false });
   };
 
-  const closeRankDialog = () => {
-    setRankDialog(false);
+  closeRankDialog = () => {
+    this.setState({ openRankDialog: false });
   };
 
-  return (
-    <Grid container direction="row" className={classes.root}>
-      <Grid item container direction="row" xs="3">
-        <Grid item xs="12" className={classes.profileSection}>
-          {/* <Typography style={{ textAlign: "center" }}>Profile</Typography> */}
-          <Profile />
+  settime = (time) => {
+    this.setState({ time });
+  };
+
+  render() {
+    // const userId = sessionStorage.getItem("userId");
+
+    // const classes = usestyle();
+    // const history = useHistory();
+    const { classes } = this.props;
+    const {
+      openModeDialog,
+      openCustomDialog,
+      openRankDialog,
+      time,
+    } = this.state;
+    // const [openModeDialog, setModeDialog] = useState(false);
+    // const [openCustomDialog, setCustomDialog] = useState(false);
+    // const [openRankDialog, setRankDialog] = useState(false);
+    // const [time, settime] = useState(1);
+
+    return (
+      <Grid container direction="row" className={classes.root}>
+        <Grid item container direction="row" xs="3">
+          <Grid item xs="12" className={classes.profileSection}>
+            {/* <Typography style={{ textAlign: "center" }}>Profile</Typography> */}
+            <Profile />
+          </Grid>
+          <Grid item xs="12" className={classes.friendSection}>
+            <Typography style={{ textAlign: "center" }}>Room</Typography>
+          </Grid>
         </Grid>
-        <Grid item xs="12" className={classes.friendSection}>
-          <Typography style={{ textAlign: "center" }}>Room</Typography>
+        <Grid item xs="5" className={classes.mainSection}>
+          <Grid
+            item
+            container
+            style={{ justifyContent: "center", paddingTop: "15vh" }}
+          >
+            <img src={logo} className="App-logo" alt="logo" />
+          </Grid>
+          <Typography
+            className={classes.text}
+            style={{
+              textAlign: "center",
+              // color: "#ffffff",
+              // textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
+              // fontSize: "72px",
+              marginTop: "5px",
+            }}
+          >
+            Exploding puppy
+          </Typography>
+          <Grid
+            container
+            style={{ justifyContent: "center", marginTop: "50px" }}
+          >
+            <Button
+              text="Play"
+              className={classes.playButton}
+              onClick={this.handleClickPlayButton}
+            ></Button>
+          </Grid>
         </Grid>
+        <Grid item xs="3" className={classes.mainSection}>
+          <Typography style={{ textAlign: "center" }}>Leader Board</Typography>
+        </Grid>
+        <ModeDialog
+          open={openModeDialog}
+          onClose={this.closeModeDialog}
+          customButton={this.handleClickCustomButton}
+          rankButton={this.handleClickRankButton}
+        />
+        <CustomDialog
+          open={openCustomDialog}
+          onClose={this.closeCustomDialog}
+        />
+        <RankDialog
+          open={openRankDialog}
+          onClose={this.closeRankDialog}
+          time={time}
+          settime={this.settime}
+        />
       </Grid>
-      <Grid item xs="5" className={classes.mainSection}>
-        <Grid
-          item
-          container
-          style={{ justifyContent: "center", paddingTop: "15vh" }}
-        >
-          <img src={logo} className="App-logo" alt="logo" />
-        </Grid>
-        <Typography
-          className={classes.text}
-          style={{
-            textAlign: "center",
-            // color: "#ffffff",
-            // textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
-            // fontSize: "72px",
-            marginTop: "5px",
-          }}
-        >
-          Exploding puppy
-        </Typography>
-        <Grid container style={{ justifyContent: "center", marginTop: "50px" }}>
-          <Button
-            text="Play"
-            className={classes.playButton}
-            onClick={handleClickPlayButton}
-          ></Button>
-        </Grid>
-      </Grid>
-      <Grid item xs="3" className={classes.mainSection}>
-        <Typography style={{ textAlign: "center" }}>Leader Board</Typography>
-      </Grid>
-      <ModeDialog
-        open={openModeDialog}
-        onClose={closeModeDialog}
-        customButton={handleClickCustomButton}
-        rankButton={handleClickRankButton}
-      />
-      <CustomDialog open={openCustomDialog} onClose={closeCustomDialog} />
-      <RankDialog
-        open={openRankDialog}
-        onClose={closeRankDialog}
-        time={time}
-        settime={settime}
-      />
-    </Grid>
-  );
+    );
+  }
 }
-export default Welcome;
+
+export default withStyles(usestyle)(Welcome);

@@ -2,7 +2,8 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import Welcome from "./Welcome";
 
-function Home() {
+function Home(props) {
+  const { matchmakingSocket } = props;
   const history = useHistory();
   const handleRedirect = (to) => {
     history.push(to);
@@ -10,7 +11,7 @@ function Home() {
   };
   return (
     <div>
-      <Welcome />
+      <Welcome matchmakingSocket={matchmakingSocket} />
       <span // todo: remove this
         className="App-link"
         onClick={() => handleRedirect("/gameplay/100001")}
