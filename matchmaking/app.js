@@ -35,6 +35,22 @@ io.on("connection", (socket) => {
       room.quitSearchRanked(userId);
     }
   });
+
+  socket.on("create-custom-room", (data) => {
+    console.log("create custom room");
+    console.log(data);
+    room.createCustomRoom(data.userId);
+    // let userId = socketIdToUserId[socket.id];
+    // if (userId) {
+    //   room.quitSearchRanked(userId);
+    // }
+  });
+
+  socket.on("join-custom-room", (data) => {
+    console.log("join custom room");
+    console.log(data);
+    room.joinCustomRoom(data.userId, data.inviteId, socket.id);
+  });
 });
 
 http.listen(3030, () => {

@@ -20,6 +20,8 @@ const usestyle = makeStyles((theme) => ({
     height: "600px",
     backgroundColor: "#465A74",
     padding: "30px",
+    display: "flex",
+    justifyContent: "center",
   },
   Button: {
     // height: "128px",
@@ -41,13 +43,45 @@ const usestyle = makeStyles((theme) => ({
       -1px 1px 0 black, \
       1px 1px 5px black;",
   },
+  codeInput: {
+    color: "white",
+    fontFamily: "Roboto",
+    fontSize: "48px",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+    textAlign: "center",
+    width: "50%",
+    marginBottom: "40px",
+    outline: "none",
+    borderRadius: "16px",
+    background: "lightgray",
+  },
 }));
 
-function CustomDialog({ open, onClose }) {
+function CustomDialog(props) {
   const classes = usestyle();
   // console.log("open",openDialog)
+  const {
+    open,
+    onClose,
+    onClickCreateButton,
+    onClickJoinButton,
+    isLoadingCustomRoom,
+  } = props;
+
+  const [inputCode, setInputCode] = useState(false);
+  const [inviteCode, setInviteCode] = useState("");
 
   const handleClose = () => {
+    setInviteCode("");
     onClose();
   };
 
@@ -73,30 +107,73 @@ function CustomDialog({ open, onClose }) {
               fontSize: "48px",
             }}
           >
-            Custom Mode
+            {inputCode ? "Enter invite code" : "Custom Mode"}
           </Typography>
         </Grid>
-        <Grid
-          item
-          container
-          direction="row"
-          style={{ justifyContent: "center" }}
-        >
-          <Grid item xs="2">
-            <Button
-              text="Create Room"
-              className={classes.Button}
-              style="primary"
-            ></Button>
+        {inputCode ? (
+          <>
+            <input
+              className={classes.codeInput}
+              defaultValue={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value)}
+            />
+            <Grid
+              item
+              container
+              direction="row"
+              style={{ justifyContent: "center" }}
+            >
+              <Grid item xs="2">
+                <Button
+                  text="Join room"
+                  className={classes.Button}
+                  style="primary"
+                  onClick={() => onClickJoinButton(inviteCode)}
+                  disabled={isLoadingCustomRoom}
+                />
+              </Grid>
+              <Grid item xs="2" style={{ marginLeft: "100px" }}>
+                <Button
+                  text="Back"
+                  className={classes.Button}
+                  style="secondary"
+                  onClick={() => {
+                    setInputCode(false);
+                    setInviteCode("");
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </>
+        ) : (
+          <Grid
+            item
+            container
+            direction="row"
+            style={{ justifyContent: "center" }}
+          >
+            <Grid item xs="2">
+              <Button
+                text={isLoadingCustomRoom ? "Loading..." : "Create Room"}
+                className={classes.Button}
+                style="primary"
+                onClick={onClickCreateButton}
+                disabled={isLoadingCustomRoom}
+              />
+            </Grid>
+            <Grid item xs="2" style={{ marginLeft: "100px" }}>
+              <Button
+                text="Join Room"
+                className={classes.Button}
+                style="secondary"
+                onClick={() => {
+                  setInputCode(true);
+                  setInviteCode("");
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs="2" style={{ marginLeft: "100px" }}>
-            <Button
-              text="Join Room"
-              className={classes.Button}
-              style="secondary"
-            ></Button>
-          </Grid>
-        </Grid>
+        )}
       </Grid>
     </Dialog>
   );

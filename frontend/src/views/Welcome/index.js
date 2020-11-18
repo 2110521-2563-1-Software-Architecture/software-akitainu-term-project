@@ -71,6 +71,7 @@ class Welcome extends React.Component {
       openModeDialog: false,
       openCustomDialog: false,
       openRankDialog: false,
+      isLoadingCustomRoom: false,
       time: 0,
     };
   }
@@ -103,8 +104,23 @@ class Welcome extends React.Component {
   };
 
   handleClickCustomButton = () => {
-    console.log("click");
+    // console.log("click");
     this.setState({ openCustomDialog: true });
+  };
+
+  handleClickCreateButton = () => {
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("create-custom-room", { userId });
+  };
+
+  handleClickJoinButton = (inviteCode) => {
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("join-custom-room", {
+      userId,
+      inviteId: inviteCode,
+    });
   };
 
   handleClickRankButton = () => {
@@ -145,6 +161,7 @@ class Welcome extends React.Component {
       openCustomDialog,
       openRankDialog,
       time,
+      isLoadingCustomRoom,
     } = this.state;
     // const [openModeDialog, setModeDialog] = useState(false);
     // const [openCustomDialog, setCustomDialog] = useState(false);
@@ -205,6 +222,9 @@ class Welcome extends React.Component {
         <CustomDialog
           open={openCustomDialog}
           onClose={this.closeCustomDialog}
+          onClickCreateButton={this.handleClickCreateButton}
+          onClickJoinButton={this.handleClickJoinButton}
+          isLoadingCustomRoom={isLoadingCustomRoom}
         />
         <RankDialog
           open={openRankDialog}

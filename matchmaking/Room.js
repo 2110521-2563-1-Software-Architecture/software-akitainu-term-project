@@ -62,21 +62,23 @@ class Room {
     }
     this.customRooms[inviteId] = { players: [userId] };
     this.socket.emit("update-custom-rooms", this.customRooms);
-    this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    // this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    console.log(this.customRooms);
   };
 
   joinCustomRoom = (userId, inviteId, socketId) => {
     let room = this.customRooms[inviteId];
-    if (!room) {
+    if (room == undefined) {
       this.socket.emit("error", { msg: "Invalid invite number" });
       return;
     }
-    if (room.players >= 8) {
+    if (room.players.length >= 8) {
       this.socket.emit("error", { msg: "The room is already full" });
       return;
     }
     room.players.push(userId);
-    this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    // this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    console.log(this.customRooms);
   };
 
   leaveCustomRoom = (userId, inviteId, socketId) => {
@@ -87,6 +89,7 @@ class Room {
     }
     room.players = room.players.filter((user) => user !== userId);
     this.socket.to(socketId).emit("leave-custom-room", { roomId: inviteId });
+    console.log(this.customRooms);
   };
 
   deleteCustomRoom = (inviteId) => {
@@ -98,6 +101,7 @@ class Room {
     // this.socket.emit("delete-custom-rooms", { inviteId }); ??
     delete this.customRooms[inviteId];
     this.socket.emit("update-custom-rooms", this.customRooms);
+    console.log(this.customRooms);
   };
   // more
 }
