@@ -274,7 +274,7 @@ function Waitingroom() {
               <Typography className={classes.title}>Code :</Typography>
             </Grid>
             <Grid item xs={6}>
-            <Typography className={classes.title}>{roomId}</Typography>
+              <Typography className={classes.title}>{roomId}</Typography>
             </Grid>
           </Grid>
           <Grid container item xs={12} className={classes.playersection}>
