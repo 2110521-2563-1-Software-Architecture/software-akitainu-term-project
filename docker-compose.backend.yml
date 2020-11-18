@@ -1,32 +1,23 @@
 version: '3.8'
 
 services:
-  backend_1:
+  backend:
     build: './backend'
     environment:
       MYSQL_URL: 'db'
       MYSQL_USER: 'root'
       MYSQL_PASSWORD: 'akitainu'
       MYSQL_DB: 'exploding_puppy'
-      SERVER_PORT: '8000'
-      SOCKET_PORT: '10002'
+      SERVER_PORT: '10000'
     ports:
-      - 8000:8000
-      - 10002:10002
+      - 10000:10000
     restart: always
-  backend_2:
-    build: './backend'
+  game-service:
+    build: './game-service'
     environment:
-      MYSQL_URL: 'db'
-      MYSQL_USER: 'root'
-      MYSQL_PASSWORD: 'akitainu'
-      MYSQL_DB: 'exploding_puppy'
-      SERVER_PORT: '9000'
-      SOCKET_PORT: '10003'
+      SOCKET_PORT: '10001'
     ports:
-      - 9000:9000
-      - 10003:10003
-    restart: always
+      - 10001:10001
   db:
     image: 'mysql:5.7'
     environment:
@@ -37,10 +28,5 @@ services:
       - ./db:/data/application
       - db-data:/var/lib/mysql
     restart: always
-  nginx:
-    build: './nginx'
-    ports:
-      - 10000:10000
-      - 10001:10001
 volumes:
   db-data:
