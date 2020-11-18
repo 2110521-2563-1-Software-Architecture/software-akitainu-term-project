@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS user (
     userRank int NOT NULL,
     userLevel int NOT NULL,
     snsId varchar(255) UNIQUE,
+    userExp int NOT NULL,
     PRIMARY KEY (userId)
 );
 CREATE TABLE IF NOT EXISTS game_match (

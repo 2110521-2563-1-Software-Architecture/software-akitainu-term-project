@@ -29,3 +29,14 @@ export class NewUserJoinCustomRoomDto {
   userId: string;
   roomId: string;
 }
+
+export enum GameMode {
+  rank = 'rank',
+  custom = 'custom',
+}
+
+export class CreateGameRoomDto {
+  readonly mode: GameMode;
+  readonly usersId: string[];
+  readonly options?: any;
+}

@@ -7,6 +7,8 @@ export class userDto {
   userName: string;
   userRank: number;
   userLevel: number;
+  userExp: number;
+  winRate: number;
 }
 
 export class newUserDto {
@@ -18,4 +20,18 @@ export class newUserDto {
 export class loginUserDto {
   snsId: string;
   loginType: LoginType;
+}
+
+export class UserProgressDto {
+  userExp: number;
+  userRank?: number;
+  userLevel: number;
+}
+
+export class EditUserDto {
+  userId: string;
+  userRank?: number;
+  userExp?: number;
+  userLevel?: number;
+  userName?: string;
 }

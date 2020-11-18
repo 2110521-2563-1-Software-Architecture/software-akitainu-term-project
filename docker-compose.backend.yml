@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build: './backend'
+    environment:
+      MYSQL_URL: 'db'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'akitainu'
+      MYSQL_DB: 'exploding_puppy'
+      SERVER_PORT: '10000'
+    ports:
+      - 10000:10000
+    restart: always
+  game-service:
+    build: './game-service'
+    environment:
+      SOCKET_PORT: '10001'
+    ports:
+      - 10001:10001
+  db:
+    image: 'mysql:5.7'
+    environment:
+      MYSQL_ROOT_PASSWORD: akitainu
+      MYSQL_DATABASE: exploding_puppy
+    command: --init-file /data/application/init.sql
+    volumes:
+      - ./db:/data/application
+      - db-data:/var/lib/mysql
+    restart: always
+volumes:
+  db-data:

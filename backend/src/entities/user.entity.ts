@@ -20,4 +20,13 @@ export class User {
 
   @Column('text')
   loginType: LoginType;
+
+  @Column('integer')
+  userExp: number;
+
+  @Column('integer', { default: 0 })
+  rankGameMatches: number;
+
+  @Column('integer', { default: 0 })
+  rankGameWinMatches: number;
 }

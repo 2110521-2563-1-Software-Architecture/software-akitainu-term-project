@@ -46,12 +46,12 @@ const usestyle = makeStyles((theme) => ({
   },
 }));
 
-function RankDialog({ open, onClose, time, settime }) {
+function RankDialog({ open, onClose, time, settime, isFound }) {
   const classes = usestyle();
   // console.log("open",open)
 
   React.useEffect(() => {
-    if (open) {
+    if (open && !isFound) {
       setTimeout(() => settime(time + 1), 1000);
     }
     console.log("open", open);
@@ -105,7 +105,7 @@ function RankDialog({ open, onClose, time, settime }) {
               fontSize: "48px",
             }}
           >
-            {time}
+            {isFound ? "welcome" : time}
           </Typography>
         </Grid>
         <Grid item container style={{ justifyContent: "center" }}>

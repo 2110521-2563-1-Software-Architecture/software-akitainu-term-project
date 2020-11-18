@@ -78,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   },
 
   logWrapper: {
@@ -128,6 +129,26 @@ const useStyles = makeStyles((theme) => ({
     padding: "8px 0px",
     listStyle: "none",
     borderBottom: "solid 1px white",
+  },
+
+  cardLeft: {
+    textAlign: "center",
+    position: "absolute",
+    bottom: "15%",
+    width: "100%",
+    fontSize: "20px",
+    color: "white",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
   },
 
   deck: {
@@ -224,6 +245,7 @@ function Game(props) {
     logs,
     result,
     handleExit,
+    userProgress,
   } = props;
   const classes = useStyles();
 
@@ -485,6 +507,7 @@ function Game(props) {
     element.scrollTop = element.scrollHeight;
   };
 
+  const { exp, rank, level } = userProgress;
   useEffect(() => {
     updateLogsScroll();
   });
@@ -495,7 +518,6 @@ function Game(props) {
     history.push("/home");
     history.go(0);
   };
-
   return (
     <>
       <div className={classes.root}>
@@ -513,12 +535,20 @@ function Game(props) {
             {getMiddlePlayer(usersToRender[1])}
           </div>
           <div className={classes.playArea}>
-            <div className={classes.cardWrapper}>
+            <div
+              className={classes.cardWrapper}
+              style={
+                numberOfDeckCards > 0 ? undefined : { visibility: "hidden" }
+              }
+            >
               <img
                 src={card_back}
                 className={classes.deck}
                 onClick={handleDrawCard}
               />
+              <div className={classes.cardLeft}>
+                {`Cards left: ${numberOfDeckCards}`}
+              </div>
             </div>
             <div className={classes.cardWrapper}>
               <img
@@ -575,7 +605,15 @@ function Game(props) {
           insertExplodingPuppy(userId, idx);
         }}
       />
-      <GameResultDialog result={result} userId={userId} />
+      <GameResultDialog
+        result={result}
+        userId={userId}
+        exp={exp}
+        plusExp={250} // todo: Rank will give 500 exp, custom will give 250
+        level={level}
+        rank={rank}
+        // plusRank={2} // todo: pass this if rank mode; 2 for 1st, 1 for 2nd, 0 for 3rd, -1 for 4th, -2 for 5th
+      />
       {isSelectingPlayer && <div className={classes.backdrop} />}
       <Button
         text={"Exit"}

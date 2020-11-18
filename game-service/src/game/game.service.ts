@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto, Card } from './custom-game-room.dto';
-import { UsersService } from '../users/users.service';
+import { NewUserJoinCustomRoomDto, Card, CreateGameRoomDto } from './game.dto';
 
 @Injectable()
-export class CustomGameRoomService {
-  constructor(private readonly userService: UsersService) {}
-
+export class GameService {
   rooms = {};
 
   allCards = {
@@ -30,8 +27,19 @@ export class CustomGameRoomService {
     this.rooms[roomId] = { ...this.rooms[roomId], ...features };
   }
 
+  async createGameRoom(createGameRoomDto: CreateGameRoomDto) {
+    const { usersId, mode, options } = createGameRoomDto;
+    let roomId = (Math.random() * 999999).toString().substr(-6);
+    while (this.rooms[roomId]) {
+      roomId = (Math.random() * 999999).toString().substr(-6);
+    }
+    this.rooms[roomId] = {};
+    this.rooms[roomId]['usersId'] = usersId;
+    this.rooms[roomId]['mode'] = mode;
+    return roomId;
+  }
+
   async createCustomRoom(userId: string) {
-    // const roomId = (Math.random() * 999999).toString().substr(-6);
     const roomId = '100001';
     this.rooms[roomId] = {};
     const usersId: string[] = [userId];
@@ -41,25 +49,16 @@ export class CustomGameRoomService {
     return roomId;
   }
 
-  async getJoinedUserName(userId: string) {
-    return this.userService.getUserName(userId);
-  }
-
   async joinCustomRoom(newUserJoinRoom: NewUserJoinCustomRoomDto) {
     const { userId, roomId } = newUserJoinRoom;
     const { usersId } = this.rooms[roomId];
     if (this.rooms[roomId]['nextTurnLeft']) return false;
     usersId.push(userId);
 
-    const usersName = [];
+    // Todo: add userName on request
+    const usersName: string[] = [];
 
-    await usersId.map(async userId =>
-      usersName.push(await this.getJoinedUserName(userId)),
-    );
-
-    console.log('usersName: ', usersName);
-
-    const allUsersTnRoom = {
+    const allUsersInRoom = {
       usersId: usersId,
       usersName,
       roomId,
@@ -68,7 +67,7 @@ export class CustomGameRoomService {
     this.setRoomByRoomId(roomId, { usersId });
 
     console.log('[AllCustomRooms] :\t', this.rooms);
-    return allUsersTnRoom;
+    return allUsersInRoom;
   }
 
   async shuffle(array: string[]) {
@@ -93,6 +92,7 @@ export class CustomGameRoomService {
 
   async onStartGame(roomId: string) {
     // determine first turn and turn left
+    console.log('rooms: ', this.rooms);
     const { usersId } = this.rooms[roomId];
     this.rooms[roomId]['nextUserIndex'] = 0;
     this.rooms[roomId]['lastUserIndex'] = 0;
@@ -357,6 +357,7 @@ export class CustomGameRoomService {
     if (aliveUsersId.length !== 0) {
       return false;
     }
+
     return result;
   }
 
@@ -366,6 +367,11 @@ export class CustomGameRoomService {
     return true;
   }
 
+  async onRankWin(userId: string, roomId: string) {
+    const { usersId } = this.rooms[roomId];
+    console.log('user win', usersId);
+    console.log('users in room', usersId);
+  }
   // async onPlayerExit(roomId: string, userId: string) {
   //   const { nextUserIndex, aliveUsersId, result, deck } = this.rooms[roomId];
   //   const explodeIndex = deck.indexOf(Card.explodingPuppy);

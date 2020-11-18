@@ -3,6 +3,7 @@ import Chat from "./Chat";
 import Game from "./Game";
 import { Palette } from "components";
 import { Card } from "../../components/type";
+import axios from "axios";
 
 const allSelectableCards = Object.values(Card);
 allSelectableCards.splice(allSelectableCards.indexOf(Card.explodingPuppy), 1);
@@ -11,9 +12,13 @@ allSelectableCards.splice(allSelectableCards.indexOf(Card.backCard), 1);
 const timePerTurn = 30; // seconds
 const timeForNope = 5; // seconds
 
+const ENDPOINT =
+  process.env.REACT_APP_BACKEND_API || "http://18.141.138.13:10000";
+
 class Gameplay extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       socket: props.socket,
       roomId: props.match.params.roomId, // room Id
@@ -44,7 +49,13 @@ class Gameplay extends React.Component {
       logs: [],
       result: [],
       hasDefuse: false,
+      userProgress: {
+        rank: 0,
+        exp: -1,
+        level: 0,
+      },
     };
+    this.setUserProgress();
   }
 
   componentDidMount() {
@@ -650,6 +661,9 @@ class Gameplay extends React.Component {
             .profileImgUrl,
         })),
       });
+
+      const { userProgress, userId } = this.state;
+      this.updateUserProgress(userId, result, userProgress);
     });
   }
 
@@ -670,13 +684,10 @@ class Gameplay extends React.Component {
       countDownTime: this.state.countDownTime,
       cardSelectorId: this.state.cardSelectorId,
       userId: this.state.userId,
+      userProgress: this.state.userProgress,
     };
     if (this.state.usersData[userIdx]?.userCards && userIdx >= 0)
       data.userCards = this.state.usersData[userIdx].userCards[userIdx];
-    console.log(
-      sessionStorage.getItem("userId"),
-      sessionStorage.getItem("userName")
-    );
     return data;
   };
 
@@ -995,7 +1006,6 @@ class Gameplay extends React.Component {
   };
 
   newCountDown = (second) => {
-    console.log("newCountDown", Date.now() + second * 1000);
     this.setState({ countDownTime: Date.now() + second * 1000 });
   };
 
@@ -1028,6 +1038,55 @@ class Gameplay extends React.Component {
     this.state.socket.emit("player-exit", data);
   };
 
+  getUser = (userId) => {
+    return new Promise((resolve, reject) => {
+      try {
+        axios
+          .get(`${ENDPOINT}/users/${userId}`)
+          .then((res) => {
+            resolve(res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } catch (err) {}
+    });
+  };
+
+  setUserProgress = async () => {
+    const resp = await this.getUser(this.state.userId);
+    const userProgress = {
+      exp: resp.userExp,
+      rank: resp.userRank,
+      level: resp.userLevel,
+    };
+    this.setState({ userProgress });
+  };
+
+  getMaxExp = (level) => 100 + level * level * 5;
+
+  updateUserProgress = (userId, result, userProgress) => {
+    const plusExp = 250; // todo: will +500 if rank
+    let level = userProgress.level;
+    let maxExp = this.getMaxExp(level);
+    let exp = userProgress.exp + plusExp;
+
+    while (exp >= maxExp) {
+      exp -= maxExp;
+      level += 1;
+      maxExp = this.getMaxExp(level);
+    }
+
+    const newUserProgress = {
+      // userRank: userProgress.rank + ???, todo: add this if rank
+      userExp: exp,
+      userLevel: level,
+    };
+    sessionStorage.setItem("userExp", exp);
+    sessionStorage.setItem("userLevel", level);
+    axios.patch(`${ENDPOINT}/users/progress/${userId}`, newUserProgress);
+  };
+
   render() {
     // const classes = useStyles();
     const roomId = "100001";
@@ -1049,6 +1108,7 @@ class Gameplay extends React.Component {
       countDownTime,
       logs,
       result,
+      userProgress,
     } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
@@ -1109,6 +1169,7 @@ class Gameplay extends React.Component {
           logs={logs}
           result={result}
           handleExit={this.handleExit}
+          userProgress={userProgress}
         />
       </div>
     );

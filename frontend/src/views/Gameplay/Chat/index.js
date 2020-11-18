@@ -304,7 +304,7 @@ function Chat({
   };
 
   useEffect(() => {
-    console.log(usersData);
+    // console.log(usersData);
     if (usersData.length !== 0) {
       thisUserId = sessionStorage.getItem("userId");
       usersData.forEach((user) => {
@@ -323,7 +323,7 @@ function Chat({
   // }
 
   useEffect(() => {
-    console.log(socket);
+    // console.log(socket);
     var person =
       sessionStorage.getItem("userName") ||
       window.sessionStorage.getItem("userId");
@@ -331,6 +331,9 @@ function Chat({
     socket.on("message-get-room", (data) => {
       console.log("message-get-room-hook", data);
       pushRoomMessage(data);
+    });
+    socket.on("debug", (data) => {
+      console.log(data);
     });
   }, []);
 
@@ -395,13 +398,22 @@ function Chat({
     setTyping(e.target.value);
   };
 
+  const testApi = () => {
+    let data = {
+      roomId: thisRoomId,
+      userId: "456",
+    };
+    console.log("testApis", data);
+    socket.emit("game-rank-win", data);
+  };
+
   const handleEnter = () => {
     if (typing) {
       if (currentShowMessage === "room") {
         // let roomMes = messageGroup.room.messages;
         sendMessageRoom(
           sessionStorage.getItem("userId"),
-          100001,
+          thisRoomId,
           thisUsername,
           typing
         );
@@ -598,6 +610,7 @@ function Chat({
       {chatBox()}
       {chatBubbles()}
       {/* {getMessage()} */}
+      <button onClick={() => testApi()}>test api</button>
     </div>
   );
 }

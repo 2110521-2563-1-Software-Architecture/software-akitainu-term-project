@@ -10,10 +10,16 @@ import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
 import AuthGaurd from "components/AuthGaurd";
 import Authen from "views/Auth";
+import Waitingroom from "views/Waitingroom";
 
 // const ENDPOINT = "18.141.138.13:10001";
-const ENDPOINT = "localhost:10001";
-const socket = socketIOClient(ENDPOINT);
+const SOCKET_ENDPOINT =
+  // process.env.REACT_APP_BACKEND_SOCKET || "http://18.141.138.13:10001";
+  process.env.REACT_APP_BACKEND_SOCKET || "http://localhost:10001";
+const MATCHMAKING_SOCKET_ENDPOINT =
+  process.env.MATCHMAKING_SOCKET || "localhost:3030";
+const socket = socketIOClient(SOCKET_ENDPOINT);
+const matchmakingSocket = socketIOClient(MATCHMAKING_SOCKET_ENDPOINT);
 
 const routesConfig = [
   {
@@ -33,22 +39,36 @@ const routesConfig = [
     path: "/helloworld/:username",
     component: lazy(() => import("views/Helloworld")),
   },
-  {
-    exact: true,
-    path: "/leadership/top",
-    component: lazy(() => import("views/leadership/Top")),
-  },
-  {
-    exact: true,
-    path: "/leadership/myscore",
-    component: lazy(() => import("views/leadership/SelfScore")),
-  },
+  // {
+  //   exact: true,
+  //   path: "/leadership/top",
+  //   component: lazy(() => import("views/leadership/Top")),
+  // },
+  // {
+  //   exact: true,
+  //   path: "/leadership/myscore",
+  //   component: lazy(() => import("views/leadership/SelfScore")),
+  // },
   //add more path ...
+  {
+    exact: true,
+    guard: AuthGaurd,
+    path: "/leaderboard",
+    component: lazy(() => import("views/Leadership")),
+  },
   {
     exact: true,
     guard: AuthGaurd,
     path: "/gameplay/:roomId",
     component: (rest) => <Gameplay socket={socket} {...rest} />,
+  },
+  {
+    exact: true,
+    guard: AuthGaurd,
+    path: "/waiting/:roomId",
+    component: (rest) => (
+      <Waitingroom matchmakingSocket={matchmakingSocket} {...rest} />
+    ),
   },
   {
     exact: true,
@@ -63,7 +83,7 @@ const routesConfig = [
         exact: true,
         guard: AuthGaurd,
         path: "/home",
-        component: Home,
+        component: () => <Home matchmakingSocket={matchmakingSocket} />,
       },
       {
         exact: true,

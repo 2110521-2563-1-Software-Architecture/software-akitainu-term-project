@@ -1,13 +1,26 @@
 # base image
-FROM node:12-alpine
+FROM node:14-slim
 
-# set working directory
-RUN mkdir /app
-WORKDIR /app
+RUN apt update && apt install -y procps
 
-# install and cache app dependencies
-COPY . /app
-RUN yarn
+USER node
 
-# start app
-CMD ["yarn", "start"]
+ARG PORT=10000
+
+ENV PORT=${PORT}
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH=$PATH:/home/node/.npm-global/bin
+
+WORKDIR /home/node
+
+COPY --chown=node package.json yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn build
+
+EXPOSE ${PORT}
+
+CMD [ "yarn", "start:prod" ]

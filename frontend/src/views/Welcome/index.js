@@ -1,15 +1,5 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
-import {
-  makeStyles,
-  Grid,
-  Typography,
-  Avatar,
-  Tooltip,
-  Grow,
-  TextField,
-  IconButton,
-  InputAdornment,
-} from "@material-ui/core";
+import React from "react";
+import { withStyles, Grid, Typography } from "@material-ui/core";
 import logo from "../../shiba-inu.svg";
 import { useHistory } from "react-router-dom";
 import Button from "components/Button";
@@ -17,9 +7,9 @@ import ModeDialog from "./ModeDialog";
 import CustomDialog from "./CustomDialog";
 import RankDialog from "./RankCustom";
 import Profile from "./Profile";
-// import logo from '../logo.svg'
+import CustomRoomList from "./CustomRoomList";
 
-const usestyle = makeStyles((theme) => ({
+const usestyle = (theme) => ({
   root: {
     height: "100vh",
     backgroundColor: "#465A74",
@@ -33,7 +23,6 @@ const usestyle = makeStyles((theme) => ({
   },
   friendSection: {
     height: "60vh",
-    backgroundColor: "#B6C5E0",
     marginTop: "50px",
   },
   mainSection: {
@@ -60,112 +49,219 @@ const usestyle = makeStyles((theme) => ({
       -1px 1px 0 black, \
       1px 1px 5px black;",
   },
-}));
+});
 
-function Welcome() {
-  const classes = usestyle();
-  const history = useHistory();
-  const [openModeDialog, setModeDialog] = useState(false);
-  const [openCustomDialog, setCustomDialog] = useState(false);
-  const [openRankDialog, setRankDialog] = useState(false);
-  const [time, settime] = useState(1);
+class Welcome extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      matchmakingSocket: props.matchmakingSocket,
+      openModeDialog: false,
+      openCustomDialog: false,
+      openRankDialog: false,
+      isLoadingCustomRoom: false,
+      time: 0,
+      publicCustomRooms: {},
+      joinCustomErrorText: "",
+      isRankFound: false,
+    };
+  }
 
-  const joinRoom100001 = () => {
+  // data = ['123','456']
+  setRankFound = () => {
+    this.setState({ isRankFound: true });
+    console.log("setState");
+  };
+
+  componentDidMount() {
+    const { matchmakingSocket } = this.state;
+    matchmakingSocket.on("ranked-found", (data) => {
+      console.log("ranked-found");
+      // console.log(data);
+      window.location = `/gameplay/${data.roomId}`;
+      this.setRankFound();
+    });
+    matchmakingSocket.on("join-custom-room", (data) => {
+      console.log("join-custom-room");
+      console.log(data);
+      window.location = `/waiting/${data.roomId}`;
+      // redirect to waiting room for that room id
+    });
+    matchmakingSocket.on("update-custom-rooms", (data) => {
+      this.setState({ publicCustomRooms: data });
+    });
+    matchmakingSocket.on("join-custom-error", (data) => {
+      this.setState({
+        isLoadingCustomRoom: false,
+        joinCustomErrorText: data.msg,
+      });
+    });
+  }
+
+  joinRoom100001 = () => {
     // todo:
     // var userIdPlaceholder = Math.floor(100000 + Math.random() * 900000);
     // const userId = prompt("Please enter your user Id", userIdPlaceholder);
     // window.sessionStorage.setItem("userId", userId);
   };
-  const onLogout = () => {
+
+  onLogout = () => {
+    const history = useHistory();
     sessionStorage.setItem("userId", null);
     history.push("/home");
     history.go(0);
   };
 
-  const handleClickPlayButton = () => {
+  handleClickPlayButton = () => {
     console.log("click");
-    setModeDialog(true);
+    this.setState({ openModeDialog: true });
   };
 
-  const handleClickCustomButton = () => {
-    console.log("click");
-    setCustomDialog(true);
+  handleClickCustomButton = () => {
+    // console.log("click");
+    this.setState({ openCustomDialog: true });
   };
 
-  const handleClickRankButton = () => {
-    console.log("click");
-    settime(0);
-    setRankDialog(true);
+  handleClickCreateButton = () => {
+    this.setState({ isLoadingCustomRoom: true });
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("create-custom-room", { userId });
   };
 
-  const closeModeDialog = () => {
-    setModeDialog(false);
+  handleClickJoinButton = (inviteCode) => {
+    this.setState({ isLoadingCustomRoom: true });
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("join-custom-room", {
+      userId,
+      inviteId: inviteCode,
+    });
   };
 
-  const closeCustomDialog = () => {
-    setCustomDialog(false);
+  handleClickRankButton = () => {
+    // console.log("click");
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("search-ranked", { userId });
+    this.setState({ time: 0, openRankDialog: true });
   };
 
-  const closeRankDialog = () => {
-    setRankDialog(false);
+  closeModeDialog = () => {
+    this.setState({ openModeDialog: false });
   };
 
-  return (
-    <Grid container direction="row" className={classes.root}>
-      <Grid item container direction="row" xs="3">
-        <Grid item xs="12" className={classes.profileSection}>
-          {/* <Typography style={{ textAlign: "center" }}>Profile</Typography> */}
-          <Profile />
+  closeCustomDialog = () => {
+    this.setState({ openCustomDialog: false, joinCustomErrorText: "" });
+  };
+
+  closeRankDialog = () => {
+    const { matchmakingSocket } = this.state;
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("quit-search-ranked", { userId });
+    this.setState({ openRankDialog: false, isRankFound: false });
+  };
+
+  settime = (time) => {
+    this.setState({ time });
+  };
+
+  toLeaderboard = () => {
+    window.location = "/leaderboard";
+  };
+
+  render() {
+    // const userId = sessionStorage.getItem("userId");
+
+    // const classes = usestyle();
+    // const history = useHistory();
+    const { classes } = this.props;
+    const {
+      openModeDialog,
+      openCustomDialog,
+      openRankDialog,
+      time,
+      isLoadingCustomRoom,
+      publicCustomRooms,
+      joinCustomErrorText,
+    } = this.state;
+    // const [openModeDialog, setModeDialog] = useState(false);
+    // const [openCustomDialog, setCustomDialog] = useState(false);
+    // const [openRankDialog, setRankDialog] = useState(false);
+    // const [time, settime] = useState(1);
+
+    return (
+      <Grid container direction="row" className={classes.root}>
+        <Grid item container direction="row" xs="3">
+          <Grid item xs="12" className={classes.profileSection}>
+            {/* <Typography style={{ textAlign: "center" }}>Profile</Typography> */}
+            <Profile />
+          </Grid>
+          <Grid item xs="12" className={classes.friendSection}>
+            <CustomRoomList
+              publicCustomRooms={publicCustomRooms}
+              onClickRoom={this.handleClickJoinButton}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs="12" className={classes.friendSection}>
-          <Typography style={{ textAlign: "center" }}>Room</Typography>
+        <Grid item xs="5" className={classes.mainSection}>
+          <Grid
+            item
+            container
+            style={{ justifyContent: "center", paddingTop: "15vh" }}
+          >
+            <img src={logo} className="App-logo" alt="logo" />
+          </Grid>
+          <Typography
+            className={classes.text}
+            style={{
+              textAlign: "center",
+              // color: "#ffffff",
+              // textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
+              // fontSize: "72px",
+              marginTop: "5px",
+            }}
+          >
+            Exploding puppy
+          </Typography>
+          <Grid
+            container
+            style={{ justifyContent: "center", marginTop: "50px" }}
+          >
+            <Button
+              text="Play"
+              className={classes.playButton}
+              onClick={this.handleClickPlayButton}
+            ></Button>
+          </Grid>
         </Grid>
+        <Grid item xs="3" className={classes.mainSection}>
+          <Button onClick={this.toLeaderboard} text="Leader Board" />
+        </Grid>
+        <ModeDialog
+          open={openModeDialog}
+          onClose={this.closeModeDialog}
+          customButton={this.handleClickCustomButton}
+          rankButton={this.handleClickRankButton}
+        />
+        <CustomDialog
+          open={openCustomDialog}
+          onClose={this.closeCustomDialog}
+          onClickCreateButton={this.handleClickCreateButton}
+          onClickJoinButton={this.handleClickJoinButton}
+          isLoadingCustomRoom={isLoadingCustomRoom}
+          joinCustomErrorText={joinCustomErrorText}
+        />
+        <RankDialog
+          open={openRankDialog}
+          onClose={this.closeRankDialog}
+          time={time}
+          settime={this.settime}
+          isFound={this.state.isRankFound}
+        />
       </Grid>
-      <Grid item xs="5" className={classes.mainSection}>
-        <Grid
-          item
-          container
-          style={{ justifyContent: "center", paddingTop: "15vh" }}
-        >
-          <img src={logo} className="App-logo" alt="logo" />
-        </Grid>
-        <Typography
-          className={classes.text}
-          style={{
-            textAlign: "center",
-            // color: "#ffffff",
-            // textShadow: "4px 4px 4px rgba(0, 0, 0, 0.5)",
-            // fontSize: "72px",
-            marginTop: "5px",
-          }}
-        >
-          Exploding puppy
-        </Typography>
-        <Grid container style={{ justifyContent: "center", marginTop: "50px" }}>
-          <Button
-            text="Play"
-            className={classes.playButton}
-            onClick={handleClickPlayButton}
-          ></Button>
-        </Grid>
-      </Grid>
-      <Grid item xs="3" className={classes.mainSection}>
-        <Typography style={{ textAlign: "center" }}>Leader Board</Typography>
-      </Grid>
-      <ModeDialog
-        open={openModeDialog}
-        onClose={closeModeDialog}
-        customButton={handleClickCustomButton}
-        rankButton={handleClickRankButton}
-      />
-      <CustomDialog open={openCustomDialog} onClose={closeCustomDialog} />
-      <RankDialog
-        open={openRankDialog}
-        onClose={closeRankDialog}
-        time={time}
-        settime={settime}
-      />
-    </Grid>
-  );
+    );
+  }
 }
-export default Welcome;
+
+export default withStyles(usestyle)(Welcome);

@@ -11,6 +11,9 @@ import logo from "../../shiba-inu.svg";
 import axios from "axios";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
+// const ENDPOINT = "http://18.141.138.13:10000";
+const ENDPOINT = process.env.REACT_APP_BACKEND_API || "http://localhost:10000";
+
 const useStlyes = makeStyles((the) => ({
   root: {
     display: "flex",
@@ -198,14 +201,17 @@ function Auth() {
   const mockUserId = () => {
     userId_tmp = Math.floor(100000 + Math.random() * 900000);
     window.sessionStorage.setItem("userId", userId_tmp);
+    return userId_tmp;
   };
 
   const setLoginSession = (loginData, type) => {
-    // console.log(loginData)
     window.sessionStorage.setItem("userId", loginData.userId);
     window.sessionStorage.setItem("userName", loginData.userName);
     window.sessionStorage.setItem("userRank", loginData.userRank);
     window.sessionStorage.setItem("userLevel", loginData.userLevel);
+    window.sessionStorage.setItem("userExp", loginData.userExp);
+    window.sessionStorage.setItem("winRate", loginData.winRate);
+    window.sessionStorage.setItem("loginType", type);
   };
 
   const googleAuthen = (profile, loginType) => {
@@ -221,7 +227,7 @@ function Auth() {
       };
       try {
         axios
-          .get(`http://localhost:10000/users`, {
+          .get(`${ENDPOINT}/users`, {
             params: user,
           })
           .then((res) => {
@@ -231,7 +237,7 @@ function Auth() {
           .catch((err) => {
             // console.log(err.response.data);
             axios
-              .post(`http://localhost:10000/users`, user)
+              .post(`${ENDPOINT}/users`, user)
               .then((res) => {
                 setLoginSession(res.data, "regis");
                 resolve(res.data);
@@ -244,6 +250,7 @@ function Auth() {
 
   async function onSignIn(googleUser) {
     // console.log("success");
+    if (googleUser.error) return;
     var profile = googleUser.getBasicProfile();
     // console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
     // console.log("Name: " + profile.getName());
@@ -272,8 +279,19 @@ function Auth() {
   };
 
   function onDevSignIn() {
-    mockUserId();
+    const userId = mockUserId();
     onLoginSuccess();
+    setLoginSession(
+      {
+        userId,
+        userName: userId,
+        userRank: 1,
+        userLevel: 1,
+        userExp: 0,
+        winRate: 0,
+      },
+      "dev"
+    );
   }
 
   // const handleClose = (event, reason) => {
@@ -310,7 +328,7 @@ function Auth() {
               Facebook Login
             </Button>
           )}
-          fields="name,email,picture"
+          fields="name,email,picture.type(large)"
           callback={responseFacebook}
         />
         <GoogleLogin
