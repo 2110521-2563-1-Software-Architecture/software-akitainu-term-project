@@ -10,7 +10,7 @@ const CustomRoomList = (props) => {
       member: room.players.length,
       roomId: key,
       leader: room.leader,
-      maxMember: room.maxPlayer,
+      maxMember: room.options.maxPlayer,
     });
   });
   console.log(roomList);

@@ -49,9 +49,9 @@ io.on("connection", (socket) => {
   socket.on("create-custom-room", (data) => {
     console.log("create custom room");
     console.log(data);
-    socketIdToUserId[socket.id] = data.userId;
-    userIdToCurrentSocket[data.userId] = socket;
-    room.setUserMapSocket(userIdToCurrentSocket);
+    // socketIdToUserId[socket.id] = data.userId;
+    // userIdToCurrentSocket[data.userId] = socket;
+    // room.setUserMapSocket(userIdToCurrentSocket);
     room.createCustomRoom(data.userId, socket.id);
     // let userId = socketIdToUserId[socket.id];
     // if (userId) {
@@ -62,13 +62,15 @@ io.on("connection", (socket) => {
   socket.on("join-custom-room", (data) => {
     console.log("join custom room");
     console.log(data);
-    socketIdToUserId[socket.id] = data.userId;
-    userIdToCurrentSocket[data.userId] = socket;
-    room.setUserMapSocket(userIdToCurrentSocket);
+    // socketIdToUserId[socket.id] = data.userId;
+    // userIdToCurrentSocket[data.userId] = socket;
+    // room.setUserMapSocket(userIdToCurrentSocket);
     room.joinCustomRoom(data.userId, data.inviteId, socket.id);
   });
 
   socket.on("start-custom-room", (data) => {
+    console.log("start custom room");
+    console.log(data);
     // socketIdToUserId[socket.id] = data.userId;
     // userIdToCurrentSocket[data.userId] = socket;
     // room.setUserMapSocket(userIdToCurrentSocket);
@@ -77,6 +79,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("joined-custom-room", (data) => {
+    console.log("joined custom room");
+    console.log(data);
     socketIdToUserId[socket.id] = data.userId;
     userIdToCurrentSocket[data.userId] = socket;
     room.setUserMapSocket(userIdToCurrentSocket);

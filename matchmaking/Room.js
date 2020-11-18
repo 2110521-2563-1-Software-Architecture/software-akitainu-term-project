@@ -38,12 +38,12 @@ class Room {
     if (this.rankedQueue.length === 5) {
       this.startRankedGame();
     }
-    console.log(this.rankedQueue);
+    console.log("updated rank queue:", this.rankedQueue);
   }
 
   quitSearchRanked(userId) {
     this.rankedQueue = this.rankedQueue.filter((user) => user !== userId);
-    console.log(this.rankedQueue);
+    console.log("updated rank queue:", this.rankedQueue);
   }
 
   startRankedGame() {
@@ -75,6 +75,34 @@ class Room {
       });
   }
 
+  userDisconnected = (userId) => {
+    let targetInviteId, found;
+    const customRoomIds = Object.keys(this.customRooms);
+    for (let i = 0; i < customRoomIds.length; i++) {
+      found = false;
+      const room = this.customRooms[customRoomIds[i]];
+      if (room.leader === userId) {
+        targetInviteId = customRoomIds[i];
+        break;
+      } else {
+        for (let j = 0; j < room.players.length; j++) {
+          if (room.players[j] === userId) {
+            found = true;
+            targetInviteId = customRoomIds[i];
+            break;
+          }
+        }
+        if (found) {
+          break;
+        }
+      }
+    }
+    if (targetInviteId) {
+      this.leaveCustomRoom(userId, targetInviteId);
+    }
+    console.log("updated custom rooms:", this.customRooms);
+  };
+
   createCustomRoom(userId, socketId) {
     let inviteId;
     while (true) {
@@ -88,7 +116,6 @@ class Room {
       leader: userId,
       options: {
         deck: {
-          explodingPuppy: 7,
           defuse: 4,
           nope: 8,
           attack: 7,
@@ -109,7 +136,7 @@ class Room {
     };
     this.socket.emit("update-custom-rooms", this.customRooms);
     this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
-    console.log(this.customRooms);
+    console.log("updated custom rooms:", this.customRooms);
   }
 
   joinCustomRoom(userId, inviteId, socketId) {
@@ -120,8 +147,7 @@ class Room {
         .emit("join-custom-error", { msg: "Invalid invite number" });
       return;
     }
-    if (room.players.length >= 8) {
-      // todo: not 8
+    if (room.players.length >= room.options.maxPlayer) {
       this.socket
         .to(socketId)
         .emit("join-custom-error", { msg: "The room is already full" });
@@ -130,6 +156,7 @@ class Room {
     room.players.push(userId);
     this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
     this.socket.emit("update-custom-rooms", this.customRooms);
+    console.log("updated custom rooms:", this.customRooms);
   }
 
   leaveCustomRoom(userId, inviteId, socketId) {
@@ -148,12 +175,17 @@ class Room {
       delete this.createCustomRoom[inviteId];
     } else {
       room.players = room.players.filter((user) => user !== userId);
-      this.socket.to(socketId).emit("leave-custom-room", { roomId: inviteId });
+      if (socketId) {
+        this.socket
+          .to(socketId)
+          .emit("leave-custom-room", { roomId: inviteId });
+      }
       this.customRooms[inviteId].players.forEach((player) => {
         this.getCustomRoomData(inviteId, player);
       });
     }
     this.socket.emit("update-custom-rooms", this.customRooms);
+    console.log("updated custom rooms:", this.customRooms);
   }
 
   startCustomRoom = (inviteId) => {
