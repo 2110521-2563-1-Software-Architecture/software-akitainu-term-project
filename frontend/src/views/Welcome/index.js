@@ -61,6 +61,7 @@ class Welcome extends React.Component {
       openRankDialog: false,
       isLoadingCustomRoom: false,
       time: 0,
+      publicCustomRooms: {},
     };
   }
 
@@ -74,6 +75,9 @@ class Welcome extends React.Component {
       console.log("join-custom-room");
       console.log(data);
       // redirect to waiting room for that room id
+    });
+    matchmakingSocket.on("update-custom-rooms", (data) => {
+      this.setState({ publicCustomRooms: data });
     });
   }
 
@@ -102,12 +106,14 @@ class Welcome extends React.Component {
   };
 
   handleClickCreateButton = () => {
+    this.setState({ isLoadingCustomRoom: true });
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("create-custom-room", { userId });
   };
 
   handleClickJoinButton = (inviteCode) => {
+    this.setState({ isLoadingCustomRoom: true });
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("join-custom-room", {
@@ -155,6 +161,7 @@ class Welcome extends React.Component {
       openRankDialog,
       time,
       isLoadingCustomRoom,
+      publicCustomRooms,
     } = this.state;
     // const [openModeDialog, setModeDialog] = useState(false);
     // const [openCustomDialog, setCustomDialog] = useState(false);
@@ -169,7 +176,10 @@ class Welcome extends React.Component {
             <Profile />
           </Grid>
           <Grid item xs="12" className={classes.friendSection}>
-            <CustomRoomList />
+            <CustomRoomList
+              publicCustomRooms={publicCustomRooms}
+              onClickRoom={this.handleClickJoinButton}
+            />
           </Grid>
         </Grid>
         <Grid item xs="5" className={classes.mainSection}>

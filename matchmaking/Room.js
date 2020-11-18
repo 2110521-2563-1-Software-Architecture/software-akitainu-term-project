@@ -78,6 +78,7 @@ class Room {
     }
     room.players.push(userId);
     this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    this.socket.emit("update-custom-rooms", this.customRooms);
     console.log(this.customRooms);
   };
 

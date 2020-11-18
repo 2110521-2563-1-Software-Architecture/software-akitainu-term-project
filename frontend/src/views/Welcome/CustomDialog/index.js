@@ -125,7 +125,7 @@ function CustomDialog(props) {
             >
               <Grid item xs="2">
                 <Button
-                  text="Join room"
+                  text={isLoadingCustomRoom ? "Loading..." : "Join room"}
                   className={classes.Button}
                   style="primary"
                   onClick={() => onClickJoinButton(inviteCode)}
@@ -134,13 +134,14 @@ function CustomDialog(props) {
               </Grid>
               <Grid item xs="2" style={{ marginLeft: "100px" }}>
                 <Button
-                  text="Back"
+                  text={isLoadingCustomRoom ? "Loading..." : "Back"}
                   className={classes.Button}
                   style="secondary"
                   onClick={() => {
                     setInputCode(false);
                     setInviteCode("");
                   }}
+                  disabled={isLoadingCustomRoom}
                 />
               </Grid>
             </Grid>
