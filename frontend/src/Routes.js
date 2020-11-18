@@ -66,7 +66,9 @@ const routesConfig = [
     exact: true,
     guard: AuthGaurd,
     path: "/waiting/:roomId",
-    component: (rest) => <Waitingroom matchmakingSocket={matchmakingSocket} {...rest} />,
+    component: (rest) => (
+      <Waitingroom matchmakingSocket={matchmakingSocket} {...rest} />
+    ),
   },
   {
     exact: true,

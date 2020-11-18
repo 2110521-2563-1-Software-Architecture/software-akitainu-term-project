@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     width: "3.5%",
     padding: "8px",
-  }
+  },
 }));
 
 function Leadership() {

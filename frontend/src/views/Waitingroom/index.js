@@ -19,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import SettingDialog from "./SettingDialog";
 import Button from "components/Button";
+import exit from "../../image/exit.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     height: "80%",
     backgroundColor: "#B6C5E0",
     padding: "20px 50px 20px 50px",
-    marginTop: "20%",
+    marginTop: "30%",
     border: "1px solid black",
     borderRadius: "20px",
   },
@@ -130,7 +131,12 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-  }
+  },
+  exitButton: {
+    position: "absolute",
+    width: "3.5%",
+    padding: "8px",
+  },
 }));
 
 function Waitingroom(props) {
@@ -212,14 +218,19 @@ function Waitingroom(props) {
   };
 
   useEffect(() => {
-    const {matchmakingSocket} = props;
-    
-  })
+    const { matchmakingSocket } = props;
+  });
 
   const handleStart = () => {
-    const {matchmakingSocket} = props;
-    matchmakingSocket.emit("start-custom-room", {inviteId: roomId});
-  }
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("start-custom-room", { inviteId: roomId });
+  };
+
+  const history = useHistory();
+  const _handleExit = () => {
+    history.push("/home");
+    history.go(0);
+  };
 
   return (
     <>
@@ -298,7 +309,7 @@ function Waitingroom(props) {
               <Typography className={classes.title}>Code :</Typography>
             </Grid>
             <Grid item xs={6}>
-            <Typography className={classes.title}>{roomId}</Typography>
+              <Typography className={classes.title}>{roomId}</Typography>
             </Grid>
           </Grid>
           <Grid container item xs={12} className={classes.playersection}>
@@ -312,7 +323,19 @@ function Waitingroom(props) {
             </Grid>
           </Grid>
         </Grid>
-        <Button text="Play" className={classes.startButton} onClick={handleStart} />
+        <Button
+          text="Play"
+          className={classes.startButton}
+          onClick={handleStart}
+        />
+        <Button
+          text={"Exit"}
+          icon={exit}
+          iconPosition={"top"}
+          onClick={_handleExit}
+          style={"secondary"}
+          className={classes.exitButton}
+        />
       </Grid>
       <SettingDialog
         open={settingOpen}

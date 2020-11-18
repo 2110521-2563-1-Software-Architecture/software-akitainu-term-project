@@ -51,12 +51,11 @@ function RankDialog({ open, onClose, time, settime, isFound }) {
   // console.log("open",open)
 
   React.useEffect(() => {
-    if (open&&!isFound) {
+    if (open && !isFound) {
       setTimeout(() => settime(time + 1), 1000);
     }
     console.log("open", open);
   }, [time, open]);
-
 
   const handleClose = () => {
     settime(0);
@@ -106,7 +105,7 @@ function RankDialog({ open, onClose, time, settime, isFound }) {
               fontSize: "48px",
             }}
           >
-            {isFound? "welcome":time}
+            {isFound ? "welcome" : time}
           </Typography>
         </Grid>
         <Grid item container style={{ justifyContent: "center" }}>
