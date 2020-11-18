@@ -1,1 +1,0 @@
-{"version":3,"sources":["views/leadership/Top/index.js"],"names":["Top"],"mappings":"wHAAA,2BAKeA,UAHf,WACE,OAAO","file":"static/js/5.99b66aa4.chunk.js","sourcesContent":["import React from \"react\";\r\n\r\nfunction Top() {\r\n  return <p>TOP 10 PLAYER RANK</p>;\r\n}\r\nexport default Top;\r\n"],"sourceRoot":""}
