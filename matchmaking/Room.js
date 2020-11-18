@@ -44,12 +44,12 @@ class Room {
     }
     this.socket.emit("ranked-found", { players });
     console.log(this.rankedQueue);
-    // axios
-    //   .post("https://localhost:1000/rooms", { type: 0, players })
-    //   .then(() => {
-    //     console.log("Created a ranked room");
-    //     this.socket.emit("ranked-found", { players });
-    //   });
+    axios
+      .post("http://localhost:10002/games/create", { mode: 'rank', usersId: players })
+      .then(() => {
+        console.log("Created a ranked room");
+        this.socket.emit("ranked-found", { players });
+      });
   };
 
   createCustomRoom = (userId, socketId) => {
