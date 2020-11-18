@@ -56,6 +56,12 @@ const routesConfig = [
   },
   {
     exact: true,
+    guard: AuthGaurd,
+    path: "/waiting/:roomId",
+    component: lazy(() => import("views/Waitingroom")),
+  },
+  {
+    exact: true,
     path: "/login",
     component: () => <Authen />,
   },
