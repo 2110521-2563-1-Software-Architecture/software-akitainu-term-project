@@ -126,7 +126,7 @@ function Leadership() {
                 className={classes.bodytext}
                 style={{ textAlign: "center" }}
               >
-                {user.winRate}
+                {user.winRate} %
               </Typography>
             </Grid>
             <Grid item xs={4}>
