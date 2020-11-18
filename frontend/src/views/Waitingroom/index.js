@@ -13,8 +13,10 @@ import {
   Box,
   Switch,
   FormControlLabel,
+  Slider,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+import SettingDialog from "./SettingDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -119,63 +121,178 @@ const useStyles = makeStyles((theme) => ({
 
 function Waitingroom() {
   const classes = useStyles();
+  const [maxPlayer, setMaxplayer] = useState(3);
+  const [timeDelay, setTimeDelay] = useState(30);
+  const [defuse, setDefuse] = useState(5);
+  const [nope, setNope] = useState(5);
+  const [attack, setAttack] = useState(5);
+  const [skip, setSkip] = useState(5);
+  const [favor, setFavor] = useState(5);
+  const [seeTheFuture, setSeeTheFuture] = useState(5);
+  const [shuffle, setShuffle] = useState(5);
+  const [common1, setCommon1] = useState(5);
+  const [common2, setCommon2] = useState(5);
+  const [common3, setCommon3] = useState(5);
+  const [common4, setCommon4] = useState(5);
+  const [common5, setCommon5] = useState(5);
+  const [settingOpen, setSettingOpen] = useState(false);
+
+  const NumberofCard = [
+    {
+      Numbercard: defuse,
+      setcard: setDefuse,
+    },
+    {
+      Numbercard: nope,
+      setcard: setNope,
+    },
+    {
+      Numbercard: attack,
+      setcard: setAttack,
+    },
+    {
+      Numbercard: skip,
+      setcard: setSkip,
+    },
+    {
+      Numbercard: favor,
+      setcard: setFavor,
+    },
+    {
+      Numbercard: seeTheFuture,
+      setcard: setSeeTheFuture,
+    },
+    {
+      Numbercard: shuffle,
+      setcard: setShuffle,
+    },
+    {
+      Numbercard: common1,
+      setcard: setCommon1,
+    },
+    {
+      Numbercard: common2,
+      setcard: setCommon2,
+    },
+    {
+      Numbercard: common3,
+      setcard: setCommon3,
+    },
+    {
+      Numbercard: common4,
+      setcard: setCommon4,
+    },
+    {
+      Numbercard: common5,
+      setcard: setCommon5,
+    },
+  ];
+
+  const handleClickSetting = () => {
+    setSettingOpen(true);
+  };
+
+  const handleCloseSeting = () => {
+    setSettingOpen(false);
+  };
   return (
-    <Grid container className={classes.root}>
-      <Grid container item xs={3} className={classes.settingcontainer}>
-        <Grid item xs={12} className={classes.settingsection}>
-          <Typography className={classes.title} style={{ textAlign: "center" }}>
-            Custom Setting
-          </Typography>
-          <FormControlLabel
-            control={
-              <Switch
-                // checked={state.checkedB}
-                // onChange={handleChange}
-                name="checkedB"
-                color="primary"
-              />
-            }
-            label={<Typography className={classes.title}>Public</Typography>}
-          />
-          <Typography className={classes.title} style={{ textAlign: "left" }}>
-            Max Player
-          </Typography>
-          <Typography className={classes.title} style={{ textAlign: "left" }}>
-            เวลาต่อ turn:
-          </Typography>
-          <Typography className={classes.title} style={{ textAlign: "left" }}>
-            Card Setting
-          </Typography>
+    <>
+      <Grid container className={classes.root}>
+        <Grid container item xs={3} className={classes.settingcontainer}>
+          <Grid item xs={12} className={classes.settingsection}>
+            <Typography
+              className={classes.title}
+              style={{ textAlign: "center", marginBottom: "10px" }}
+            >
+              Custom Setting
+            </Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  // checked={state.checkedB}
+                  // onChange={handleChange}
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label={<Typography className={classes.title}>Public</Typography>}
+              style={{ marginBottom: "10px" }}
+            />
+            <Typography
+              className={classes.title}
+              style={{ textAlign: "left", marginBottom: "10px" }}
+            >
+              Max Player
+            </Typography>
+            <Slider
+              defaultValue={maxPlayer}
+              valueLabelFormat={(n) => `${n}`}
+              valueLabelDisplay="auto"
+              step={1}
+              min={3}
+              max={8}
+              style={{ marginBottom: "10px" }}
+              onChangeCommitted={(e, idx) => setMaxplayer(idx)}
+            />
+            <Typography
+              className={classes.title}
+              style={{ textAlign: "left", marginBottom: "10px" }}
+            >
+              เวลาต่อ turn:
+            </Typography>
+            <Slider
+              defaultValue={timeDelay}
+              valueLabelFormat={(n) => `${n}`}
+              valueLabelDisplay="auto"
+              step={5}
+              min={5}
+              max={60}
+              style={{ marginBottom: "30px" }}
+              onChangeCommitted={(e, idx) => setTimeDelay(idx)}
+            />
+            <Typography
+              className={classes.title}
+              style={{ textAlign: "center", cursor: "pointer" }}
+              onClick={handleClickSetting}
+            >
+              Card Setting
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid item xs={8} className={classes.playercontainer}>
+          <Grid
+            container
+            item
+            xs={12}
+            className={classes.codesection}
+            alignContent="center"
+            justify="center"
+          >
+            <Grid item xs={6}>
+              <Typography className={classes.title}>Code :</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography className={classes.title}>888 566</Typography>
+            </Grid>
+          </Grid>
+          <Grid container item xs={12} className={classes.playersection}>
+            <Grid container item xs={6}>
+              <img className={classes.profilePic}></img>
+              <Typography className={classes.playnametext}>Owen</Typography>
+            </Grid>
+            <Grid container item xs={6}>
+              <img className={classes.profilePic}></img>
+              <Typography className={classes.playnametext}>Miw</Typography>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={8} className={classes.playercontainer}>
-        <Grid
-          container
-          item
-          xs={12}
-          className={classes.codesection}
-          alignContent="center"
-          justify="center"
-        >
-          <Grid item xs={6}>
-            <Typography className={classes.title}>Code :</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography className={classes.title}>888 566</Typography>
-          </Grid>
-        </Grid>
-        <Grid container item xs={12} className={classes.playersection}>
-          <Grid container item xs={6}>
-            <img className={classes.profilePic}></img>
-            <Typography className={classes.playnametext}>Owen</Typography>
-          </Grid>
-          <Grid container item xs={6}>
-            <img className={classes.profilePic}></img>
-            <Typography className={classes.playnametext}>Miw</Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+      <SettingDialog
+        open={settingOpen}
+        handleClose={handleCloseSeting}
+        NumberofCard={NumberofCard}
+      />
+    </>
   );
 }
 export default Waitingroom;
