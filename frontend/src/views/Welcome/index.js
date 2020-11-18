@@ -61,15 +61,22 @@ class Welcome extends React.Component {
       openRankDialog: false,
       isLoadingCustomRoom: false,
       time: 0,
+      isRankFound: false,
     };
   }
 
   // data = ['123','456']
+  setRankFound = () =>{
+    this.setState({ isRankFound: true });
+    console.log("setState")
+  }
+
   componentDidMount() {
     const { matchmakingSocket } = this.state;
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
       console.log(data);
+      this.setRankFound()
     });
     matchmakingSocket.on("join-custom-room", (data) => {
       console.log("join-custom-room");
@@ -156,6 +163,7 @@ class Welcome extends React.Component {
       openRankDialog,
       time,
       isLoadingCustomRoom,
+    
     } = this.state;
     // const [openModeDialog, setModeDialog] = useState(false);
     // const [openCustomDialog, setCustomDialog] = useState(false);
@@ -225,6 +233,7 @@ class Welcome extends React.Component {
           onClose={this.closeRankDialog}
           time={time}
           settime={this.settime}
+          isFound={this.state.isRankFound}
         />
       </Grid>
     );
