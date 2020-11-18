@@ -81,6 +81,7 @@ class Welcome extends React.Component {
     matchmakingSocket.on("join-custom-room", (data) => {
       console.log("join-custom-room");
       console.log(data);
+      window.location=`/waiting/${data.roomId}`
       // redirect to waiting room for that room id
     });
   }
