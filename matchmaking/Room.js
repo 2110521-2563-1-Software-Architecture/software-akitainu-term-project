@@ -17,11 +17,18 @@ var axios = require("axios");
     }
 */
 
+
+
 class Room {
   constructor(socket) {
     this.socket = socket;
     this.rankedQueue = [];
     this.customRooms = {};
+    this.userIdToCurrentSocket = {};
+  }
+
+  getSocketByUserId = (userId) =>{
+    return this.userIdToCurrentSocket[userId]
   }
 
   searchRanked = (userId) => {
@@ -42,14 +49,25 @@ class Room {
     for (let i = 0; i < 5; i++) {
       players.push(this.rankedQueue.shift());
     }
-    this.socket.emit("ranked-found", { players });
-    console.log(this.rankedQueue);
-    // axios
-    //   .post("https://localhost:1000/rooms", { type: 0, players })
-    //   .then(() => {
-    //     console.log("Created a ranked room");
-    //     this.socket.emit("ranked-found", { players });
-    //   });
+    // this.socket.emit("ranked-found", { players });
+    // players.forEach((player)=>{
+    //   this.getSocketByUserId(player).emit("ranked-found", { players })
+    // })
+    // console.log(this.rankedQueue);
+    axios
+      .post("http://localhost:10002/games/create", { mode: 'rank', usersId: players })
+      .then((res) => {
+        console.log("Created a ranked room");
+        // console.log(res.data)
+        // this.socket.emit("ranked-found", { players });
+        let data = {
+          players : players,
+          roomId : res.data.roomId
+        }
+        players.forEach((player)=>{
+          this.getSocketByUserId(player).emit("ranked-found", data)
+        })
+      });
   };
 
   createCustomRoom = (userId, socketId) => {
@@ -69,11 +87,11 @@ class Room {
   joinCustomRoom = (userId, inviteId, socketId) => {
     let room = this.customRooms[inviteId];
     if (room == undefined) {
-      this.socket.emit("error", { msg: "Invalid invite number" });
+      this.socket.to(socketId).emit("join-custom-error", { msg: "Invalid invite number" });
       return;
     }
-    if (room.players.length >= 8) {
-      this.socket.emit("error", { msg: "The room is already full" });
+    if (room.players.length >= 8) { // todo: not 8
+      this.socket.to(socketId).emit("join-custom-error", { msg: "The room is already full" });
       return;
     }
     room.players.push(userId);
@@ -105,6 +123,9 @@ class Room {
     console.log(this.customRooms);
   };
   // more
+  setUserMapSocket = (userIdToCurrentSocket) => {
+    this.userIdToCurrentSocket = userIdToCurrentSocket
+  }
 }
 
 module.exports = { Room };

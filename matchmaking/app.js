@@ -4,7 +4,13 @@ var io = require("socket.io")(http);
 
 const { Room } = require("./Room");
 
-let socketIdToUserId = {};
+var socketIdToUserId = {};
+
+
+// {
+//   123546 : socket
+// }
+var userIdToCurrentSocket = {};
 
 const room = new Room(io);
 
@@ -19,7 +25,10 @@ io.on("connection", (socket) => {
     console.log("search-ranked");
     console.log(data);
     socketIdToUserId[socket.id] = data.userId;
+    userIdToCurrentSocket[data.userId] = socket
     room.searchRanked(data.userId);
+    room.setUserMapSocket(userIdToCurrentSocket);
+
   });
 
   socket.on("quit-search-ranked", (data) => {

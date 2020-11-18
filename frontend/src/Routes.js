@@ -37,17 +37,23 @@ const routesConfig = [
     path: "/helloworld/:username",
     component: lazy(() => import("views/Helloworld")),
   },
-  {
-    exact: true,
-    path: "/leadership/top",
-    component: lazy(() => import("views/leadership/Top")),
-  },
-  {
-    exact: true,
-    path: "/leadership/myscore",
-    component: lazy(() => import("views/leadership/SelfScore")),
-  },
+  // {
+  //   exact: true,
+  //   path: "/leadership/top",
+  //   component: lazy(() => import("views/leadership/Top")),
+  // },
+  // {
+  //   exact: true,
+  //   path: "/leadership/myscore",
+  //   component: lazy(() => import("views/leadership/SelfScore")),
+  // },
   //add more path ...
+  {
+    exact: true,
+    guard: AuthGaurd,
+    path: "/leaderboard",
+    component: lazy(() => import("views/Leadership")),
+  },
   {
     exact: true,
     guard: AuthGaurd,

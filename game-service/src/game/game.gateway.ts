@@ -79,8 +79,7 @@ export class GameGateway implements OnGatewayInterface {
     this.server.emit('new-join-custom-joiner', allUsersInRoom);
   }
 
-  @SubscribeMessage('start-game')
-  async onStartGame(socket: Socket, data: any) {
+  async onStartGame(data: any) {
     const { roomId } = data;
     const newGame = await this.customGameRoomService.onStartGame(roomId);
 
@@ -273,16 +272,16 @@ export class GameGateway implements OnGatewayInterface {
   async onRankWin(socket: Socket, data: any) {
     const { roomId, userId } = data;
     // this.server.to(roomId).emit('no-new-nope', data);
-    console.log('game-rank-win',data)
-    this.server.to(roomId).emit('debug', "got it");
-    await this.customGameRoomService.onRankWin(userId,roomId) 
+    console.log('game-rank-win', data);
+    this.server.to(roomId).emit('debug', 'got it');
+    await this.customGameRoomService.onRankWin(userId, roomId);
   }
 
   // chat service
   @SubscribeMessage('message-send-room')
   async onSendMessageRoom(socket: Socket, data: any) {
-    console.log(data)
-    console.log("message-send-room");
+    console.log(data);
+    console.log('message-send-room');
     const { fromRoomId } = data;
     console.log('message send room');
     this.server.to(fromRoomId).emit('message-get-room', data);

@@ -62,22 +62,39 @@ class Welcome extends React.Component {
       isLoadingCustomRoom: false,
       time: 0,
       publicCustomRooms: {},
+      joinCustomErrorText: "",
+      isRankFound: false,
     };
   }
+
+  // data = ['123','456']
+  setRankFound = () => {
+    this.setState({ isRankFound: true });
+    console.log("setState");
+  };
 
   componentDidMount() {
     const { matchmakingSocket } = this.state;
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
-      console.log(data);
+      // console.log(data);
+      window.location = `/gameplay/${data.roomId}`;
+      this.setRankFound();
     });
     matchmakingSocket.on("join-custom-room", (data) => {
       console.log("join-custom-room");
       console.log(data);
+      window.location = `/waiting/${data.roomId}`;
       // redirect to waiting room for that room id
     });
     matchmakingSocket.on("update-custom-rooms", (data) => {
       this.setState({ publicCustomRooms: data });
+    });
+    matchmakingSocket.on("join-custom-error", (data) => {
+      this.setState({
+        isLoadingCustomRoom: false,
+        joinCustomErrorText: data.msg,
+      });
     });
   }
 
@@ -135,18 +152,22 @@ class Welcome extends React.Component {
   };
 
   closeCustomDialog = () => {
-    this.setState({ openCustomDialog: false });
+    this.setState({ openCustomDialog: false, joinCustomErrorText: "" });
   };
 
   closeRankDialog = () => {
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("quit-search-ranked", { userId });
-    this.setState({ openRankDialog: false });
+    this.setState({ openRankDialog: false, isRankFound: false });
   };
 
   settime = (time) => {
     this.setState({ time });
+  };
+
+  toLeaderboard = () => {
+    window.location = "/leaderboard";
   };
 
   render() {
@@ -162,6 +183,7 @@ class Welcome extends React.Component {
       time,
       isLoadingCustomRoom,
       publicCustomRooms,
+      joinCustomErrorText,
     } = this.state;
     // const [openModeDialog, setModeDialog] = useState(false);
     // const [openCustomDialog, setCustomDialog] = useState(false);
@@ -214,7 +236,7 @@ class Welcome extends React.Component {
           </Grid>
         </Grid>
         <Grid item xs="3" className={classes.mainSection}>
-          <Typography style={{ textAlign: "center" }}>Leader Board</Typography>
+          <Button onClick={this.toLeaderboard} text="Leader Board" />
         </Grid>
         <ModeDialog
           open={openModeDialog}
@@ -228,12 +250,14 @@ class Welcome extends React.Component {
           onClickCreateButton={this.handleClickCreateButton}
           onClickJoinButton={this.handleClickJoinButton}
           isLoadingCustomRoom={isLoadingCustomRoom}
+          joinCustomErrorText={joinCustomErrorText}
         />
         <RankDialog
           open={openRankDialog}
           onClose={this.closeRankDialog}
           time={time}
           settime={this.settime}
+          isFound={this.state.isRankFound}
         />
       </Grid>
     );
