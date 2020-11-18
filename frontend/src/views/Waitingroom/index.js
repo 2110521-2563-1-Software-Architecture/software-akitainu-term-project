@@ -16,6 +16,7 @@ import {
   Slider,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import SettingDialog from "./SettingDialog";
 
 const useStyles = makeStyles((theme) => ({
@@ -136,6 +137,7 @@ function Waitingroom() {
   const [common4, setCommon4] = useState(5);
   const [common5, setCommon5] = useState(5);
   const [settingOpen, setSettingOpen] = useState(false);
+  const { roomId } = useParams();
 
   const NumberofCard = [
     {
@@ -272,7 +274,7 @@ function Waitingroom() {
               <Typography className={classes.title}>Code :</Typography>
             </Grid>
             <Grid item xs={6}>
-              <Typography className={classes.title}>888 566</Typography>
+            <Typography className={classes.title}>{roomId}</Typography>
             </Grid>
           </Grid>
           <Grid container item xs={12} className={classes.playersection}>
