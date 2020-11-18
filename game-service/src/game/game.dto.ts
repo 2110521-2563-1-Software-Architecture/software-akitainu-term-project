@@ -38,6 +38,5 @@ export enum GameMode {
 export class CreateGameRoomDto {
   readonly mode: GameMode;
   readonly usersId: string[];
-  readonly usersName: string[];
   readonly options?: any;
 }

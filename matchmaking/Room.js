@@ -17,11 +17,18 @@ var axios = require("axios");
     }
 */
 
+
+
 class Room {
   constructor(socket) {
     this.socket = socket;
     this.rankedQueue = [];
     this.customRooms = {};
+    this.userIdToCurrentSocket = {};
+  }
+
+  getSocketByUserId = (userId) =>{
+    return this.userIdToCurrentSocket[userId]
   }
 
   searchRanked = (userId) => {
@@ -42,14 +49,17 @@ class Room {
     for (let i = 0; i < 5; i++) {
       players.push(this.rankedQueue.shift());
     }
-    this.socket.emit("ranked-found", { players });
+    // this.socket.emit("ranked-found", { players });
+    players.forEach((player)=>{
+      this.getSocketByUserId(player).emit("ranked-found", { players })
+    })
     console.log(this.rankedQueue);
-    // axios
-    //   .post("https://localhost:1000/rooms", { type: 0, players })
-    //   .then(() => {
-    //     console.log("Created a ranked room");
-    //     this.socket.emit("ranked-found", { players });
-    //   });
+    axios
+      .post("http://localhost:10002/games/create", { mode: 'rank', usersId: players })
+      .then(() => {
+        console.log("Created a ranked room");
+        this.socket.emit("ranked-found", { players });
+      });
   };
 
   createCustomRoom = (userId, socketId) => {
@@ -104,6 +114,9 @@ class Room {
     console.log(this.customRooms);
   };
   // more
+  setUserMapSocket = (userIdToCurrentSocket) => {
+    this.userIdToCurrentSocket = userIdToCurrentSocket
+  }
 }
 
 module.exports = { Room };
