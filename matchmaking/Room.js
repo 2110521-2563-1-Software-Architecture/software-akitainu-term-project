@@ -79,11 +79,11 @@ class Room {
   joinCustomRoom = (userId, inviteId, socketId) => {
     let room = this.customRooms[inviteId];
     if (room == undefined) {
-      this.socket.emit("error", { msg: "Invalid invite number" });
+      this.socket.to(socketId).emit("join-custom-error", { msg: "Invalid invite number" });
       return;
     }
-    if (room.players.length >= 8) {
-      this.socket.emit("error", { msg: "The room is already full" });
+    if (room.players.length >= 8) { // todo: not 8
+      this.socket.to(socketId).emit("join-custom-error", { msg: "The room is already full" });
       return;
     }
     room.players.push(userId);

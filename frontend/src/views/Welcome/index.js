@@ -61,6 +61,7 @@ class Welcome extends React.Component {
       openRankDialog: false,
       isLoadingCustomRoom: false,
       time: 0,
+      joinCustomErrorText: "",
       isRankFound: false,
     };
   }
@@ -83,6 +84,11 @@ class Welcome extends React.Component {
       console.log(data);
       window.location=`/waiting/${data.roomId}`
       // redirect to waiting room for that room id
+    });
+    matchmakingSocket.on("join-custom-error", (data) => {
+      this.setState({
+        joinCustomErrorText: data.msg,
+      });
     });
   }
 
@@ -138,7 +144,7 @@ class Welcome extends React.Component {
   };
 
   closeCustomDialog = () => {
-    this.setState({ openCustomDialog: false });
+    this.setState({ openCustomDialog: false, joinCustomErrorText: "" });
   };
 
   closeRankDialog = () => {
@@ -164,7 +170,7 @@ class Welcome extends React.Component {
       openRankDialog,
       time,
       isLoadingCustomRoom,
-    
+      joinCustomErrorText,
     } = this.state;
     // const [openModeDialog, setModeDialog] = useState(false);
     // const [openCustomDialog, setCustomDialog] = useState(false);
@@ -228,6 +234,7 @@ class Welcome extends React.Component {
           onClickCreateButton={this.handleClickCreateButton}
           onClickJoinButton={this.handleClickJoinButton}
           isLoadingCustomRoom={isLoadingCustomRoom}
+          joinCustomErrorText={joinCustomErrorText}
         />
         <RankDialog
           open={openRankDialog}
