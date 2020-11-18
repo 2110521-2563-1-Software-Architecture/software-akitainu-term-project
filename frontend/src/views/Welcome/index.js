@@ -61,33 +61,38 @@ class Welcome extends React.Component {
       openRankDialog: false,
       isLoadingCustomRoom: false,
       time: 0,
+      publicCustomRooms: {},
       joinCustomErrorText: "",
       isRankFound: false,
     };
   }
 
   // data = ['123','456']
-  setRankFound = () =>{
+  setRankFound = () => {
     this.setState({ isRankFound: true });
-    console.log("setState")
-  }
+    console.log("setState");
+  };
 
   componentDidMount() {
     const { matchmakingSocket } = this.state;
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
       // console.log(data);
-      window.location = `/gameplay/${data.roomId}`
-      this.setRankFound()
+      window.location = `/gameplay/${data.roomId}`;
+      this.setRankFound();
     });
     matchmakingSocket.on("join-custom-room", (data) => {
       console.log("join-custom-room");
       console.log(data);
-      window.location=`/waiting/${data.roomId}`
+      window.location = `/waiting/${data.roomId}`;
       // redirect to waiting room for that room id
+    });
+    matchmakingSocket.on("update-custom-rooms", (data) => {
+      this.setState({ publicCustomRooms: data });
     });
     matchmakingSocket.on("join-custom-error", (data) => {
       this.setState({
+        isLoadingCustomRoom: false,
         joinCustomErrorText: data.msg,
       });
     });
@@ -118,12 +123,14 @@ class Welcome extends React.Component {
   };
 
   handleClickCreateButton = () => {
+    this.setState({ isLoadingCustomRoom: true });
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("create-custom-room", { userId });
   };
 
   handleClickJoinButton = (inviteCode) => {
+    this.setState({ isLoadingCustomRoom: true });
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("join-custom-room", {
@@ -152,7 +159,7 @@ class Welcome extends React.Component {
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("quit-search-ranked", { userId });
-    this.setState({ openRankDialog: false,isRankFound:false });
+    this.setState({ openRankDialog: false, isRankFound: false });
   };
 
   settime = (time) => {
@@ -160,8 +167,8 @@ class Welcome extends React.Component {
   };
 
   toLeaderboard = () => {
-    window.location = "/leaderboard"
-  }
+    window.location = "/leaderboard";
+  };
 
   render() {
     // const userId = sessionStorage.getItem("userId");
@@ -175,6 +182,7 @@ class Welcome extends React.Component {
       openRankDialog,
       time,
       isLoadingCustomRoom,
+      publicCustomRooms,
       joinCustomErrorText,
     } = this.state;
     // const [openModeDialog, setModeDialog] = useState(false);
@@ -190,7 +198,10 @@ class Welcome extends React.Component {
             <Profile />
           </Grid>
           <Grid item xs="12" className={classes.friendSection}>
-            <CustomRoomList />
+            <CustomRoomList
+              publicCustomRooms={publicCustomRooms}
+              onClickRoom={this.handleClickJoinButton}
+            />
           </Grid>
         </Grid>
         <Grid item xs="5" className={classes.mainSection}>
@@ -225,7 +236,7 @@ class Welcome extends React.Component {
           </Grid>
         </Grid>
         <Grid item xs="3" className={classes.mainSection}>
-          <Button onClick={this.toLeaderboard} text="Leader Board"/>
+          <Button onClick={this.toLeaderboard} text="Leader Board" />
         </Grid>
         <ModeDialog
           open={openModeDialog}
