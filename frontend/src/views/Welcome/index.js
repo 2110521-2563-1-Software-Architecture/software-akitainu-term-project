@@ -1,16 +1,5 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
-import {
-  withStyles,
-  makeStyles,
-  Grid,
-  Typography,
-  Avatar,
-  Tooltip,
-  Grow,
-  TextField,
-  IconButton,
-  InputAdornment,
-} from "@material-ui/core";
+import React from "react";
+import { withStyles, Grid, Typography } from "@material-ui/core";
 import logo from "../../shiba-inu.svg";
 import { useHistory } from "react-router-dom";
 import Button from "components/Button";
@@ -18,7 +7,7 @@ import ModeDialog from "./ModeDialog";
 import CustomDialog from "./CustomDialog";
 import RankDialog from "./RankCustom";
 import Profile from "./Profile";
-// import logo from '../logo.svg'
+import CustomRoomList from "./CustomRoomList";
 
 const usestyle = (theme) => ({
   root: {
@@ -34,7 +23,6 @@ const usestyle = (theme) => ({
   },
   friendSection: {
     height: "60vh",
-    backgroundColor: "#B6C5E0",
     marginTop: "50px",
   },
   mainSection: {
@@ -159,7 +147,7 @@ class Welcome extends React.Component {
             <Profile />
           </Grid>
           <Grid item xs="12" className={classes.friendSection}>
-            <Typography style={{ textAlign: "center" }}>Room</Typography>
+            <CustomRoomList />
           </Grid>
         </Grid>
         <Grid item xs="5" className={classes.mainSection}>
