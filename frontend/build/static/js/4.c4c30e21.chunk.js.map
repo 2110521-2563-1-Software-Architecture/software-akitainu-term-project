@@ -1,0 +1,1 @@
+{"version":3,"sources":["views/leadership/SelfScore/index.js"],"names":["SelfScore"],"mappings":"wHAAA,2BAKeA,UAHf,WACE,OAAO","file":"static/js/4.c4c30e21.chunk.js","sourcesContent":["import React from \"react\";\r\n\r\nfunction SelfScore() {\r\n  return <p>my score</p>;\r\n}\r\nexport default SelfScore;\r\n"],"sourceRoot":""}

@@ -6,9 +6,8 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { Card, CreatedIdCustomGameRoomDto } from './custom-game-room.dto';
-import { CustomGameRoomService } from './custom-game-room.service';
-import { ChatService } from './chat.service';
+import { Card, CreatedIdCustomGameRoomDto } from './game.dto';
+import { GameService } from './game.service';
 
 type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 
@@ -16,11 +15,8 @@ type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 require('dotenv').config();
 const socket_port = parseInt(process.env.SOCKET_SERVER) || 10001;
 @WebSocketGateway(socket_port)
-export class CustomGameRoomGateway implements OnGatewayInterface {
-  constructor(
-    private readonly customGameRoomService: CustomGameRoomService,
-    private readonly chatService: ChatService,
-  ) {}
+export class GameGateway implements OnGatewayInterface {
+  constructor(private readonly customGameRoomService: GameService) {}
 
   @WebSocketServer() server;
   users = 0;
@@ -69,9 +65,8 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     if (!allUsersInRoom) return; // cant join started room
     console.log('allUsersInRoom', allUsersInRoom);
 
-    const newJoinedUserName = await this.customGameRoomService.getJoinedUserName(
-      userId,
-    );
+    // Todo: add userName in request
+    const newJoinedUserName = '';
 
     const newJoinedUser = {
       userId,
@@ -274,11 +269,20 @@ export class CustomGameRoomGateway implements OnGatewayInterface {
     }
   }
 
+  @SubscribeMessage('game-rank-win')
+  async onRankWin(socket: Socket, data: any) {
+    const { roomId, userId } = data;
+    // this.server.to(roomId).emit('no-new-nope', data);
+    console.log('game-rank-win',data)
+    this.server.to(roomId).emit('debug', "got it");
+    await this.customGameRoomService.onRankWin(userId,roomId) 
+  }
+
   // chat service
   @SubscribeMessage('message-send-room')
   async onSendMessageRoom(socket: Socket, data: any) {
-    // console.log(data)
-    // console.log("message-send-room");
+    console.log(data)
+    console.log("message-send-room");
     const { fromRoomId } = data;
     console.log('message send room');
     this.server.to(fromRoomId).emit('message-get-room', data);

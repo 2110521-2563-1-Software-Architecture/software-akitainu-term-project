@@ -5,7 +5,7 @@ RUN apt update && apt install -y procps
 
 USER node
 
-ARG PORT=10000
+ARG PORT=10001
 
 ENV PORT=${PORT}
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global

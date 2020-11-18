@@ -332,6 +332,9 @@ function Chat({
       console.log("message-get-room-hook", data);
       pushRoomMessage(data);
     });
+    socket.on('debug',(data)=>{
+      console.log(data)
+    })
   }, []);
 
   // const sendMessageRoom = (fromUserId,fromRoomId,fromUsername,message) => {
@@ -394,6 +397,15 @@ function Chat({
   const handleTyping = (e) => {
     setTyping(e.target.value);
   };
+
+  const testApi = () => {
+    let data = {
+      roomId:thisRoomId,
+      userId:"456",
+    }
+    console.log("testApis",data)
+    socket.emit("game-rank-win",data)
+  }
 
   const handleEnter = () => {
     if (typing) {
@@ -598,6 +610,7 @@ function Chat({
       {chatBox()}
       {chatBubbles()}
       {/* {getMessage()} */}
+      <button onClick={()=>testApi()}>test api</button>
     </div>
   );
 }
