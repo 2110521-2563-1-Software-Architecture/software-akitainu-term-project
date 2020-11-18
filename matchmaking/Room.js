@@ -27,11 +27,11 @@ class Room {
     this.userIdToCurrentSocket = {};
   }
 
-  getSocketByUserId = (userId) =>{
+  getSocketByUserId (userId) {
     return this.userIdToCurrentSocket[userId]
   }
 
-  searchRanked = (userId) => {
+  searchRanked (userId) {
     this.rankedQueue.push(userId);
     if (this.rankedQueue.length === 5) {
       this.startRankedGame();
@@ -39,12 +39,12 @@ class Room {
     console.log(this.rankedQueue);
   };
 
-  quitSearchRanked = (userId) => {
+  quitSearchRanked (userId) {
     this.rankedQueue = this.rankedQueue.filter((user) => user !== userId);
     console.log(this.rankedQueue);
   };
 
-  startRankedGame = () => {
+  startRankedGame() {
     let players = [];
     for (let i = 0; i < 5; i++) {
       players.push(this.rankedQueue.shift());
@@ -70,7 +70,7 @@ class Room {
       });
   };
 
-  createCustomRoom = (userId, socketId) => {
+  createCustomRoom(userId, socketId) {
     let inviteId;
     while (true) {
       inviteId = Math.floor(100000 + Math.random() * 900000);
@@ -84,7 +84,7 @@ class Room {
     console.log(this.customRooms);
   };
 
-  joinCustomRoom = (userId, inviteId, socketId) => {
+  joinCustomRoom(userId, inviteId, socketId) {
     let room = this.customRooms[inviteId];
     if (room == undefined) {
       this.socket.to(socketId).emit("join-custom-error", { msg: "Invalid invite number" });
@@ -100,7 +100,7 @@ class Room {
     console.log(this.customRooms);
   };
 
-  leaveCustomRoom = (userId, inviteId, socketId) => {
+  leaveCustomRoom (userId, inviteId, socketId) {
     let room = this.customRooms[inviteId];
     if (!room) {
       this.socket.emit("error", { msg: "Invalid invite number" });
@@ -111,7 +111,7 @@ class Room {
     console.log(this.customRooms);
   };
 
-  deleteCustomRoom = (inviteId) => {
+  deleteCustomRoom (inviteId) {
     let room = this.customRooms[inviteId];
     if (!room) {
       this.socket.emit("error", { msg: "Invalid invite number" });
@@ -123,7 +123,7 @@ class Room {
     console.log(this.customRooms);
   };
   // more
-  setUserMapSocket = (userIdToCurrentSocket) => {
+  setUserMapSocket (userIdToCurrentSocket) {
     this.userIdToCurrentSocket = userIdToCurrentSocket
   }
 }
