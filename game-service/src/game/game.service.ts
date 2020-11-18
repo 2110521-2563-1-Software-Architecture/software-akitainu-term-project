@@ -1,16 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto, Card } from './custom-game-room.dto';
-import { UsersService } from '../users/users.service';
-import { GameMatchService } from 'src/game-match/game-match.service';
-import { GameType } from 'src/entities/game-match.entity';
+import { NewUserJoinCustomRoomDto, Card } from './game.dto';
 
 @Injectable()
-export class CustomGameRoomService {
-  constructor(
-    private readonly userService: UsersService,
-    private readonly gameMatchService: GameMatchService,
-  ) {}
-
+export class GameService {
   rooms = {};
 
   allCards = {
@@ -46,18 +38,14 @@ export class CustomGameRoomService {
     return roomId;
   }
 
-  async getJoinedUserName(userId: string) {
-    return this.userService.getUserName(userId);
-  }
-
   async joinCustomRoom(newUserJoinRoom: NewUserJoinCustomRoomDto) {
     const { userId, roomId } = newUserJoinRoom;
     const { usersId } = this.rooms[roomId];
     if (this.rooms[roomId]['nextTurnLeft']) return false;
     usersId.push(userId);
-    const usersName: string[] = await Promise.all(
-      usersId.map(async userId => await this.getJoinedUserName(userId)),
-    );
+
+    // Todo: add userName on request
+    const usersName: string[] = [];
 
     const allUsersInRoom = {
       usersId: usersId,
@@ -358,8 +346,6 @@ export class CustomGameRoomService {
       return false;
     }
 
-    // this mean game will end
-    this.gameMatchService.addGameMatch(result, GameType.custom);
     return result;
   }
 

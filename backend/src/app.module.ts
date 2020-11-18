@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CustomGameRoomModule } from './custom-game-room/custom-game-room.module';
 import { UsersModule } from './users/users.module';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -10,7 +9,6 @@ require('dotenv').config();
 
 @Module({
   imports: [
-    CustomGameRoomModule,
     UsersModule,
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
