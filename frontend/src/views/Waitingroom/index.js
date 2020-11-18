@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import SettingDialog from "./SettingDialog";
 import Button from "components/Button";
 import exit from "../../image/exit.png";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -139,6 +140,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const ENDPOINT = process.env.REACT_APP_BACKEND_API || "http://localhost:10000";
+
 function Waitingroom(props) {
   const classes = useStyles();
   const [maxPlayer, setMaxplayer] = useState(3);
@@ -156,6 +159,9 @@ function Waitingroom(props) {
   const [common4, setCommon4] = useState(5);
   const [common5, setCommon5] = useState(5);
   const [settingOpen, setSettingOpen] = useState(false);
+  const [leader, setLeader] = useState('');
+  const [players, setPlayers] = useState([]);
+  const [playersName, setPlayersName] = useState([]);
   const { roomId } = useParams();
 
   const NumberofCard = [
@@ -219,7 +225,41 @@ function Waitingroom(props) {
 
   useEffect(() => {
     const { matchmakingSocket } = props;
-  });
+    const userId = sessionStorage.getItem("userId");
+    matchmakingSocket.emit("joined-custom-room", { inviteId: roomId, userId });
+    matchmakingSocket.on("custom-room-info", (data) => {
+      console.log("custom-room-info", data);
+      const {leader, players, options} = data;
+      const {deck, maxPlayer, isPublic, turn} = options;
+      const {defuse, nope, attack, skip, favor, shuffle, seeTheFuture, common1, common2, common3, common4, common5} = deck;
+      setDefuse(defuse);
+      setNope(nope);
+      setAttack(attack);
+      setSkip(skip);
+      setFavor(favor);
+      setShuffle(shuffle);
+      setSeeTheFuture(seeTheFuture);
+      setCommon1(common1);
+      setCommon2(common2);
+      setCommon3(common3);
+      setCommon4(common4);
+      setCommon5(common5);
+      // setSettingOpen(isPublic);
+      setMaxplayer(maxPlayer);
+      setTimeDelay(turn);
+      setLeader(leader);
+      setPlayers(players);
+
+      const usersName = [];
+
+      players.map(async player =>
+        usersName.push(await axios.get(`${ENDPOINT}/users/${player}`).then((res) => res.body.usersName))
+      );
+      
+      setPlayersName(usersName);
+      
+    });
+  }, []);
 
   const handleStart = () => {
     const { matchmakingSocket } = props;
@@ -231,6 +271,20 @@ function Waitingroom(props) {
     history.push("/home");
     history.go(0);
   };
+
+  const leaderUser = (
+    <Grid container item xs={6}>
+      {/* <img className={classes.profilePic}></img> */}
+      <Typography className={classes.playnametext}>{leader}</Typography>
+    </Grid>
+  );
+
+  const playersUser = playersName.map(playerName => (
+    <Grid container item xs={6}>
+      {/* <img className={classes.profilePic}></img> */}
+      <Typography className={classes.playnametext}>{playerName}</Typography>
+    </Grid>
+  ));
 
   return (
     <>
@@ -313,14 +367,8 @@ function Waitingroom(props) {
             </Grid>
           </Grid>
           <Grid container item xs={12} className={classes.playersection}>
-            <Grid container item xs={6}>
-              <img className={classes.profilePic}></img>
-              <Typography className={classes.playnametext}>Owen</Typography>
-            </Grid>
-            <Grid container item xs={6}>
-              <img className={classes.profilePic}></img>
-              <Typography className={classes.playnametext}>Miw</Typography>
-            </Grid>
+            {leaderUser}
+            {playersUser}
           </Grid>
         </Grid>
         <Button
