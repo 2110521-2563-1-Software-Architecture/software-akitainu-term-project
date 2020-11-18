@@ -158,6 +158,10 @@ class Welcome extends React.Component {
     this.setState({ time });
   };
 
+  toLeaderboard = () => {
+    window.location = "/leaderboard"
+  }
+
   render() {
     // const userId = sessionStorage.getItem("userId");
 
@@ -220,7 +224,7 @@ class Welcome extends React.Component {
           </Grid>
         </Grid>
         <Grid item xs="3" className={classes.mainSection}>
-          <Typography style={{ textAlign: "center" }}>Leader Board</Typography>
+          <Button onClick={this.toLeaderboard} text="Leader Board"/>
         </Grid>
         <ModeDialog
           open={openModeDialog}
