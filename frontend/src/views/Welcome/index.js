@@ -64,6 +64,7 @@ class Welcome extends React.Component {
     };
   }
 
+  // data = ['123','456']
   componentDidMount() {
     const { matchmakingSocket } = this.state;
     matchmakingSocket.on("ranked-found", (data) => {
