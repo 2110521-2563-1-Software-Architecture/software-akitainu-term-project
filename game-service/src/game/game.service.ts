@@ -355,6 +355,12 @@ export class GameService {
     return true;
   }
 
+  async onRankWin(userId:string,roomId:string) {
+    const { usersId } = this.rooms[roomId]
+    console.log("user win",usersId)
+    console.log("users in room", usersId)
+
+  }
   // async onPlayerExit(roomId: string, userId: string) {
   //   const { nextUserIndex, aliveUsersId, result, deck } = this.rooms[roomId];
   //   const explodeIndex = deck.indexOf(Card.explodingPuppy);
