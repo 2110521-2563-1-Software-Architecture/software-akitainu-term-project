@@ -28,15 +28,15 @@ export class GameService {
   }
 
   async createGameRoom(createGameRoomDto: CreateGameRoomDto) {
-    const { usersId, usersName, mode, options } = createGameRoomDto;
+    const { usersId, mode, options } = createGameRoomDto;
     let roomId = (Math.random() * 999999).toString().substr(-6);
     while (this.rooms[roomId]) {
       roomId = (Math.random() * 999999).toString().substr(-6);
     }
     this.rooms[roomId] = {};
     this.rooms[roomId]['usersId'] = usersId;
-    this.rooms[roomId]['usersName'] = usersName;
     this.rooms[roomId]['mode'] = mode;
+    return roomId;
   }
 
   async createCustomRoom(userId: string) {
@@ -92,6 +92,7 @@ export class GameService {
 
   async onStartGame(roomId: string) {
     // determine first turn and turn left
+    console.log('rooms: ', this.rooms);
     const { usersId } = this.rooms[roomId];
     this.rooms[roomId]['nextUserIndex'] = 0;
     this.rooms[roomId]['lastUserIndex'] = 0;
@@ -366,11 +367,10 @@ export class GameService {
     return true;
   }
 
-  async onRankWin(userId:string,roomId:string) {
-    const { usersId } = this.rooms[roomId]
-    console.log("user win",usersId)
-    console.log("users in room", usersId)
-
+  async onRankWin(userId: string, roomId: string) {
+    const { usersId } = this.rooms[roomId];
+    console.log('user win', usersId);
+    console.log('users in room', usersId);
   }
   // async onPlayerExit(roomId: string, userId: string) {
   //   const { nextUserIndex, aliveUsersId, result, deck } = this.rooms[roomId];
