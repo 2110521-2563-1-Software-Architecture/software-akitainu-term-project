@@ -76,7 +76,8 @@ class Welcome extends React.Component {
     const { matchmakingSocket } = this.state;
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
-      console.log(data);
+      // console.log(data);
+      window.location = `/gameplay/${data.roomId}`
       this.setRankFound()
     });
     matchmakingSocket.on("join-custom-room", (data) => {
@@ -151,7 +152,7 @@ class Welcome extends React.Component {
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("quit-search-ranked", { userId });
-    this.setState({ openRankDialog: false });
+    this.setState({ openRankDialog: false,isRankFound:false });
   };
 
   settime = (time) => {

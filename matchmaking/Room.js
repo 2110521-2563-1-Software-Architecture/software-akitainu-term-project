@@ -50,15 +50,23 @@ class Room {
       players.push(this.rankedQueue.shift());
     }
     // this.socket.emit("ranked-found", { players });
-    players.forEach((player)=>{
-      this.getSocketByUserId(player).emit("ranked-found", { players })
-    })
-    console.log(this.rankedQueue);
+    // players.forEach((player)=>{
+    //   this.getSocketByUserId(player).emit("ranked-found", { players })
+    // })
+    // console.log(this.rankedQueue);
     axios
       .post("http://localhost:10002/games/create", { mode: 'rank', usersId: players })
-      .then(() => {
+      .then((res) => {
         console.log("Created a ranked room");
-        this.socket.emit("ranked-found", { players });
+        // console.log(res.data)
+        // this.socket.emit("ranked-found", { players });
+        let data = {
+          players : players,
+          roomId : res.data.roomId
+        }
+        players.forEach((player)=>{
+          this.getSocketByUserId(player).emit("ranked-found", data)
+        })
       });
   };
 
