@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto, Card } from './game.dto';
+import { NewUserJoinCustomRoomDto, Card, CreateGameRoomDto } from './game.dto';
 
 @Injectable()
 export class GameService {
@@ -27,8 +27,19 @@ export class GameService {
     this.rooms[roomId] = { ...this.rooms[roomId], ...features };
   }
 
+  async createGameRoom(createGameRoomDto: CreateGameRoomDto) {
+    const { usersId, usersName, mode, options } = createGameRoomDto;
+    let roomId = (Math.random() * 999999).toString().substr(-6);
+    while (this.rooms[roomId]) {
+      roomId = (Math.random() * 999999).toString().substr(-6);
+    }
+    this.rooms[roomId] = {};
+    this.rooms[roomId]['usersId'] = usersId;
+    this.rooms[roomId]['usersName'] = usersName;
+    this.rooms[roomId]['mode'] = mode;
+  }
+
   async createCustomRoom(userId: string) {
-    // const roomId = (Math.random() * 999999).toString().substr(-6);
     const roomId = '100001';
     this.rooms[roomId] = {};
     const usersId: string[] = [userId];
