@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
   socket.on("create-custom-room", (data) => {
     console.log("create custom room");
     console.log(data);
-    room.createCustomRoom(data.userId);
+    room.createCustomRoom(data.userId, socket.id);
     // let userId = socketIdToUserId[socket.id];
     // if (userId) {
     //   room.quitSearchRanked(userId);

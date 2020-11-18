@@ -72,7 +72,7 @@ class Room {
     }
     this.customRooms[inviteId] = { players: [userId] };
     this.socket.emit("update-custom-rooms", this.customRooms);
-    // this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
     console.log(this.customRooms);
   };
 
@@ -87,7 +87,7 @@ class Room {
       return;
     }
     room.players.push(userId);
-    // this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
     console.log(this.customRooms);
   };
 

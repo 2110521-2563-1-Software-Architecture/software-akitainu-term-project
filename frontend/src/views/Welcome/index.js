@@ -71,6 +71,11 @@ class Welcome extends React.Component {
       console.log("ranked-found");
       console.log(data);
     });
+    matchmakingSocket.on("join-custom-room", (data) => {
+      console.log("join-custom-room");
+      console.log(data);
+      // redirect to waiting room for that room id
+    });
   }
 
   joinRoom100001 = () => {
