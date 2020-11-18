@@ -84,8 +84,13 @@ export class GameGateway implements OnGatewayInterface {
     const newGame = await this.customGameRoomService.onStartGame(roomId);
 
     console.log('newGame: ', newGame);
+    console.log("starting")
 
-    this.server.to(roomId).emit('new-game', newGame);
+    // this.server.to(roomId).emit('new-game', newGame);
+    this.server.emit('new-game', newGame);
+    // setTimeout(()=>{
+    //   this.server.emit('new-game', newGame);
+    // },5000)
   }
 
   @SubscribeMessage('draw-card')

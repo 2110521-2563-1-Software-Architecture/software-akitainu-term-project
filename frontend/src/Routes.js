@@ -13,7 +13,8 @@ import Authen from "views/Auth";
 
 // const ENDPOINT = "18.141.138.13:10001";
 const SOCKET_ENDPOINT =
-  process.env.REACT_APP_BACKEND_SOCKET || "http://18.141.138.13:10001";
+  // process.env.REACT_APP_BACKEND_SOCKET || "http://18.141.138.13:10001";
+  process.env.REACT_APP_BACKEND_SOCKET || "http://localhost:10001";
 const MATCHMAKING_SOCKET_ENDPOINT =
   process.env.MATCHMAKING_SOCKET || "localhost:3030";
 const socket = socketIOClient(SOCKET_ENDPOINT);
