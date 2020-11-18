@@ -74,7 +74,7 @@ export class GameGateway implements OnGatewayInterface {
       roomId,
     };
 
-    this.server.to(roomId).emit('new-join-custom-other', newJoinedUser);
+    this.server.emit('new-join-custom-other', newJoinedUser);
 
     this.server.emit('new-join-custom-joiner', allUsersInRoom);
   }
@@ -84,9 +84,9 @@ export class GameGateway implements OnGatewayInterface {
     const newGame = await this.customGameRoomService.onStartGame(roomId);
 
     console.log('newGame: ', newGame);
-    console.log("starting")
+    console.log('starting');
 
-    // this.server.to(roomId).emit('new-game', newGame);
+    // this.server.emit('new-game', newGame);
     this.server.emit('new-game', newGame);
     // setTimeout(()=>{
     //   this.server.emit('new-game', newGame);
@@ -99,7 +99,7 @@ export class GameGateway implements OnGatewayInterface {
     const newCard = await this.customGameRoomService.drawCard(userId, roomId);
     console.log('newCard: ', newCard);
     if (newCard !== false) {
-      this.server.to(roomId).emit('new-card', newCard);
+      this.server.emit('new-card', newCard);
     }
   }
 
@@ -112,19 +112,19 @@ export class GameGateway implements OnGatewayInterface {
       card,
       cardIdx,
     );
-    this.server.to(roomId).emit('new-card-use', newCardUse);
+    this.server.emit('new-card-use', newCardUse);
   }
 
   // @SubscribeMessage('use-favor')
   // async onUseFavor(socket: Socket, data: any) {
   //   const { roomId } = data;
-  //   this.server.to(roomId).emit('new-favor', data);
+  //   this.server.emit('new-favor', data);
   // }
 
   @SubscribeMessage('select-player')
   async onSelectPlayer(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-select', data);
+    this.server.emit('new-select', data);
   }
 
   // @SubscribeMessage('use-see-the-future')
@@ -134,49 +134,49 @@ export class GameGateway implements OnGatewayInterface {
   //     userId,
   //     roomId,
   //   );
-  //   this.server.to(roomId).emit('new-see-the-future', newSeeTheFuture);
+  //   this.server.emit('new-see-the-future', newSeeTheFuture);
   // }
 
   @SubscribeMessage('use-common-2')
   async onUseCommon2(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-common-2', data);
+    this.server.emit('new-common-2', data);
   }
 
   @SubscribeMessage('select-common-2')
   async onSelectCommon2(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('receive-common-2', data);
+    this.server.emit('receive-common-2', data);
   }
 
   @SubscribeMessage('use-common-3')
   async onUseCommon3(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-common-3', data);
+    this.server.emit('new-common-3', data);
   }
 
   @SubscribeMessage('select-common-3')
   async onSelectCommon3(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('receive-common-3', data);
+    this.server.emit('receive-common-3', data);
   }
 
   @SubscribeMessage('use-common-5')
   async onUseCommon5(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-common-5', data);
+    this.server.emit('new-common-5', data);
   }
 
   @SubscribeMessage('select-common-5')
   async onSelectCommon5(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('receive-common-5', data);
+    this.server.emit('receive-common-5', data);
   }
 
   @SubscribeMessage('draw-exploding-puppy')
   async onDrawExplodingPuppy(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-exploding-puppy', data);
+    this.server.emit('new-exploding-puppy', data);
   }
 
   @SubscribeMessage('insert-exploding-puppy')
@@ -186,9 +186,7 @@ export class GameGateway implements OnGatewayInterface {
       roomId,
       idx,
     );
-    this.server
-      .to(roomId)
-      .emit('finish-exploding-puppy', { roomId, userId, nextUserId });
+    this.server.emit('finish-exploding-puppy', { roomId, userId, nextUserId });
   }
 
   @SubscribeMessage('game-lose')
@@ -200,11 +198,11 @@ export class GameGateway implements OnGatewayInterface {
       false,
     );
     if (!loseResult) return; // Error : player already die
-    this.server.to(roomId).emit('new-lose', { ...data, ...loseResult });
+    this.server.emit('new-lose', { ...data, ...loseResult });
 
     const result = await this.customGameRoomService.resultGame(roomId);
     if (result) {
-      this.server.to(roomId).emit('new-win', { result });
+      this.server.emit('new-win', { result });
     }
   }
 
@@ -242,19 +240,19 @@ export class GameGateway implements OnGatewayInterface {
       ...data,
       [effectCard]: result,
     };
-    this.server.to(roomId).emit('new-effect', newEffect);
+    this.server.emit('new-effect', newEffect);
   }
 
   @SubscribeMessage('use-nope')
   async onUseNope(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('new-nope', data);
+    this.server.emit('new-nope', data);
   }
 
   @SubscribeMessage('no-one-nope')
   async onNoOneNope(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.to(roomId).emit('no-new-nope', data);
+    this.server.emit('no-new-nope', data);
   }
 
   @SubscribeMessage('player-exit')
@@ -265,20 +263,20 @@ export class GameGateway implements OnGatewayInterface {
       userId,
       true,
     );
-    this.server.to(roomId).emit('new-exit', { ...data, ...exitResult });
+    this.server.emit('new-exit', { ...data, ...exitResult });
 
     const result = await this.customGameRoomService.resultGame(roomId);
     if (result) {
-      this.server.to(roomId).emit('new-win', { result });
+      this.server.emit('new-win', { result });
     }
   }
 
   @SubscribeMessage('game-rank-win')
   async onRankWin(socket: Socket, data: any) {
     const { roomId, userId } = data;
-    // this.server.to(roomId).emit('no-new-nope', data);
+    // this.server.emit('no-new-nope', data);
     console.log('game-rank-win', data);
-    this.server.to(roomId).emit('debug', 'got it');
+    this.server.emit('debug', 'got it');
     await this.customGameRoomService.onRankWin(userId, roomId);
   }
 
