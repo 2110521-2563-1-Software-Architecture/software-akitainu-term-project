@@ -18,6 +18,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import SettingDialog from "./SettingDialog";
+import Button from "components/Button";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "20px 50px 20px 50px",
     border: "1px solid black",
     borderRadius: "20px",
+    width: "90%",
   },
   playersection: {
     height: "70%",
@@ -62,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "5%",
     border: "1px solid black",
     borderRadius: "20px",
+    width: "90%",
   },
   title: {
     fontWeight: "bold",
@@ -118,9 +121,19 @@ const useStyles = makeStyles((theme) => ({
       -1px 1px 0 black, \
       1px 1px 5px black;",
   },
+  startButton: {
+    height: "8%",
+    width: "4%",
+    position: "absolute",
+    right: "3%",
+    bottom: "5%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }
 }));
 
-function Waitingroom() {
+function Waitingroom(props) {
   const classes = useStyles();
   const [maxPlayer, setMaxplayer] = useState(3);
   const [timeDelay, setTimeDelay] = useState(30);
@@ -197,6 +210,17 @@ function Waitingroom() {
   const handleCloseSeting = () => {
     setSettingOpen(false);
   };
+
+  useEffect(() => {
+    const {matchmakingSocket} = props;
+    
+  })
+
+  const handleStart = () => {
+    const {matchmakingSocket} = props;
+    matchmakingSocket.emit("start-custom-room", {inviteId: roomId});
+  }
+
   return (
     <>
       <Grid container className={classes.root}>
@@ -288,6 +312,7 @@ function Waitingroom() {
             </Grid>
           </Grid>
         </Grid>
+        <Button text="Play" className={classes.startButton} onClick={handleStart} />
       </Grid>
       <SettingDialog
         open={settingOpen}
