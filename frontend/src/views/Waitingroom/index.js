@@ -18,6 +18,8 @@ import {
 import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import SettingDialog from "./SettingDialog";
+import Button from "components/Button";
+import exit from "../../image/exit.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     height: "80%",
     backgroundColor: "#B6C5E0",
     padding: "20px 50px 20px 50px",
-    marginTop: "20%",
+    marginTop: "30%",
     border: "1px solid black",
     borderRadius: "20px",
   },
@@ -54,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "20px 50px 20px 50px",
     border: "1px solid black",
     borderRadius: "20px",
+    width: "90%",
   },
   playersection: {
     height: "70%",
@@ -62,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "5%",
     border: "1px solid black",
     borderRadius: "20px",
+    width: "90%",
   },
   title: {
     fontWeight: "bold",
@@ -118,9 +122,24 @@ const useStyles = makeStyles((theme) => ({
       -1px 1px 0 black, \
       1px 1px 5px black;",
   },
+  startButton: {
+    height: "8%",
+    width: "4%",
+    position: "absolute",
+    right: "3%",
+    bottom: "5%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  exitButton: {
+    position: "absolute",
+    width: "3.5%",
+    padding: "8px",
+  },
 }));
 
-function Waitingroom() {
+function Waitingroom(props) {
   const classes = useStyles();
   const [maxPlayer, setMaxplayer] = useState(3);
   const [timeDelay, setTimeDelay] = useState(30);
@@ -197,6 +216,22 @@ function Waitingroom() {
   const handleCloseSeting = () => {
     setSettingOpen(false);
   };
+
+  useEffect(() => {
+    const { matchmakingSocket } = props;
+  });
+
+  const handleStart = () => {
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("start-custom-room", { inviteId: roomId });
+  };
+
+  const history = useHistory();
+  const _handleExit = () => {
+    history.push("/home");
+    history.go(0);
+  };
+
   return (
     <>
       <Grid container className={classes.root}>
@@ -288,6 +323,19 @@ function Waitingroom() {
             </Grid>
           </Grid>
         </Grid>
+        <Button
+          text="Play"
+          className={classes.startButton}
+          onClick={handleStart}
+        />
+        <Button
+          text={"Exit"}
+          icon={exit}
+          iconPosition={"top"}
+          onClick={_handleExit}
+          style={"secondary"}
+          className={classes.exitButton}
+        />
       </Grid>
       <SettingDialog
         open={settingOpen}

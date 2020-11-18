@@ -10,10 +10,12 @@ import Gameplay from "views/Gameplay";
 import socketIOClient from "socket.io-client";
 import AuthGaurd from "components/AuthGaurd";
 import Authen from "views/Auth";
+import Waitingroom from "views/Waitingroom";
 
 // const ENDPOINT = "18.141.138.13:10001";
 const SOCKET_ENDPOINT =
-  process.env.REACT_APP_BACKEND_SOCKET || "http://18.141.138.13:10001";
+  // process.env.REACT_APP_BACKEND_SOCKET || "http://18.141.138.13:10001";
+  process.env.REACT_APP_BACKEND_SOCKET || "http://localhost:10001";
 const MATCHMAKING_SOCKET_ENDPOINT =
   process.env.MATCHMAKING_SOCKET || "localhost:3030";
 const socket = socketIOClient(SOCKET_ENDPOINT);
@@ -64,7 +66,9 @@ const routesConfig = [
     exact: true,
     guard: AuthGaurd,
     path: "/waiting/:roomId",
-    component: lazy(() => import("views/Waitingroom")),
+    component: (rest) => (
+      <Waitingroom matchmakingSocket={matchmakingSocket} {...rest} />
+    ),
   },
   {
     exact: true,

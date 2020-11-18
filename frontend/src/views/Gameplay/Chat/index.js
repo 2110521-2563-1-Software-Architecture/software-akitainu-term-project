@@ -413,7 +413,7 @@ function Chat({
         // let roomMes = messageGroup.room.messages;
         sendMessageRoom(
           sessionStorage.getItem("userId"),
-          100001,
+          thisRoomId,
           thisUsername,
           typing
         );

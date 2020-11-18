@@ -17,6 +17,8 @@ import {
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import exit from "../../image/exit.png";
+import Button from "components/Button";
 
 const ENDPOINT =
   process.env.REACT_APP_BACKEND_API || "http://18.141.138.13:10000";
@@ -70,6 +72,11 @@ const useStyles = makeStyles((theme) => ({
       -1px 1px 0 black, \
       1px 1px 5px black;",
   },
+  exitButton: {
+    position: "absolute",
+    width: "3.5%",
+    padding: "8px",
+  },
 }));
 
 function Leadership() {
@@ -83,6 +90,12 @@ function Leadership() {
     });
   }, []);
 
+  const history = useHistory();
+  const _handleExit = () => {
+    history.push("/home");
+    history.go(0);
+  };
+
   return (
     <Grid container className={classes.root}>
       <Grid
@@ -95,6 +108,14 @@ function Leadership() {
       >
         <Typography className={classes.title}>Leader board</Typography>
       </Grid>
+      <Button
+        text={"Exit"}
+        icon={exit}
+        iconPosition={"top"}
+        onClick={_handleExit}
+        style={"secondary"}
+        className={classes.exitButton}
+      />
       <Grid container item className={classes.board} xs={12}>
         <Grid item xs={4}>
           <Typography className={classes.title} style={{ textAlign: "center" }}>
