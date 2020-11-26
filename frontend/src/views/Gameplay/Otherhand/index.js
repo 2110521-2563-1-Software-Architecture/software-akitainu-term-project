@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, makeStyles, Avatar } from "@material-ui/core";
 import card_back from "../../../image/card_back.png";
 import classNames from "classnames";
-import axios from 'axios'
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -98,7 +98,7 @@ function Otherhand(props) {
   const classes = useStyles();
   const { user, clickable, nextUserId, onClick } = props;
   const name = user.userName ? user.userName : `Player ${user.userId}`;
-  const [username,setUsername] = useState("")
+  const [username, setUsername] = useState("");
   const numberOfCards = user.numberOfCards;
   const profileImgUrl = user.profileImgUrl;
   const isDead = user.isDead;
@@ -143,31 +143,33 @@ function Otherhand(props) {
   }
 
   const getUserName = () =>
-  new Promise( async(resolve,reject)=>{
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_BACKEND_API}/users/${user.userId}`)
-      // console.log(res)
-      resolve(res)
-    } catch(err) {
-      // console.log(err)
-      reject(err)
-    }
-  })
+    new Promise(async (resolve, reject) => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_API}/users/${user.userId}`
+        );
+        // console.log(res)
+        resolve(res);
+      } catch (err) {
+        // console.log(err)
+        reject(err);
+      }
+    });
 
-  useEffect( async()=>{
+  useEffect(async () => {
     if (user) {
-      console.log("in other hand",user)
+      console.log("in other hand", user);
       try {
         const res = await getUserName();
         // console.log(res)
         if (res.data.userName) {
-          setUsername(res.data.userName)
+          setUsername(res.data.userName);
         }
-      } catch(err) {
-        console.log(err)
+      } catch (err) {
+        console.log(err);
       }
     }
-  },[user])
+  }, [user]);
 
   return (
     <Grid
@@ -181,7 +183,9 @@ function Otherhand(props) {
       onClick={onClick}
     >
       <Grid container item xs="12" className={classes.nameAndAvatar}>
-      <Avatar alt={name} src={profileImgUrl}>{username?username[0]:name[0]}</Avatar>
+        <Avatar alt={name} src={profileImgUrl}>
+          {username ? username[0] : name[0]}
+        </Avatar>
         <Grid
           item
           className={classNames(classes.playerName, {

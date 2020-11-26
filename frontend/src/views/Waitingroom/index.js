@@ -159,7 +159,7 @@ function Waitingroom(props) {
   const [common4, setCommon4] = useState(5);
   const [common5, setCommon5] = useState(5);
   const [settingOpen, setSettingOpen] = useState(false);
-  const [leader, setLeader] = useState('');
+  const [leader, setLeader] = useState("");
   const [isPublic, setPublic] = useState(false);
   const [players, setPlayers] = useState([]);
   const [playersName, setPlayersName] = useState([]);
@@ -232,9 +232,22 @@ function Waitingroom(props) {
     matchmakingSocket.emit("joined-custom-room", { inviteId: roomId, userId });
     matchmakingSocket.on("custom-room-info", async (data) => {
       console.log("custom-room-info", data);
-      const {leader, players, options} = data;
-      const {deck, maxPlayer, isPublic, timePerTurn} = options;
-      const {defuse, nope, attack, skip, favor, shuffle, seeTheFuture, common1, common2, common3, common4, common5} = deck;
+      const { leader, players, options } = data;
+      const { deck, maxPlayer, isPublic, timePerTurn } = options;
+      const {
+        defuse,
+        nope,
+        attack,
+        skip,
+        favor,
+        shuffle,
+        seeTheFuture,
+        common1,
+        common2,
+        common3,
+        common4,
+        common5,
+      } = deck;
       setDefuse(defuse);
       setNope(nope);
       setAttack(attack);
@@ -253,13 +266,13 @@ function Waitingroom(props) {
       setLeader(leader);
       setPlayers(players);
 
-      const newUserName = await players.map(async player => {
+      const newUserName = await players.map(async (player) => {
         const resp = await axios.get(`${ENDPOINT}/users/username/${player}`);
         return resp.data;
       });
       Promise.all(newUserName).then((usersName) => {
         setPlayersName(usersName);
-      })
+      });
     });
     matchmakingSocket.on("custom-room-info-error", () => {
       window.location = `/home`;
@@ -276,18 +289,27 @@ function Waitingroom(props) {
 
   const handleSwitchChange = () => {
     const { matchmakingSocket } = props;
-    matchmakingSocket.emit("set-visible", {inviteId: roomId, visible: !isPublic});
-  }
+    matchmakingSocket.emit("set-visible", {
+      inviteId: roomId,
+      visible: !isPublic,
+    });
+  };
 
   const handleMaxPlayerChange = (idx) => {
     const { matchmakingSocket } = props;
-    matchmakingSocket.emit("set-max-player", {inviteId: roomId, maxPlayer: idx});
-  }
+    matchmakingSocket.emit("set-max-player", {
+      inviteId: roomId,
+      maxPlayer: idx,
+    });
+  };
 
   const handleTimePerTurnChange = (idx) => {
     const { matchmakingSocket } = props;
-    matchmakingSocket.emit("set-time-per-turn", {inviteId: roomId, timePerTurn: idx});
-  }
+    matchmakingSocket.emit("set-time-per-turn", {
+      inviteId: roomId,
+      timePerTurn: idx,
+    });
+  };
 
   const history = useHistory();
   const _handleExit = () => {
@@ -302,7 +324,7 @@ function Waitingroom(props) {
     </Grid>
   );
 
-  const playersUser = playersName.map(playerName => (
+  const playersUser = playersName.map((playerName) => (
     <Grid container item xs={6}>
       {/* <img className={classes.profilePic}></img> */}
       <Typography className={classes.playnametext}>{playerName}</Typography>
@@ -316,7 +338,11 @@ function Waitingroom(props) {
           <Grid item xs={12} className={classes.settingsection}>
             <Typography
               className={classes.title}
-              style={{ textAlign: "center", marginTop: "10px", fontSize: "28px" }}
+              style={{
+                textAlign: "center",
+                marginTop: "10px",
+                fontSize: "28px",
+              }}
             >
               Custom settings
             </Typography>
@@ -330,12 +356,23 @@ function Waitingroom(props) {
                   disabled={userId !== leader}
                 />
               }
-              label={<Typography className={classes.title} style={{ fontSize: "24px" }}>{isPublic ? 'Public':'Private'}</Typography>}
+              label={
+                <Typography
+                  className={classes.title}
+                  style={{ fontSize: "24px" }}
+                >
+                  {isPublic ? "Public" : "Private"}
+                </Typography>
+              }
               style={{ margin: "16px auto" }}
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "left", marginBottom: "10px", fontSize: "24px" }}
+              style={{
+                textAlign: "left",
+                marginBottom: "10px",
+                fontSize: "24px",
+              }}
             >
               {`Max player: ${maxPlayer}`}
             </Typography>
@@ -353,7 +390,11 @@ function Waitingroom(props) {
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "left", marginBottom: "10px", fontSize: "24px" }}
+              style={{
+                textAlign: "left",
+                marginBottom: "10px",
+                fontSize: "24px",
+              }}
             >
               {`Time per turn: ${timeDelay}`}
             </Typography>
@@ -371,7 +412,11 @@ function Waitingroom(props) {
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "center", cursor: "pointer" , fontSize: "24px"}}
+              style={{
+                textAlign: "center",
+                cursor: "pointer",
+                fontSize: "24px",
+              }}
               onClick={handleClickSetting}
             >
               Card Setting
