@@ -124,7 +124,6 @@ export class UsersService {
 
   async updateUserProgress(userId: string, userProgressDto: UserProgressDto) {
     const { userExp, userRank, userLevel } = userProgressDto; // new EXP and new rank
-
     const user = await this.getUserByUserId(userId);
     if (userLevel < user.userLevel)
       throw new BadRequestException(
@@ -139,6 +138,7 @@ export class UsersService {
       userLevel,
       userExp,
     };
+    console.log("editUserDto",editUserDto)
     const ret = await this.userRepository.save(editUserDto);
     if (!ret) throw new BadRequestException('Invalid UserId');
     return ret;

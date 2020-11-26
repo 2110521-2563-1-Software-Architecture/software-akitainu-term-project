@@ -5,24 +5,6 @@ import { NewUserJoinCustomRoomDto, Card, CreateGameRoomDto } from './game.dto';
 export class GameService {
   rooms = {};
 
-  allCards = {
-    explodingPuppy: 4,
-    defuse: 6,
-    nope: 5,
-    attack: 4,
-    skip: 4,
-    favor: 4,
-    shuffle: 4,
-    seeTheFuture: 5,
-    common1: 4,
-    common2: 4,
-    common3: 4,
-    common4: 4,
-    common5: 4,
-  };
-
-  deck = [];
-
   setRoomByRoomId(roomId: string, features: any) {
     this.rooms[roomId] = { ...this.rooms[roomId], ...features };
   }
@@ -36,6 +18,7 @@ export class GameService {
     this.rooms[roomId] = {};
     this.rooms[roomId]['usersId'] = usersId;
     this.rooms[roomId]['mode'] = mode;
+    this.rooms[roomId]['options'] = options;
     return roomId;
   }
 
@@ -104,27 +87,66 @@ export class GameService {
   }
 
   async initializeDeck(roomId: string) {
-    const { usersId } = this.rooms[roomId];
+    const { usersId, mode, options } = this.rooms[roomId];
     const userNumber = usersId.length;
 
-    this.allCards = {
-      explodingPuppy: 0,
-      defuse: 0,
-      nope: 5,
-      attack: 4,
-      skip: 4,
-      favor: 4,
-      shuffle: 4,
-      seeTheFuture: 5,
-      common1: 4,
-      common2: 4,
-      common3: 4,
-      common4: 4,
-      common5: 4,
-    };
+    console.log('options: ', options);
+
+    let allCards = {};
+    let defuseNumber = 0;
+    let time = 30; // default
+
+    if (mode === 'rank') {
+      allCards = {
+        nope: 5,
+        attack: 4,
+        skip: 4,
+        favor: 4,
+        shuffle: 4,
+        seeTheFuture: 5,
+        common1: 4,
+        common2: 4,
+        common3: 4,
+        common4: 4,
+        common5: 4,
+      };
+      defuseNumber = 1;
+    } else if (mode === 'custom') {
+      const {
+        defuse,
+        nope,
+        attack,
+        skip,
+        favor,
+        shuffle,
+        seeTheFuture,
+        common1,
+        common2,
+        common3,
+        common4,
+        common5,
+        timePerTurn,
+      } = options;
+      allCards = {
+        nope,
+        attack,
+        skip,
+        favor,
+        shuffle,
+        seeTheFuture,
+        common1,
+        common2,
+        common3,
+        common4,
+        common5,
+      };
+      defuseNumber = defuse;
+      time = timePerTurn;
+    }
+
     let deck = [];
-    for (const cardType in this.allCards) {
-      deck.push(...Array(this.allCards[cardType]).fill(Card[cardType]));
+    for (const cardType in allCards) {
+      deck.push(...Array(allCards[cardType]).fill(Card[cardType]));
     }
 
     deck = await this.shuffle(deck);
@@ -141,7 +163,8 @@ export class GameService {
 
     deck = deck.slice(userNumber * 7);
 
-    deck.push(...Array(userNumber === 5 ? 1 : 2).fill(Card.defuse));
+    // add defuse and exploding puppy
+    deck.push(...Array(defuseNumber).fill(Card.defuse));
     deck.push(...Array(userNumber - 1).fill(Card.explodingPuppy));
     deck = await this.shuffle(deck);
     this.setRoomByRoomId(roomId, { deck });
@@ -153,6 +176,7 @@ export class GameService {
       usersCard: usersCard,
       nextUserId: usersId[0],
       nextTurnLeft: 1,
+      timePerTurn: time,
     };
 
     console.log('newGame: ', newGame);
