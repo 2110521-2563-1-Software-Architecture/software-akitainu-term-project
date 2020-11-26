@@ -180,10 +180,6 @@ class Gameplay extends React.Component {
         nextTurnLeft,
       });
     });
-
-    this.state.socket.on("test", (data) => {
-      console.log("test", data);
-    });
     
     this.state.socket.on("new-game", (data) => {
       console.log("new-game", data);
