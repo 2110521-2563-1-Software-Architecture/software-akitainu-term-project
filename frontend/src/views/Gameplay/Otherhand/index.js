@@ -181,7 +181,7 @@ function Otherhand(props) {
       onClick={onClick}
     >
       <Grid container item xs="12" className={classes.nameAndAvatar}>
-        <Avatar alt={name} src={profileImgUrl}></Avatar>
+      <Avatar alt={name} src={profileImgUrl}>{username?username[0]:name[0]}</Avatar>
         <Grid
           item
           className={classNames(classes.playerName, {
