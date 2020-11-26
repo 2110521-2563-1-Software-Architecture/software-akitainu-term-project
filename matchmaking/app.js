@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
     // userIdToCurrentSocket[data.userId] = socket;
     // room.setUserMapSocket(userIdToCurrentSocket);
     // room.getCustomRoomData(data.inviteId, data.userId);
-    room.startCustomRoom({ inviteId: data.inviteId });
+    room.startCustomRoom(data.inviteId);
   });
 
   socket.on("joined-custom-room", (data) => {
