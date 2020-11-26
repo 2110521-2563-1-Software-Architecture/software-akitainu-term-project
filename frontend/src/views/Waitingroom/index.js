@@ -144,7 +144,7 @@ const ENDPOINT = process.env.REACT_APP_BACKEND_API || "http://localhost:10000";
 
 function Waitingroom(props) {
   const classes = useStyles();
-  const [maxPlayer, setMaxplayer] = useState(3);
+  const [maxPlayer, setMaxplayer] = useState(8);
   const [timeDelay, setTimeDelay] = useState(30);
   const [defuse, setDefuse] = useState(5);
   const [nope, setNope] = useState(5);
@@ -160,9 +160,12 @@ function Waitingroom(props) {
   const [common5, setCommon5] = useState(5);
   const [settingOpen, setSettingOpen] = useState(false);
   const [leader, setLeader] = useState('');
+  const [isPublic, setPublic] = useState(false);
   const [players, setPlayers] = useState([]);
   const [playersName, setPlayersName] = useState([]);
   const { roomId } = useParams();
+
+  const userId = sessionStorage.getItem("userId");
 
   const NumberofCard = [
     {
@@ -230,7 +233,7 @@ function Waitingroom(props) {
     matchmakingSocket.on("custom-room-info", async (data) => {
       console.log("custom-room-info", data);
       const {leader, players, options} = data;
-      const {deck, maxPlayer, isPublic, turn} = options;
+      const {deck, maxPlayer, isPublic, timePerTurn} = options;
       const {defuse, nope, attack, skip, favor, shuffle, seeTheFuture, common1, common2, common3, common4, common5} = deck;
       setDefuse(defuse);
       setNope(nope);
@@ -244,9 +247,9 @@ function Waitingroom(props) {
       setCommon3(common3);
       setCommon4(common4);
       setCommon5(common5);
-      // setSettingOpen(isPublic);
+      setPublic(isPublic);
       setMaxplayer(maxPlayer);
-      setTimeDelay(turn);
+      setTimeDelay(timePerTurn);
       setLeader(leader);
       setPlayers(players);
 
@@ -270,6 +273,21 @@ function Waitingroom(props) {
     const { matchmakingSocket } = props;
     matchmakingSocket.emit("start-custom-room", { inviteId: roomId });
   };
+
+  const handleSwitchChange = () => {
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("set-visible", {inviteId: roomId, visible: !isPublic});
+  }
+
+  const handleMaxPlayerChange = (idx) => {
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("set-max-player", {inviteId: roomId, maxPlayer: idx});
+  }
+
+  const handleTimePerTurnChange = (idx) => {
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("set-time-per-turn", {inviteId: roomId, timePerTurn: idx});
+  }
 
   const history = useHistory();
   const _handleExit = () => {
@@ -298,57 +316,62 @@ function Waitingroom(props) {
           <Grid item xs={12} className={classes.settingsection}>
             <Typography
               className={classes.title}
-              style={{ textAlign: "center", marginBottom: "10px" }}
+              style={{ textAlign: "center", marginTop: "10px", fontSize: "28px" }}
             >
-              Custom Setting
+              Custom settings
             </Typography>
             <FormControlLabel
               control={
                 <Switch
-                  // checked={state.checkedB}
-                  // onChange={handleChange}
+                  checked={isPublic}
+                  onChange={handleSwitchChange}
                   name="checkedB"
                   color="primary"
+                  disabled={userId !== leader}
                 />
               }
-              label={<Typography className={classes.title}>Public</Typography>}
-              style={{ marginBottom: "10px" }}
+              label={<Typography className={classes.title} style={{ fontSize: "24px" }}>{isPublic ? 'Public':'Private'}</Typography>}
+              style={{ margin: "16px auto" }}
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "left", marginBottom: "10px" }}
+              style={{ textAlign: "left", marginBottom: "10px", fontSize: "24px" }}
             >
-              Max Player
+              {`Max player: ${maxPlayer}`}
             </Typography>
             <Slider
               defaultValue={maxPlayer}
+              value={maxPlayer}
               valueLabelFormat={(n) => `${n}`}
               valueLabelDisplay="auto"
               step={1}
-              min={3}
+              min={2}
               max={8}
               style={{ marginBottom: "10px" }}
-              onChangeCommitted={(e, idx) => setMaxplayer(idx)}
+              onChangeCommitted={(e, idx) => handleMaxPlayerChange(idx)}
+              disabled={userId !== leader}
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "left", marginBottom: "10px" }}
+              style={{ textAlign: "left", marginBottom: "10px", fontSize: "24px" }}
             >
-              เวลาต่อ turn:
+              {`Time per turn: ${timeDelay}`}
             </Typography>
             <Slider
               defaultValue={timeDelay}
+              value={timeDelay}
               valueLabelFormat={(n) => `${n}`}
               valueLabelDisplay="auto"
               step={5}
               min={5}
               max={60}
               style={{ marginBottom: "30px" }}
-              onChangeCommitted={(e, idx) => setTimeDelay(idx)}
+              onChangeCommitted={(e, idx) => handleTimePerTurnChange(idx)}
+              disabled={userId !== leader}
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "center", cursor: "pointer" }}
+              style={{ textAlign: "center", cursor: "pointer" , fontSize: "24px"}}
               onClick={handleClickSetting}
             >
               Card Setting

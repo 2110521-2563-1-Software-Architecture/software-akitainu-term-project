@@ -131,7 +131,7 @@ class Room {
         },
         maxPlayer: 8,
         isPublic: true,
-        turn: 30,
+        timePerTurn: 30,
       },
     };
     this.socket.emit("update-custom-rooms", this.customRooms);
@@ -214,7 +214,7 @@ class Room {
   };
 
   getCustomRoomData (inviteId, userId) {
-    const usersId = this.customRooms[inviteId].players;
+    const usersId = this.customRooms[inviteId] ? this.customRooms[inviteId].players : [];
     usersId.map((userId) => {
       this.getSocketByUserId(userId).emit(
         "custom-room-info",
@@ -231,6 +231,24 @@ class Room {
   setUserMapSocket (userIdToCurrentSocket) {
     this.userIdToCurrentSocket = userIdToCurrentSocket;
   };
+
+  setVisible = (inviteId, visible)=> {
+    this.customRooms[inviteId].options.isPublic = visible;
+    this.getCustomRoomData(inviteId)
+    this.socket.emit("update-custom-rooms", this.customRooms);
+  }
+
+  setMaxPlayer = (inviteId, maxPlayer)=> {
+    this.customRooms[inviteId].options.maxPlayer = maxPlayer;
+    this.getCustomRoomData(inviteId)
+    this.socket.emit("update-custom-rooms", this.customRooms);
+  }
+
+  setTimePerTurn = (inviteId, timePerTurn)=> {
+    this.customRooms[inviteId].options.timePerTurn = timePerTurn;
+    this.getCustomRoomData(inviteId)
+    this.socket.emit("update-custom-rooms", this.customRooms);
+  }
 }
 
 module.exports = { Room };
