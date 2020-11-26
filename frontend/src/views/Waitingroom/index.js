@@ -227,7 +227,7 @@ function Waitingroom(props) {
     const { matchmakingSocket } = props;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("joined-custom-room", { inviteId: roomId, userId });
-    matchmakingSocket.on("custom-room-info", (data) => {
+    matchmakingSocket.on("custom-room-info", async (data) => {
       console.log("custom-room-info", data);
       const {leader, players, options} = data;
       const {deck, maxPlayer, isPublic, turn} = options;
@@ -250,14 +250,19 @@ function Waitingroom(props) {
       setLeader(leader);
       setPlayers(players);
 
-      const usersName = [];
-
-      players.map(async player =>
-        usersName.push(await axios.get(`${ENDPOINT}/users/${player}`).then((res) => res.body.usersName))
-      );
-      
-      setPlayersName(usersName);
-      
+      const newUserName = await players.map(async player => {
+        const resp = await axios.get(`${ENDPOINT}/users/username/${player}`);
+        return resp.data;
+      });
+      Promise.all(newUserName).then((usersName) => {
+        setPlayersName(usersName);
+      })
+    });
+    matchmakingSocket.on("custom-room-info-error", () => {
+      window.location = `/home`;
+    });
+    matchmakingSocket.on("leave-custom-room", (data) => {
+      window.location = `/home`;
     });
   }, []);
 
@@ -367,7 +372,6 @@ function Waitingroom(props) {
             </Grid>
           </Grid>
           <Grid container item xs={12} className={classes.playersection}>
-            {leaderUser}
             {playersUser}
           </Grid>
         </Grid>

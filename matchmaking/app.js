@@ -20,8 +20,6 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log("a user connected");
 
-  socket.emit("update-custom-rooms", room.getCustomRooms());
-
   socket.on("search-ranked", (data) => {
     console.log("search-ranked");
     console.log(data);
@@ -85,6 +83,10 @@ io.on("connection", (socket) => {
     userIdToCurrentSocket[data.userId] = socket;
     room.setUserMapSocket(userIdToCurrentSocket);
     room.getCustomRoomData(data.inviteId, data.userId);
+  });
+
+  socket.on("get-custom-game-rooms", () => {
+    socket.emit("update-custom-rooms", room.getCustomRooms());
   });
 });
 

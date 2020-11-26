@@ -25,11 +25,11 @@ class Room {
     this.userIdToCurrentSocket = {};
   }
 
-  getCustomRooms = () => {
+  getCustomRooms ()  {
     return this.customRooms;
   };
 
-  getSocketByUserId = (userId) => {
+  getSocketByUserId (userId) {
     return this.userIdToCurrentSocket[userId];
   };
 
@@ -75,7 +75,7 @@ class Room {
       });
   }
 
-  userDisconnected = (userId) => {
+  userDisconnected (userId) {
     let targetInviteId, found;
     const customRoomIds = Object.keys(this.customRooms);
     for (let i = 0; i < customRoomIds.length; i++) {
@@ -135,7 +135,7 @@ class Room {
       },
     };
     this.socket.emit("update-custom-rooms", this.customRooms);
-    this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    this.socket.to(socketId).emit("custom-room-id", { roomId: inviteId });
     console.log("updated custom rooms:", this.customRooms);
   }
 
@@ -154,7 +154,7 @@ class Room {
       return;
     }
     room.players.push(userId);
-    this.socket.to(socketId).emit("join-custom-room", { roomId: inviteId });
+    this.socket.to(socketId).emit("custom-room-id", { roomId: inviteId });
     this.socket.emit("update-custom-rooms", this.customRooms);
     console.log("updated custom rooms:", this.customRooms);
   }
@@ -166,29 +166,32 @@ class Room {
       return;
     }
     if (room.leader === userId) {
-      this.customRooms[inviteId];
+      // this.customRooms[inviteId];
       room.players.forEach((player) => {
         this.getSocketByUserId(player).emit("leave-custom-room", {
           roomId: inviteId,
         });
       });
-      delete this.createCustomRoom[inviteId];
+      room.players = [];
+      delete this.customRooms[inviteId];
     } else {
       room.players = room.players.filter((user) => user !== userId);
+      /*
       if (socketId) {
         this.socket
           .to(socketId)
           .emit("leave-custom-room", { roomId: inviteId });
       }
+      */
       this.customRooms[inviteId].players.forEach((player) => {
-        this.getCustomRoomData(inviteId, player);
+        this.getCustomRoomData(inviteId);
       });
     }
     this.socket.emit("update-custom-rooms", this.customRooms);
     console.log("updated custom rooms:", this.customRooms);
   }
 
-  startCustomRoom = (inviteId) => {
+  startCustomRoom (inviteId) {
     axios
       .post("http://localhost:10002/games/create", {
         mode: "rank",
@@ -210,14 +213,22 @@ class Room {
       });
   };
 
-  getCustomRoomData = (inviteId, userId) => {
-    this.getSocketByUserId(userId).emit(
-      "custom-room-info",
-      this.customRooms[inviteId]
-    );
+  getCustomRoomData (inviteId, userId) {
+    const usersId = this.customRooms[inviteId].players;
+    usersId.map((userId) => {
+      this.getSocketByUserId(userId).emit(
+        "custom-room-info",
+        this.customRooms[inviteId]
+      );
+    });
+    if(userId && usersId.indexOf(userId) === -1) {
+      this.getSocketByUserId(userId).emit(
+        "custom-room-info-error"
+      );
+    }
   };
   // more
-  setUserMapSocket = (userIdToCurrentSocket) => {
+  setUserMapSocket (userIdToCurrentSocket) {
     this.userIdToCurrentSocket = userIdToCurrentSocket;
   };
 }
