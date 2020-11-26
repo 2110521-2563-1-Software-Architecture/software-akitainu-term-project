@@ -1063,6 +1063,7 @@ class Gameplay extends React.Component {
 
   setUserProgress = async () => {
     const resp = await this.getUser(this.state.userId);
+    console.log("userProgress",resp)
     const userProgress = {
       exp: resp.userExp,
       rank: resp.userRank,
@@ -1073,11 +1074,23 @@ class Gameplay extends React.Component {
 
   getMaxExp = (level) => 100 + level * level * 5;
 
+  updateRank = (currentUserId,result) => {
+    console.log("currentUserId",currentUserId)
+    let myRank = result.findIndex(e => e === currentUserId)
+    console.log("myRank",myRank)
+    //first = 0, second 1
+    return ((myRank-2)*(-1)+this.state.userProgress.rank)
+  }
+
   updateUserProgress = (userId, result, userProgress) => {
     const plusExp = 250; // todo: will +500 if rank
     let level = userProgress.level;
     let maxExp = this.getMaxExp(level);
     let exp = userProgress.exp + plusExp;
+
+    console.log("gameplay/userProgess() result",result)
+    let newRank = this.updateRank(this.state.userId,result)
+    console.log("rankPoint",newRank)
 
     while (exp >= maxExp) {
       exp -= maxExp;
@@ -1089,6 +1102,7 @@ class Gameplay extends React.Component {
       // userRank: userProgress.rank + ???, todo: add this if rank
       userExp: exp,
       userLevel: level,
+      userRank: newRank,
     };
     sessionStorage.setItem("userExp", exp);
     sessionStorage.setItem("userLevel", level);
