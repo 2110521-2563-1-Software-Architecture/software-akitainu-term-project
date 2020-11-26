@@ -415,7 +415,7 @@ function Game(props) {
   };
 
   const handleDrawCard = () => {
-    if (nextUserId !== userId || cardSelectorId !== -1 || canNope) return;
+    if (nextUserId !== userId || cardSelectorId !== -1 || canNope || explodeId === userId || cardSelectorId === userId || seeTheFutureId === userId) return;
     drawCard(userId, roomId);
     newCountDown(timePerTurn);
   };
@@ -584,14 +584,18 @@ function Game(props) {
       </div>
       <SeeTheFutureDialog
         open={seeTheFutureId === userId}
-        handleClose={() => closeSeeTheFutureDialog()}
+        handleClose={() => {
+          closeSeeTheFutureDialog(); 
+          newCountDown(timePerTurn);
+        }}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog
         open={cardSelectorId === userId}
-        handleClose={(selelctedCardIdx) =>
-          _handleCloseCardSelectorDialog(selelctedCardIdx)
-        }
+        handleClose={(selelctedCardIdx) => {
+          _handleCloseCardSelectorDialog(selelctedCardIdx);
+          newCountDown(timePerTurn);
+        }}
         cardSelectorCards={cardSelectorCards}
         showBackCard={showCardSelectorBackCard}
       />
