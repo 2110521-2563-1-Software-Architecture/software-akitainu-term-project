@@ -212,12 +212,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Game(props) {
   const {
-    socket,
     drawCard,
-    createCustomRoom,
-    joinCustomRoom,
-    startGame,
-    getPropsFromUserId,
     hasDefuse,
     explodeId,
     insertExplodingPuppy,
@@ -238,7 +233,6 @@ function Game(props) {
     showCardSelectorBackCard,
     userCards,
     canNope,
-    handleUseNope,
     countDownTime,
     newCountDown,
     handleCompleteNopeCountdown,
@@ -483,10 +477,6 @@ function Game(props) {
     newCountDown(0);
   }
 
-  const _handleUseNope = () => {
-    handleUseNope(userId);
-  };
-
   const logItems = logs.map((item, idx) => (
     <li
       key={`log-${idx}`}
@@ -628,19 +618,6 @@ function Game(props) {
         onClick={_handleExit}
         className={classes.exitButton}
       />
-      <div>
-        <button onClick={() => createCustomRoom(userId)}>
-          createCustomRoom
-        </button>
-        <button onClick={() => joinCustomRoom(userId, roomId)}>
-          joinCustomRoom
-        </button>
-        <button onClick={() => startGame(roomId)}>startGame</button>
-        <button onClick={() => console.log(getPropsFromUserId(userId))}>
-          getProps
-        </button>
-        <button onClick={() => _handleUseNope()}>use nope</button>
-      </div>
     </>
   );
 }
