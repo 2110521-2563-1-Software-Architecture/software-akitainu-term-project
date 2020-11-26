@@ -88,6 +88,24 @@ io.on("connection", (socket) => {
   socket.on("get-custom-game-rooms", () => {
     socket.emit("update-custom-rooms", room.getCustomRooms());
   });
+
+  socket.on("set-visible", (data) => {
+    console.log('set visible')
+    console.log(data)
+    room.setVisible(data.inviteId,data.visible)
+  })
+
+  socket.on("set-max-player", (data) => {
+    console.log('set max player')
+    console.log(data)
+    room.setMaxPlayer(data.inviteId,data.maxPlayer)
+  })
+
+  socket.on("set-time-per-turn", (data) => {
+    console.log('set time per turn')
+    console.log(data)
+    room.setTimePerTurn(data.inviteId,data.timePerTurn)
+  })
 });
 
 http.listen(3030, () => {
