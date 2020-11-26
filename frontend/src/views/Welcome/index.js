@@ -30,6 +30,11 @@ const usestyle = (theme) => ({
     // backgroundColor: "#B6C5E0",
     marginLeft: "50px",
   },
+  leaderboardBtn: {
+    top: "30px",
+    right: "30px",
+    position: "absolute",
+  },
   playButton: {
     width: "128px",
     alignSelf: "center",
@@ -235,9 +240,9 @@ class Welcome extends React.Component {
             ></Button>
           </Grid>
         </Grid>
-        <Grid item xs="3" className={classes.mainSection}>
+        <div className={classes.leaderboardBtn}>
           <Button onClick={this.toLeaderboard} text="Leader Board" />
-        </Grid>
+        </div>
         <ModeDialog
           open={openModeDialog}
           onClose={this.closeModeDialog}
