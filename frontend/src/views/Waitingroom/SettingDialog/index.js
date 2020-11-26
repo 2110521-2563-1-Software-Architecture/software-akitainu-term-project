@@ -24,7 +24,6 @@ import { Cards } from "./mock";
 const useStyles = makeStyles((theme) => ({
   root: {
     // height: "100vh",
-    minHeight: "100vh",
     backgroundColor: "#465A74",
     padding: "20px 50px 20px 50px",
   },

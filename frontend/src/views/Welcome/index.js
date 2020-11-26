@@ -80,7 +80,7 @@ class Welcome extends React.Component {
 
   componentDidMount() {
     const { matchmakingSocket } = this.state;
-    matchmakingSocket.emit('get-custom-game-rooms');
+    matchmakingSocket.emit("get-custom-game-rooms");
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
       // console.log(data);

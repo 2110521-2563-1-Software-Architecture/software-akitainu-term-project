@@ -6,6 +6,7 @@ const CustomRoomList = (props) => {
   let roomList = [];
   Object.keys(publicCustomRooms).map(function (key) {
     const room = publicCustomRooms[key];
+    if (!room.options.isPublic) return;
     roomList.push({
       member: room.players.length,
       roomId: key,

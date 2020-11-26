@@ -159,7 +159,7 @@ function Waitingroom(props) {
   const [common4, setCommon4] = useState(5);
   const [common5, setCommon5] = useState(5);
   const [settingOpen, setSettingOpen] = useState(false);
-  const [leader, setLeader] = useState('');
+  const [leader, setLeader] = useState("");
   const [players, setPlayers] = useState([]);
   const [playersName, setPlayersName] = useState([]);
   const { roomId } = useParams();
@@ -229,9 +229,22 @@ function Waitingroom(props) {
     matchmakingSocket.emit("joined-custom-room", { inviteId: roomId, userId });
     matchmakingSocket.on("custom-room-info", async (data) => {
       console.log("custom-room-info", data);
-      const {leader, players, options} = data;
-      const {deck, maxPlayer, isPublic, turn} = options;
-      const {defuse, nope, attack, skip, favor, shuffle, seeTheFuture, common1, common2, common3, common4, common5} = deck;
+      const { leader, players, options } = data;
+      const { deck, maxPlayer, isPublic, turn } = options;
+      const {
+        defuse,
+        nope,
+        attack,
+        skip,
+        favor,
+        shuffle,
+        seeTheFuture,
+        common1,
+        common2,
+        common3,
+        common4,
+        common5,
+      } = deck;
       setDefuse(defuse);
       setNope(nope);
       setAttack(attack);
@@ -250,13 +263,13 @@ function Waitingroom(props) {
       setLeader(leader);
       setPlayers(players);
 
-      const newUserName = await players.map(async player => {
+      const newUserName = await players.map(async (player) => {
         const resp = await axios.get(`${ENDPOINT}/users/username/${player}`);
         return resp.data;
       });
       Promise.all(newUserName).then((usersName) => {
         setPlayersName(usersName);
-      })
+      });
     });
     matchmakingSocket.on("custom-room-info-error", () => {
       window.location = `/home`;
@@ -284,7 +297,7 @@ function Waitingroom(props) {
     </Grid>
   );
 
-  const playersUser = playersName.map(playerName => (
+  const playersUser = playersName.map((playerName) => (
     <Grid container item xs={6}>
       {/* <img className={classes.profilePic}></img> */}
       <Typography className={classes.playnametext}>{playerName}</Typography>
