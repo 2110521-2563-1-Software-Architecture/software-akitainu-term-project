@@ -180,9 +180,17 @@ class Gameplay extends React.Component {
         nextTurnLeft,
       });
     });
+
+    this.state.socket.on("test", (data) => {
+      console.log("test", data);
+    });
+    
     this.state.socket.on("new-game", (data) => {
       console.log("new-game", data);
 
+      // join socket's room
+      this.state.socket.emit("join-room", {userId: this.state.userId, roomId: this.state.roomId});
+      
       const {
         roomId,
         leftCardNumber,
