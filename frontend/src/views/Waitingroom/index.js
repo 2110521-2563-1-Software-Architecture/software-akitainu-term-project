@@ -280,6 +280,9 @@ function Waitingroom(props) {
     matchmakingSocket.on("leave-custom-room", (data) => {
       window.location = `/home`;
     });
+    matchmakingSocket.on("started-custom-room", (data) => {
+      window.location = `/gameplay/${data.roomId}`;
+    });
   }, []);
 
   const handleStart = () => {
@@ -443,11 +446,13 @@ function Waitingroom(props) {
             {playersUser}
           </Grid>
         </Grid>
-        <Button
-          text="Play"
-          className={classes.startButton}
-          onClick={handleStart}
-        />
+        {leader === userId && (
+          <Button
+            text="Play"
+            className={classes.startButton}
+            onClick={handleStart}
+          />
+        )}
         <Button
           text={"Exit"}
           icon={exit}

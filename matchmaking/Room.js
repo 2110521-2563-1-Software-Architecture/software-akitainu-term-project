@@ -192,23 +192,23 @@ class Room {
   }
 
   startCustomRoom (inviteId) {
+    const players = this.customRooms[inviteId].players;
+    const options = this.customRooms[inviteId].options;
     axios
       .post("http://localhost:10002/games/create", {
-        mode: "rank",
+        mode: "custom",
         usersId: players,
+        options,
       })
       .then((res) => {
         console.log("Created a custom room");
-        // console.log(res.data)
-        // this.socket.emit("ranked-found", { players });
-        // let data = {
-        //   players: players,
-        //   roomId: res.data.roomId,
-        // };
+        const data = {
+          players: players,
+          roomId: res.data.roomId,
+        };
+        console.log(data, res.data);
         this.customRooms[inviteId].players.forEach((player) => {
-          this.getSocketByUserId(player).emit("started-custom-room", {
-            inviteId,
-          });
+          this.getSocketByUserId(player).emit("started-custom-room", data);
         });
       });
   };
