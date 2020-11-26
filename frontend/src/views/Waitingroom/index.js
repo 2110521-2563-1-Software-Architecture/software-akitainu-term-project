@@ -222,8 +222,10 @@ function Waitingroom(props) {
     setSettingOpen(true);
   };
 
-  const handleCloseSeting = () => {
+  const handleCloseSeting = (cards) => {
+    const {matchmakingSocket} = props
     setSettingOpen(false);
+    matchmakingSocket.emit('set-cards', cards)
   };
 
   useEffect(() => {
@@ -233,9 +235,7 @@ function Waitingroom(props) {
     matchmakingSocket.on("custom-room-info", async (data) => {
       console.log("custom-room-info", data);
       const { leader, players, options } = data;
-      const { deck, maxPlayer, isPublic, timePerTurn } = options;
-      const {
-        defuse,
+      const { defuse,
         nope,
         attack,
         skip,
@@ -246,8 +246,8 @@ function Waitingroom(props) {
         common2,
         common3,
         common4,
-        common5,
-      } = deck;
+        common5, maxPlayer, isPublic, timePerTurn } = options;
+
       setDefuse(defuse);
       setNope(nope);
       setAttack(attack);
@@ -459,6 +459,8 @@ function Waitingroom(props) {
       </Grid>
       <SettingDialog
         open={settingOpen}
+        isLeader={userId === leader}
+        maxPlayer={maxPlayer}
         handleClose={handleCloseSeting}
         NumberofCard={NumberofCard}
       />
