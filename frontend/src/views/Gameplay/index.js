@@ -1134,7 +1134,7 @@ class Gameplay extends React.Component {
         }}
       >
         <Chat
-          roomId={roomId}
+          roomId={this.state.roomId}
           socket={this.state.socket}
           sendMessageRoom={this.sendMessageRoom}
           usersData={usersData}
