@@ -502,6 +502,7 @@ function Waitingroom(props) {
             text="Play"
             className={classes.startButton}
             onClick={handleStart}
+            disabled={players.length <= 1}
           />
         )}
         <Button
