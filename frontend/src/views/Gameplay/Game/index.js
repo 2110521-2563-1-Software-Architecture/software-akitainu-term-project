@@ -240,14 +240,12 @@ function Game(props) {
     result,
     handleExit,
     userProgress,
+    timePerTurn,
   } = props;
   const classes = useStyles();
 
   const userId = window.sessionStorage.getItem("userId"); // todo:
   const roomId = "100001"; // todo:
-  // console.log(props)
-  // const roomId = this.props.match.params.roomId
-  const timePerTurn = 30; // seconds
   const [isMyTurn, setIsMyTurn] = useState(false);
   const isSelectingPlayer = isSelectingPlayerId === userId;
 

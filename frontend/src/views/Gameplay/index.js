@@ -9,7 +9,7 @@ const allSelectableCards = Object.values(Card);
 allSelectableCards.splice(allSelectableCards.indexOf(Card.explodingPuppy), 1);
 allSelectableCards.splice(allSelectableCards.indexOf(Card.backCard), 1);
 
-const timePerTurn = 30; // seconds
+// const timePerTurn = 30; // seconds
 const timeForNope = 5; // seconds
 
 const ENDPOINT =
@@ -54,6 +54,7 @@ class Gameplay extends React.Component {
         exp: -1,
         level: 0,
       },
+      timePerTurn: 30,
     };
     this.setUserProgress();
   }
@@ -197,6 +198,7 @@ class Gameplay extends React.Component {
         usersCard,
         nextUserId,
         nextTurnLeft,
+        timePerTurn,
       } = data;
       if (this.state.roomId !== roomId) return;
 
@@ -218,6 +220,7 @@ class Gameplay extends React.Component {
         usersData,
         nextUserId,
         nextTurnLeft,
+        timePerTurn,
       });
 
       usersData.map(async (userData) => {
@@ -495,7 +498,7 @@ class Gameplay extends React.Component {
           break;
         case Card.favor:
           const { targetId, favorCardIdx } = data;
-          const { usersData } = this.state;
+          const { usersData, timePerTurn } = this.state;
           const userIdx = this.findUserIdx(userId);
           const targetIdx = this.findUserIdx(targetId);
           const favorCard = usersData[targetIdx].userCards[favorCardIdx];
@@ -531,7 +534,7 @@ class Gameplay extends React.Component {
             nextTurnLeft: data.skipCard.nextTurnLeft,
             nextUserId: data.skipCard.nextUserId,
           });
-          this.newCountDown(timePerTurn);
+          this.newCountDown(this.state.timePerTurn);
           break;
       }
     });
@@ -604,6 +607,7 @@ class Gameplay extends React.Component {
         usingEffectCard,
         newCardSelectorId,
         isNoped,
+        timePerTurn,
       } = this.state;
       if (usingEffectCard !== Card.favor) this.newCountDown(timePerTurn);
       this.setState({
@@ -950,7 +954,7 @@ class Gameplay extends React.Component {
       roomId: this.state.roomId,
       card,
     };
-    this.newCountDown(timePerTurn);
+    this.newCountDown(this.state.timePerTurn);
     this.state.socket.emit("use-effect", data);
   };
 
@@ -1139,6 +1143,7 @@ class Gameplay extends React.Component {
       logs,
       result,
       userProgress,
+      timePerTurn,
     } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
@@ -1200,6 +1205,7 @@ class Gameplay extends React.Component {
           result={result}
           handleExit={this.handleExit}
           userProgress={userProgress}
+          timePerTurn={timePerTurn}
         />
       </div>
     );
