@@ -166,6 +166,7 @@ function Waitingroom(props) {
   const { roomId } = useParams();
 
   const userId = sessionStorage.getItem("userId");
+  const isLeader = userId === leader;
 
   const NumberofCard = [
     {
@@ -222,10 +223,28 @@ function Waitingroom(props) {
     setSettingOpen(true);
   };
 
-  const handleCloseSeting = (cards) => {
-    const {matchmakingSocket} = props
+  const handleCloseSetting = () => {
+    const { matchmakingSocket } = props;
     setSettingOpen(false);
-    matchmakingSocket.emit('set-cards', cards)
+    if (isLeader) {
+      matchmakingSocket.emit("set-cards", {
+        inviteId: roomId,
+        cards: {
+          defuse,
+          nope,
+          attack,
+          skip,
+          favor,
+          shuffle,
+          seeTheFuture,
+          common1,
+          common2,
+          common3,
+          common4,
+          common5,
+        },
+      });
+    }
   };
 
   useEffect(() => {
@@ -235,7 +254,8 @@ function Waitingroom(props) {
     matchmakingSocket.on("custom-room-info", async (data) => {
       console.log("custom-room-info", data);
       const { leader, players, options } = data;
-      const { defuse,
+      const {
+        defuse,
         nope,
         attack,
         skip,
@@ -246,7 +266,11 @@ function Waitingroom(props) {
         common2,
         common3,
         common4,
-        common5, maxPlayer, isPublic, timePerTurn } = options;
+        common5,
+        maxPlayer,
+        isPublic,
+        timePerTurn,
+      } = options;
 
       setDefuse(defuse);
       setNope(nope);
@@ -356,7 +380,7 @@ function Waitingroom(props) {
                   onChange={handleSwitchChange}
                   name="checkedB"
                   color="primary"
-                  disabled={userId !== leader}
+                  disabled={!isLeader}
                 />
               }
               label={
@@ -389,7 +413,7 @@ function Waitingroom(props) {
               max={8}
               style={{ marginBottom: "10px" }}
               onChangeCommitted={(e, idx) => handleMaxPlayerChange(idx)}
-              disabled={userId !== leader}
+              disabled={!isLeader}
             />
             <Typography
               className={classes.title}
@@ -411,7 +435,7 @@ function Waitingroom(props) {
               max={60}
               style={{ marginBottom: "30px" }}
               onChangeCommitted={(e, idx) => handleTimePerTurnChange(idx)}
-              disabled={userId !== leader}
+              disabled={!isLeader}
             />
             <Typography
               className={classes.title}
@@ -464,9 +488,9 @@ function Waitingroom(props) {
       </Grid>
       <SettingDialog
         open={settingOpen}
-        isLeader={userId === leader}
+        isLeader={isLeader}
         maxPlayer={maxPlayer}
-        handleClose={handleCloseSeting}
+        handleClose={handleCloseSetting}
         NumberofCard={NumberofCard}
       />
     </>

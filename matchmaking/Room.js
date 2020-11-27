@@ -25,13 +25,13 @@ class Room {
     this.userIdToCurrentSocket = {};
   }
 
-  getCustomRooms ()  {
+  getCustomRooms() {
     return this.customRooms;
-  };
+  }
 
-  getSocketByUserId (userId) {
+  getSocketByUserId(userId) {
     return this.userIdToCurrentSocket[userId];
-  };
+  }
 
   searchRanked(userId) {
     this.rankedQueue.push(userId);
@@ -75,7 +75,7 @@ class Room {
       });
   }
 
-  userDisconnected (userId) {
+  userDisconnected(userId) {
     let targetInviteId, found;
     const customRoomIds = Object.keys(this.customRooms);
     for (let i = 0; i < customRoomIds.length; i++) {
@@ -101,7 +101,7 @@ class Room {
       this.leaveCustomRoom(userId, targetInviteId);
     }
     console.log("updated custom rooms:", this.customRooms);
-  };
+  }
 
   createCustomRoom(userId, socketId) {
     let inviteId;
@@ -115,20 +115,18 @@ class Room {
       players: [userId],
       leader: userId,
       options: {
-        deck: {
-          defuse: 4,
-          nope: 8,
-          attack: 7,
-          skip: 7,
-          favor: 7,
-          shuffle: 7,
-          seeTheFuture: 8,
-          common1: 7,
-          common2: 7,
-          common3: 7,
-          common4: 7,
-          common5: 7,
-        },
+        defuse: 4,
+        nope: 8,
+        attack: 7,
+        skip: 7,
+        favor: 7,
+        shuffle: 7,
+        seeTheFuture: 8,
+        common1: 7,
+        common2: 7,
+        common3: 7,
+        common4: 7,
+        common5: 7,
         maxPlayer: 8,
         isPublic: true,
         timePerTurn: 30,
@@ -191,7 +189,7 @@ class Room {
     console.log("updated custom rooms:", this.customRooms);
   }
 
-  startCustomRoom (inviteId) {
+  startCustomRoom(inviteId) {
     const players = this.customRooms[inviteId].players;
     const options = this.customRooms[inviteId].options;
     axios
@@ -211,43 +209,80 @@ class Room {
           this.getSocketByUserId(player).emit("started-custom-room", data);
         });
       });
-  };
+  }
 
-  getCustomRoomData (inviteId, userId) {
-    const usersId = this.customRooms[inviteId] ? this.customRooms[inviteId].players : [];
+  getCustomRoomData(inviteId, userId) {
+    const usersId = this.customRooms[inviteId]
+      ? this.customRooms[inviteId].players
+      : [];
     usersId.map((userId) => {
       this.getSocketByUserId(userId).emit(
         "custom-room-info",
         this.customRooms[inviteId]
       );
     });
-    if(userId && usersId.indexOf(userId) === -1) {
-      this.getSocketByUserId(userId).emit(
-        "custom-room-info-error"
-      );
+    if (userId && usersId.indexOf(userId) === -1) {
+      this.getSocketByUserId(userId).emit("custom-room-info-error");
     }
-  };
+  }
   // more
-  setUserMapSocket (userIdToCurrentSocket) {
+  setUserMapSocket(userIdToCurrentSocket) {
     this.userIdToCurrentSocket = userIdToCurrentSocket;
-  };
+  }
 
-  setVisible (inviteId, visible) {
-    this.customRooms[inviteId].options.isPublic = visible;
-    this.getCustomRoomData(inviteId)
+  setVisible(inviteId, visible) {
+    const room = this.customRooms[inviteId];
+    if (!room) return;
+    room.options.isPublic = visible;
+    this.getCustomRoomData(inviteId);
     this.socket.emit("update-custom-rooms", this.customRooms);
   }
 
-  setMaxPlayer (inviteId, maxPlayer) {
-    this.customRooms[inviteId].options.maxPlayer = maxPlayer;
-    this.getCustomRoomData(inviteId)
+  setMaxPlayer(inviteId, maxPlayer) {
+    const room = this.customRooms[inviteId];
+    if (!room) return;
+    room.options.maxPlayer = maxPlayer;
+    this.getCustomRoomData(inviteId);
     this.socket.emit("update-custom-rooms", this.customRooms);
   }
 
-  setTimePerTurn (inviteId, timePerTurn) {
-    this.customRooms[inviteId].options.timePerTurn = timePerTurn;
-    this.getCustomRoomData(inviteId)
-    this.socket.emit("update-custom-rooms", this.customRooms);
+  setTimePerTurn(inviteId, timePerTurn) {
+    const room = this.customRooms[inviteId];
+    if (!room) return;
+    room.options.timePerTurn = timePerTurn;
+    this.getCustomRoomData(inviteId);
+  }
+
+  setCards(inviteId, cards) {
+    const room = this.customRooms[inviteId];
+    if (!room) return;
+    const {
+      defuse,
+      nope,
+      attack,
+      skip,
+      favor,
+      shuffle,
+      seeTheFuture,
+      common1,
+      common2,
+      common3,
+      common4,
+      common5,
+    } = cards;
+    room.options.defuse = defuse;
+    room.options.nope = nope;
+    room.options.attack = attack;
+    room.options.skip = skip;
+    room.options.favor = favor;
+    room.options.shuffle = shuffle;
+    room.options.seeTheFuture = seeTheFuture;
+    room.options.common1 = common1;
+    room.options.common2 = common2;
+    room.options.common3 = common3;
+    room.options.common4 = common4;
+    room.options.common5 = common5;
+    this.getCustomRoomData(inviteId);
   }
 }
 

@@ -90,22 +90,28 @@ io.on("connection", (socket) => {
   });
 
   socket.on("set-visible", (data) => {
-    console.log('set visible')
-    console.log(data)
-    room.setVisible(data.inviteId,data.visible)
-  })
+    console.log("set visible");
+    console.log(data);
+    room.setVisible(data.inviteId, data.visible);
+  });
 
   socket.on("set-max-player", (data) => {
-    console.log('set max player')
-    console.log(data)
-    room.setMaxPlayer(data.inviteId,data.maxPlayer)
-  })
+    console.log("set max player");
+    console.log(data);
+    room.setMaxPlayer(data.inviteId, data.maxPlayer);
+  });
 
   socket.on("set-time-per-turn", (data) => {
-    console.log('set time per turn')
-    console.log(data)
-    room.setTimePerTurn(data.inviteId,data.timePerTurn)
-  })
+    console.log("set time per turn");
+    console.log(data);
+    room.setTimePerTurn(data.inviteId, data.timePerTurn);
+  });
+
+  socket.on("set-cards", (data) => {
+    console.log("set cards");
+    console.log(data);
+    room.setCards(data.inviteId, data.cards);
+  });
 });
 
 http.listen(3030, () => {

@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
   },
   sliderWrapper: {
-    width: "80%",
+    width: "60%",
     display: "flex",
   },
   number: {
@@ -71,10 +71,16 @@ const useStyles = makeStyles((theme) => ({
       1px -1px 0 black, \
       -1px 1px 0 black, \
       1px 1px 5px black;",
-  }
+  },
 }));
 
-function SettingDialog({ open, isLeader, maxPlayer, handleClose, NumberofCard }) {
+function SettingDialog({
+  open,
+  isLeader,
+  maxPlayer,
+  handleClose,
+  NumberofCard,
+}) {
   const classes = useStyles();
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
@@ -96,11 +102,18 @@ function SettingDialog({ open, isLeader, maxPlayer, handleClose, NumberofCard })
         </Typography>
         <Grid container item>
           {Cards.map((card, index) => (
-            <Grid container item xs="3" justify="center" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-              <img
-                src={getCardImage(card)}
-                className={classes.card}
-              />
+            <Grid
+              container
+              item
+              xs="3"
+              justify="center"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <img src={getCardImage(card)} className={classes.card} />
               <div className={classes.sliderWrapper}>
                 <Slider
                   defaultValue={NumberofCard[index].Numbercard}
@@ -109,8 +122,14 @@ function SettingDialog({ open, isLeader, maxPlayer, handleClose, NumberofCard })
                   step={1}
                   min={0}
                   max={8}
-                  style={{ marginBottom: "10px", width: "80%", color: "#B6C5E0" }}
-                  onChangeCommitted={(e, idx) => NumberofCard[index].setcard(idx)}
+                  style={{
+                    margin: "10px auto 20px",
+                    width: "80%",
+                    color: "#B6C5E0",
+                  }}
+                  onChangeCommitted={(e, idx) =>
+                    NumberofCard[index].setcard(idx)
+                  }
                   disabled={!isLeader}
                 />
                 <div className={classes.number}>
