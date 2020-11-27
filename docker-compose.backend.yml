@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  backend:
-    build: './backend'
+  user-service:
+    build: './user-service'
     environment:
       MYSQL_URL: 'db'
       MYSQL_USER: 'root'
