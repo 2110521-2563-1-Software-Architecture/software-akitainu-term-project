@@ -26,13 +26,18 @@ class Room {
     this.userIdToCurrentSocket = {};
   }
 
-  addOnlinePlayers(userId) {
-    if(this.onlinePlayers.findIndex((id) => userId === id) !== -1) {
-      console.log('duplicate user');
-      return this.socket.to(this.getSocketByUserId(userId)).emit("duplicate-user", {});
+  addOnlinePlayers(userId, socketId) {
+    if (this.onlinePlayers.findIndex((id) => userId === id) !== -1) {
+      console.log("duplicate user");
+      return this.socket.to(socketId).emit("duplicate-user", {});
     }
     this.onlinePlayers.push(userId);
-    console.log('online: ', this.onlinePlayers);
+    console.log("online: ", this.onlinePlayers);
+  }
+
+  removeOnlinePlayers(userId) {
+    this.onlinePlayers = this.onlinePlayers.filter((user) => user != userId);
+    console.log("online: ", this.onlinePlayers);
   }
 
   getCustomRooms() {

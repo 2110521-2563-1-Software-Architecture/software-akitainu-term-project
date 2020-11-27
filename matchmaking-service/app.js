@@ -39,8 +39,9 @@ io.on("connection", (socket) => {
     console.log("a user disconnected");
     let userId = socketIdToUserId[socket.id];
     if (userId) {
-      room.quitSearchRanked(userId);
-      room.userDisconnected(userId);
+      room.quitSearchRanked(userId); // rank
+      room.userDisconnected(userId); // custom
+      room.removeOnlinePlayers(userId); // online players
     }
   });
 
@@ -86,9 +87,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("get-custom-game-rooms", (data) => {
-    userIdToCurrentSocket[data.userId] = socket;
-    room.setUserMapSocket(userIdToCurrentSocket);
-    room.addOnlinePlayers(data.userId);
+    room.addOnlinePlayers(data.userId, socket.id);
+    socketIdToUserId[socket.id] = data.userId;
     socket.emit("update-custom-rooms", room.getCustomRooms());
   });
 

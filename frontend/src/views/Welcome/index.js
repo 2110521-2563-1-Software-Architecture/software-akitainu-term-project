@@ -80,11 +80,17 @@ class Welcome extends React.Component {
 
   componentDidMount() {
     const { matchmakingSocket } = this.state;
-    matchmakingSocket.emit("get-custom-game-rooms", {userId: sessionStorage.getItem("userId")});
+    matchmakingSocket.emit("get-custom-game-rooms", {
+      userId: sessionStorage.getItem("userId"),
+    });
     matchmakingSocket.on("duplicate-user", (data) => {
-      console.log('duplicate-user')
-      alert('Error: User cannot login twice!');
-      this.onLogout();
+      console.log("duplicate-user");
+      alert("Error: This user is already in the system!");
+      // using onLogout() results in an error
+      sessionStorage.setItem("userId", null);
+      sessionStorage.setItem("userName", null);
+      sessionStorage.setItem("profileImgUrl", null);
+      window.location = `/login`;
     });
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
@@ -111,6 +117,8 @@ class Welcome extends React.Component {
   onLogout = () => {
     const history = useHistory();
     sessionStorage.setItem("userId", null);
+    sessionStorage.setItem("userName", null);
+    sessionStorage.setItem("profileImgUrl", null);
     history.push("/home");
     history.go(0);
   };
