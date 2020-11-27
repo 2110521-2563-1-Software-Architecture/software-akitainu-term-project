@@ -29,7 +29,11 @@ const CustomRoomList = (props) => {
     let roomsResult = [];
     Object.keys(publicCustomRooms).map(async (key, i) => {
       const room = publicCustomRooms[key];
-      if (!room.options.isPublic) return;
+      console.log(room);
+      if (!room.options.isPublic) {
+        setRooms(roomsResult);
+        return;
+      }
       let username = "";
       try {
         const res = await getUsername(room.leader);
@@ -39,18 +43,9 @@ const CustomRoomList = (props) => {
         console.log(err);
       }
       console.log(username);
-      // roomList.push({
-      //   member: room.players.length,
-      //   roomId: key,
-      //   // leader: room.leader,
-      //   leader : username||room.leader,
-      //   maxMember: room.options.maxPlayer,
-      // });
-      // let roomsTmp = roomsResult
       roomsResult.push({
         member: room.players.length,
         roomId: key,
-        // leader: room.leader,
         leader: username || room.leader,
         maxMember: room.options.maxPlayer,
       });
