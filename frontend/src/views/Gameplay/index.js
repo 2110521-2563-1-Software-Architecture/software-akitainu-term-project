@@ -1062,13 +1062,18 @@ class Gameplay extends React.Component {
 
     const { mode, userProgress } = this.state;
     if (mode === GameMode.custom) return;
-    const userRank = userProgress.rank;
-    const newRank = Math.max(1, userRank - 2);
+    const { rank, rankGameMatches, rankGameWinMatches } = userProgress;
+    const newRank = Math.max(1, rank - 2);
     const newUserProgress = {
       ...userProgress,
       userRank: newRank,
+      rankGameMatches: rankGameMatches + 1,
     };
     sessionStorage.setItem("userRank", newRank);
+    sessionStorage.setItem(
+      "winRate",
+      (rankGameWinMatches / (rankGameMatches + 1)) * 100
+    );
     axios.patch(`${ENDPOINT}/users/progress/${userId}`, newUserProgress);
   };
 
@@ -1094,6 +1099,8 @@ class Gameplay extends React.Component {
       exp: resp.userExp,
       rank: resp.userRank,
       level: resp.userLevel,
+      rankGameMatches: resp.rankGameMatches,
+      rankGameWinMatches: resp.rankGameWinMatches,
     };
     this.setState({ userProgress });
   };
@@ -1111,13 +1118,15 @@ class Gameplay extends React.Component {
   };
 
   updateUserProgress = (userId, result, userProgress) => {
-    const plusExp = this.state.mode === GameMode.rank ? 500 : 250;
+    const { mode } = this.state;
+    const plusExp = mode === GameMode.rank ? 500 : 250;
     let level = userProgress.level;
     let maxExp = this.getMaxExp(level);
     let exp = userProgress.exp + plusExp;
+    const { rankGameMatches, rankGameWinMatches } = userProgress;
 
     console.log("gameplay/userProgess() result", result);
-    let newRank = this.updateRank(this.state.userId, result);
+    let newRank = this.updateRank(userId, result);
     console.log("rankPoint", newRank);
 
     while (exp >= maxExp) {
@@ -1126,14 +1135,29 @@ class Gameplay extends React.Component {
       maxExp = this.getMaxExp(level);
     }
 
+    const newRankGameMatches =
+      mode === GameMode.rank ? rankGameMatches + 1 : rankGameMatches;
+    const newRankGameWinMatches =
+      mode === GameMode.rank
+        ? result[0] === userId
+          ? rankGameWinMatches + 1
+          : rankGameWinMatches
+        : rankGameWinMatches;
+
     const newUserProgress = {
       userExp: exp,
       userLevel: level,
       userRank: newRank,
+      rankGameMatches: newRankGameMatches,
+      rankGameWinMatches: newRankGameWinMatches,
     };
     sessionStorage.setItem("userExp", exp);
     sessionStorage.setItem("userLevel", level);
     sessionStorage.setItem("userRank", newRank);
+    sessionStorage.setItem(
+      "winRate",
+      (newRankGameWinMatches / newRankGameMatches) * 100
+    );
     axios.patch(`${ENDPOINT}/users/progress/${userId}`, newUserProgress);
   };
 
