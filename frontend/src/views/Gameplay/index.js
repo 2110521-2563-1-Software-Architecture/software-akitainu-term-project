@@ -119,7 +119,6 @@ class Gameplay extends React.Component {
       const { usersId, usersName, profileImgUrls } = data;
       let alreadyJoin = false;
       usersId.forEach((userId, idx) => {
-        console.log(userId, this.state.userId, idx);
         if (userId === this.state.userId && idx !== usersId.length - 1)
           alreadyJoin = true;
         const newUserData = {
@@ -1048,7 +1047,6 @@ class Gameplay extends React.Component {
   getUserNameByUserId = (userId) => {
     const { usersData } = this.state;
     const userIdx = this.findUserIdx(userId);
-    console.log(usersData, userIdx);
     if (userIdx !== -1) return usersData[userIdx].userName;
     return userId;
   };
@@ -1094,7 +1092,6 @@ class Gameplay extends React.Component {
 
   setUserProgress = async () => {
     const resp = await this.getUser(this.state.userId);
-    console.log("userProgress", resp);
     const userProgress = {
       exp: resp.userExp,
       rank: resp.userRank,
@@ -1110,9 +1107,7 @@ class Gameplay extends React.Component {
   updateRank = (currentUserId, result) => {
     const { mode, userProgress } = this.state;
     if (mode === GameMode.custom) return userProgress.rank;
-    console.log("currentUserId", currentUserId);
     let myRank = result.findIndex((e) => e === currentUserId);
-    console.log("myRank", myRank);
     //first = 0, second 1
     return Math.max(1, (myRank - 2) * -1 + userProgress.rank);
   };
@@ -1124,10 +1119,7 @@ class Gameplay extends React.Component {
     let maxExp = this.getMaxExp(level);
     let exp = userProgress.exp + plusExp;
     const { rankGameMatches, rankGameWinMatches } = userProgress;
-
-    console.log("gameplay/userProgess() result", result);
     let newRank = this.updateRank(userId, result);
-    console.log("rankPoint", newRank);
 
     while (exp >= maxExp) {
       exp -= maxExp;

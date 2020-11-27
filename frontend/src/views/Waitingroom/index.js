@@ -275,7 +275,6 @@ function Waitingroom(props) {
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("joined-custom-room", { inviteId: roomId, userId });
     matchmakingSocket.on("custom-room-info", async (data) => {
-      console.log("custom-room-info", data);
       const { leader, players, options } = data;
       const {
         defuse,

@@ -122,14 +122,11 @@ const renderRoutes = (routes) =>
               render={(props) => (
                 <Guard>
                   <Layout>
-                    {
-                      route.routes ? (
-                        renderRoutes(route.routes)
-                      ) : (
-                        <Component {...props} />
-                      )
-                      // console.log("route",props)
-                    }
+                    {route.routes ? (
+                      renderRoutes(route.routes)
+                    ) : (
+                      <Component {...props} />
+                    )}
                   </Layout>
                 </Guard>
               )}

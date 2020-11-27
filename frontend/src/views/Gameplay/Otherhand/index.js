@@ -148,20 +148,16 @@ function Otherhand(props) {
         const res = await axios.get(
           `${process.env.REACT_APP_BACKEND_API}/users/${user.userId}`
         );
-        // console.log(res)
         resolve(res);
       } catch (err) {
-        // console.log(err)
         reject(err);
       }
     });
 
   useEffect(async () => {
     if (user) {
-      console.log("in other hand", user);
       try {
         const res = await getUserName();
-        // console.log(res)
         if (res.data.userName) {
           setUsername(res.data.userName);
         }

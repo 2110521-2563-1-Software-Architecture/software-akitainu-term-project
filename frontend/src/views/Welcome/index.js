@@ -75,7 +75,6 @@ class Welcome extends React.Component {
   // data = ['123','456']
   setRankFound = () => {
     this.setState({ isRankFound: true });
-    console.log("setState");
   };
 
   componentDidMount() {
@@ -97,12 +96,10 @@ class Welcome extends React.Component {
     });
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
-      // console.log(data);
       window.location = `/gameplay/${data.roomId}`;
       this.setRankFound();
     });
     matchmakingSocket.on("custom-room-id", (data) => {
-      console.log(data);
       window.location = `/waiting/${data.roomId}`;
       // redirect to waiting room for that room id
     });
@@ -127,12 +124,10 @@ class Welcome extends React.Component {
   };
 
   handleClickPlayButton = () => {
-    console.log("click");
     this.setState({ openModeDialog: true });
   };
 
   handleClickCustomButton = () => {
-    // console.log("click");
     this.setState({ openCustomDialog: true });
   };
 
@@ -154,7 +149,6 @@ class Welcome extends React.Component {
   };
 
   handleClickRankButton = () => {
-    // console.log("click");
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("search-ranked", { userId });

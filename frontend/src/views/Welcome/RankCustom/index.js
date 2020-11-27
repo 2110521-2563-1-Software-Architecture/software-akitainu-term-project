@@ -48,7 +48,6 @@ const usestyle = makeStyles((theme) => ({
 
 function RankDialog({ open, onClose, time, settime, isFound }) {
   const classes = usestyle();
-  // console.log("open",open)
 
   React.useEffect(() => {
     if (open && !isFound) {
