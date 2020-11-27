@@ -202,6 +202,7 @@ class Room {
   startCustomRoom(inviteId) {
     const players = this.customRooms[inviteId].players;
     const options = this.customRooms[inviteId].options;
+    delete this.customRooms[inviteId];
     axios
       .post("http://localhost:10002/games/create", {
         mode: "custom",
@@ -215,7 +216,7 @@ class Room {
           roomId: res.data.roomId,
         };
         console.log(data, res.data);
-        this.customRooms[inviteId].players.forEach((player) => {
+        players.forEach((player) => {
           this.getSocketByUserId(player).emit("started-custom-room", data);
         });
       });

@@ -2,7 +2,7 @@ import React from "react";
 import Chat from "./Chat";
 import Game from "./Game";
 import { Palette } from "components";
-import { Card } from "../../components/type";
+import { Card, GameMode } from "../../components/type";
 import axios from "axios";
 
 const allSelectableCards = Object.values(Card);
@@ -55,6 +55,7 @@ class Gameplay extends React.Component {
         level: 0,
       },
       timePerTurn: 30,
+      mode: GameMode.custom,
     };
     this.setUserProgress();
   }
@@ -199,6 +200,7 @@ class Gameplay extends React.Component {
         nextUserId,
         nextTurnLeft,
         timePerTurn,
+        mode,
       } = data;
       if (this.state.roomId !== roomId) return;
 
@@ -221,6 +223,7 @@ class Gameplay extends React.Component {
         nextUserId,
         nextTurnLeft,
         timePerTurn,
+        mode,
       });
 
       usersData.map(async (userData) => {
@@ -1056,6 +1059,17 @@ class Gameplay extends React.Component {
       roomId: this.state.roomId,
     };
     this.state.socket.emit("player-exit", data);
+
+    const { mode, userProgress } = this.state;
+    if (mode === GameMode.custom) return;
+    const userRank = userProgress.rank;
+    const newRank = Math.max(1, userRank - 2);
+    const newUserProgress = {
+      ...userProgress,
+      userRank: newRank,
+    };
+    sessionStorage.setItem("userRank", newRank);
+    axios.patch(`${ENDPOINT}/users/progress/${userId}`, newUserProgress);
   };
 
   getUser = (userId) => {
@@ -1087,15 +1101,17 @@ class Gameplay extends React.Component {
   getMaxExp = (level) => 100 + level * level * 5;
 
   updateRank = (currentUserId, result) => {
+    const { mode, userProgress } = this.state;
+    if (mode === GameMode.custom) return userProgress.rank;
     console.log("currentUserId", currentUserId);
     let myRank = result.findIndex((e) => e === currentUserId);
     console.log("myRank", myRank);
     //first = 0, second 1
-    return (myRank - 2) * -1 + this.state.userProgress.rank;
+    return Math.max(1, (myRank - 2) * -1 + userProgress.rank);
   };
 
   updateUserProgress = (userId, result, userProgress) => {
-    const plusExp = 250; // todo: will +500 if rank
+    const plusExp = this.state.mode === GameMode.rank ? 500 : 250;
     let level = userProgress.level;
     let maxExp = this.getMaxExp(level);
     let exp = userProgress.exp + plusExp;
@@ -1111,13 +1127,13 @@ class Gameplay extends React.Component {
     }
 
     const newUserProgress = {
-      // userRank: userProgress.rank + ???, todo: add this if rank
       userExp: exp,
       userLevel: level,
       userRank: newRank,
     };
     sessionStorage.setItem("userExp", exp);
     sessionStorage.setItem("userLevel", level);
+    sessionStorage.setItem("userRank", newRank);
     axios.patch(`${ENDPOINT}/users/progress/${userId}`, newUserProgress);
   };
 
@@ -1144,6 +1160,7 @@ class Gameplay extends React.Component {
       result,
       userProgress,
       timePerTurn,
+      mode,
     } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
@@ -1206,6 +1223,7 @@ class Gameplay extends React.Component {
           handleExit={this.handleExit}
           userProgress={userProgress}
           timePerTurn={timePerTurn}
+          mode={mode}
         />
       </div>
     );

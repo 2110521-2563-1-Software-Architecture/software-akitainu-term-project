@@ -108,13 +108,6 @@ class Welcome extends React.Component {
     });
   }
 
-  joinRoom100001 = () => {
-    // todo:
-    // var userIdPlaceholder = Math.floor(100000 + Math.random() * 900000);
-    // const userId = prompt("Please enter your user Id", userIdPlaceholder);
-    // window.sessionStorage.setItem("userId", userId);
-  };
-
   onLogout = () => {
     const history = useHistory();
     sessionStorage.setItem("userId", null);
