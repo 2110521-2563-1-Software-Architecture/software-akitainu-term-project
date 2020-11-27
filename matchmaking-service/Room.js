@@ -51,6 +51,7 @@ class Room {
   }
 
   searchRanked(userId) {
+    if(this.rankedQueue.indexOf(userId) !== -1) return;
     this.rankedQueue.push(userId);
     if (this.rankedQueue.length === 5) {
       this.startRankedGame();
@@ -166,6 +167,12 @@ class Room {
       this.socket
         .to(socketId)
         .emit("join-custom-error", { msg: "The room is already full" });
+      return;
+    }
+    if (room.players.indexOf(userId) !== -1) {
+      this.socket
+        .to(socketId)
+        .emit("join-custom-error", { msg: "This user already joined this room" });
       return;
     }
     room.players.push(userId);
