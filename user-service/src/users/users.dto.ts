@@ -2,6 +2,12 @@ export enum LoginType {
   facebook,
   google,
 }
+
+export enum GameMode {
+  rank = 'rank',
+  custom = 'custom',
+}
+
 export class userDto {
   userId: string;
   userName: string;
@@ -26,6 +32,8 @@ export class UserProgressDto {
   userExp: number;
   userRank?: number;
   userLevel: number;
+  rankGameWinMatches: number;
+  rankGameMatches: number;
 }
 
 export class EditUserDto {
@@ -34,4 +42,6 @@ export class EditUserDto {
   userExp?: number;
   userLevel?: number;
   userName?: string;
+  rankGameWinMatches?: number;
+  rankGameMatches?: number;
 }
