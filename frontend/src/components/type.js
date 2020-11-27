@@ -67,3 +67,8 @@ export function getCardImage(card) {
       return card_back;
   }
 }
+
+export const GameMode = {
+  rank: "rank",
+  custom: "custom",
+};

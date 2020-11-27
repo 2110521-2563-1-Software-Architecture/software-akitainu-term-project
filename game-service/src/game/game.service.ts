@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto, Card, CreateGameRoomDto } from './game.dto';
+import { NewUserJoinCustomRoomDto, Card, CreateGameRoomDto, GameMode } from './game.dto';
 
 @Injectable()
 export class GameService {
@@ -96,7 +96,7 @@ export class GameService {
     let defuseNumber = 0;
     let time = 30; // default
 
-    if (mode === 'rank') {
+    if (mode === GameMode.rank) {
       allCards = {
         nope: 5,
         attack: 4,
@@ -111,7 +111,7 @@ export class GameService {
         common5: 4,
       };
       defuseNumber = 1;
-    } else if (mode === 'custom') {
+    } else if (mode === GameMode.custom) {
       const {
         defuse,
         nope,
@@ -177,6 +177,7 @@ export class GameService {
       nextUserId: usersId[0],
       nextTurnLeft: 1,
       timePerTurn: time,
+      mode,
     };
 
     console.log('newGame: ', newGame);

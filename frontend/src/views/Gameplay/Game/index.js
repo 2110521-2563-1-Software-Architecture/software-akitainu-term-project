@@ -241,11 +241,11 @@ function Game(props) {
     handleExit,
     userProgress,
     timePerTurn,
+    mode,
   } = props;
   const classes = useStyles();
 
-  const userId = window.sessionStorage.getItem("userId"); // todo:
-  const roomId = "100001"; // todo:
+  const userId = window.sessionStorage.getItem("userId");
   const [isMyTurn, setIsMyTurn] = useState(false);
   const isSelectingPlayer = isSelectingPlayerId === userId;
 
@@ -416,7 +416,7 @@ function Game(props) {
       seeTheFutureId === userId
     )
       return;
-    drawCard(userId, roomId);
+    drawCard(userId);
     newCountDown(timePerTurn);
   };
 
@@ -610,10 +610,9 @@ function Game(props) {
         result={result}
         userId={userId}
         exp={exp}
-        plusExp={250} // todo: Rank will give 500 exp, custom will give 250
         level={level}
         rank={rank}
-        // plusRank={2} // todo: pass this if rank mode; 2 for 1st, 1 for 2nd, 0 for 3rd, -1 for 4th, -2 for 5th
+        mode={mode}
       />
       {isSelectingPlayer && <div className={classes.backdrop} />}
       <Button
