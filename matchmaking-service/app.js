@@ -5,10 +5,6 @@ var io = require("socket.io")(http);
 const { Room } = require("./Room");
 
 var socketIdToUserId = {};
-
-// {
-//   123546 : socket
-// }
 var userIdToCurrentSocket = {};
 
 const room = new Room(io);
@@ -21,8 +17,6 @@ io.on("connection", (socket) => {
   console.log("a user connected");
 
   socket.on("search-ranked", (data) => {
-    // console.log("search-ranked");
-    // console.log(data);
     if (room.searchRanked(data.userId, socket.id)) {
       console.log("search-ranked", data);
       socketIdToUserId[socket.id] = data.userId;
@@ -49,32 +43,18 @@ io.on("connection", (socket) => {
   socket.on("create-custom-room", (data) => {
     console.log("create custom room");
     console.log(data);
-    // socketIdToUserId[socket.id] = data.userId;
-    // userIdToCurrentSocket[data.userId] = socket;
-    // room.setUserMapSocket(userIdToCurrentSocket);
     room.createCustomRoom(data.userId, socket.id);
-    // let userId = socketIdToUserId[socket.id];
-    // if (userId) {
-    //   room.quitSearchRanked(userId);
-    // }
   });
 
   socket.on("join-custom-room", (data) => {
     console.log("join custom room");
     console.log(data);
-    // socketIdToUserId[socket.id] = data.userId;
-    // userIdToCurrentSocket[data.userId] = socket;
-    // room.setUserMapSocket(userIdToCurrentSocket);
     room.joinCustomRoom(data.userId, data.inviteId, socket.id);
   });
 
   socket.on("start-custom-room", (data) => {
     console.log("start custom room");
     console.log(data);
-    // socketIdToUserId[socket.id] = data.userId;
-    // userIdToCurrentSocket[data.userId] = socket;
-    // room.setUserMapSocket(userIdToCurrentSocket);
-    // room.getCustomRoomData(data.inviteId, data.userId);
     room.startCustomRoom(data.inviteId);
   });
 

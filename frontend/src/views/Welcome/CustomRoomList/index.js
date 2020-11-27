@@ -25,11 +25,9 @@ const CustomRoomList = (props) => {
   // })
 
   useEffect(() => {
-    console.log("intial");
     let roomsResult = [];
     Object.keys(publicCustomRooms).map(async (key, i) => {
       const room = publicCustomRooms[key];
-      console.log(room);
       if (!room.options.isPublic) {
         setRooms(roomsResult);
         return;
@@ -37,31 +35,21 @@ const CustomRoomList = (props) => {
       let username = "";
       try {
         const res = await getUsername(room.leader);
-        // console.log(res.data.userName)
         username = res.data ? res.data.userName : room.leader;
       } catch (err) {
         console.log(err);
       }
-      console.log(username);
       roomsResult.push({
         member: room.players.length,
         roomId: key,
         leader: username || room.leader,
         maxMember: room.options.maxPlayer,
       });
-      console.log(roomsResult);
       if (Object.keys(publicCustomRooms).length === i + 1) {
         setRooms(roomsResult);
       }
     });
-    // setRooms(roomsResult)
   }, [publicCustomRooms]);
-
-  useEffect(() => {
-    if (rooms) {
-      console.log(rooms);
-    }
-  }, [rooms]);
 
   const roomListComponent = () =>
     rooms.map((room) => {

@@ -364,7 +364,6 @@ function Game(props) {
   };
 
   const getTopPlayer = (user) => {
-    // console.log("other hand",user)
     return (
       <div className={classes.topPlayerWrapper}>
         {user && (

@@ -241,30 +241,8 @@ function Chat({
   const [thisUsername, setUsername] = useState("");
   const [isUserJoined, setIsUserJoined] = useState(false);
 
-  // const thisUsername = "bump";
-  // const thisRoomId = 101;
-
-  // useEffect(() => {
-  //   setMessageGroup({
-  //     room: {
-  //       messages: roomMessages,
-  //     },
-  //     private: {
-  //       messages: privateMessages,
-  //     },
-  //   });
-  // }, []);
-
-  // useEffect(()=>{
-  // var tf = document.getElementById(`room-${thisRoomId}-chat-box`)
-  // tf.scrollTop = tf.offsetHeight;
-  // console.log(tf)
-  //   console.log(messageGroup)
-  // },[messageGroup])
-
   const pushRoomMessage = (data) => {
     let roomMes = messageGroup.room.messages;
-    // console.log(roomMes)
     roomMes.push({
       fromRoomId: thisRoomId,
       fromUsername: data.fromUsername,
