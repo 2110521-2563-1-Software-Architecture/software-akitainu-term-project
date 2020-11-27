@@ -223,8 +223,31 @@ function Waitingroom(props) {
     setSettingOpen(true);
   };
 
+  const checkNumberOfCards = () => {
+    const numberOfCards =
+      defuse +
+      nope +
+      attack +
+      skip +
+      favor +
+      shuffle +
+      seeTheFuture +
+      common1 +
+      common2 +
+      common3 +
+      common4 +
+      common5;
+    if (numberOfCards < players.length * 7) return false;
+    return true;
+  };
+
   const handleCloseSetting = () => {
+    if (!checkNumberOfCards()) {
+      alert(`Please select more than or equal ${players.length * 7} cards`);
+      return false;
+    }
     const { matchmakingSocket } = props;
+
     setSettingOpen(false);
     if (isLeader) {
       matchmakingSocket.emit("set-cards", {
@@ -310,6 +333,11 @@ function Waitingroom(props) {
   }, []);
 
   const handleStart = () => {
+    if (!checkNumberOfCards()) {
+      alert(`Please select more than or equal ${players.length * 7} cards`);
+      return false;
+    }
+
     const { matchmakingSocket } = props;
     matchmakingSocket.emit("start-custom-room", { inviteId: roomId });
   };

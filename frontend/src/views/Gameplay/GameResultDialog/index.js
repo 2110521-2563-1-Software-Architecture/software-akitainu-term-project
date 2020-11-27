@@ -80,7 +80,10 @@ export default function GameResultDialog(props) {
   const getMaxExp = (level) => 100 + level * level * 5;
 
   useEffect(() => {
-    if (!showEXPResultModal) return;
+    if (!showEXPResultModal) {
+      setCurPlusExp(plusExp);
+      return;
+    }
     const timer = setInterval(() => {
       if (curPlusExp <= 0) return; // done
       if (curExp + plusExpPerTime < getMaxExp(curLevel)) {
