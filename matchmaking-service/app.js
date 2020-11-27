@@ -85,7 +85,10 @@ io.on("connection", (socket) => {
     room.getCustomRoomData(data.inviteId, data.userId);
   });
 
-  socket.on("get-custom-game-rooms", () => {
+  socket.on("get-custom-game-rooms", (data) => {
+    userIdToCurrentSocket[data.userId] = socket;
+    room.setUserMapSocket(userIdToCurrentSocket);
+    room.addOnlinePlayers(data.userId);
     socket.emit("update-custom-rooms", room.getCustomRooms());
   });
 

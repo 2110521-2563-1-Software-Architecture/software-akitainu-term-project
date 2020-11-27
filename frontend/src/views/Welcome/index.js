@@ -80,7 +80,12 @@ class Welcome extends React.Component {
 
   componentDidMount() {
     const { matchmakingSocket } = this.state;
-    matchmakingSocket.emit("get-custom-game-rooms");
+    matchmakingSocket.emit("get-custom-game-rooms", {userId: sessionStorage.getItem("userId")});
+    matchmakingSocket.on("duplicate-user", (data) => {
+      console.log('duplicate-user')
+      alert('Error: User cannot login twice!');
+      this.onLogout();
+    });
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
       // console.log(data);

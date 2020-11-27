@@ -21,8 +21,18 @@ class Room {
   constructor(socket) {
     this.socket = socket;
     this.rankedQueue = [];
+    this.onlinePlayers = [];
     this.customRooms = {};
     this.userIdToCurrentSocket = {};
+  }
+
+  addOnlinePlayers(userId) {
+    if(this.onlinePlayers.findIndex((id) => userId === id) !== -1) {
+      console.log('duplicate user');
+      return this.socket.to(this.getSocketByUserId(userId)).emit("duplicate-user", {});
+    }
+    this.onlinePlayers.push(userId);
+    console.log('online: ', this.onlinePlayers);
   }
 
   getCustomRooms() {
