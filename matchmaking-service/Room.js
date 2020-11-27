@@ -29,10 +29,12 @@ class Room {
   addOnlinePlayers(userId, socketId) {
     if (this.onlinePlayers.findIndex((id) => userId === id) !== -1) {
       console.log("duplicate user");
-      return this.socket.to(socketId).emit("duplicate-user", {});
+      this.socket.to(socketId).emit("duplicate-user", {});
+      return false;
     }
     this.onlinePlayers.push(userId);
     console.log("online: ", this.onlinePlayers);
+    return true;
   }
 
   removeOnlinePlayers(userId) {

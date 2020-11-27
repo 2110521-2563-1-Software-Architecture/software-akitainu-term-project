@@ -87,8 +87,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("get-custom-game-rooms", (data) => {
-    room.addOnlinePlayers(data.userId, socket.id);
-    socketIdToUserId[socket.id] = data.userId;
+    const newPlayer = room.addOnlinePlayers(data.userId, socket.id);
+    if (newPlayer) {
+      socketIdToUserId[socket.id] = data.userId;
+    }
     socket.emit("update-custom-rooms", room.getCustomRooms());
   });
 
