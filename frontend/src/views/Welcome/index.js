@@ -79,18 +79,20 @@ class Welcome extends React.Component {
   };
 
   componentDidMount() {
-    const { matchmakingSocket } = this.state;
+    const { matchmakingSocket, openCustomDialog } = this.state;
     matchmakingSocket.emit("get-custom-game-rooms", {
       userId: sessionStorage.getItem("userId"),
     });
     matchmakingSocket.on("duplicate-user", (data) => {
       console.log("duplicate-user");
-      alert("Error: This user is already in the system!");
-      // using onLogout() results in an error
-      sessionStorage.setItem("userId", null);
-      sessionStorage.setItem("userName", null);
-      sessionStorage.setItem("profileImgUrl", null);
-      window.location = `/login`;
+      if (openCustomDialog) {
+        return;
+      }
+      alert(
+        `Error: This user is already in ${
+          data.isRanked ? "the queue" : "this room"
+        }!`
+      );
     });
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");

@@ -41,7 +41,6 @@ io.on("connection", (socket) => {
     if (userId) {
       room.quitSearchRanked(userId); // rank
       room.userDisconnected(userId); // custom
-      room.removeOnlinePlayers(userId); // online players
     }
   });
 
@@ -86,11 +85,7 @@ io.on("connection", (socket) => {
     room.getCustomRoomData(data.inviteId, data.userId);
   });
 
-  socket.on("get-custom-game-rooms", (data) => {
-    const newPlayer = room.addOnlinePlayers(data.userId, socket.id);
-    if (newPlayer) {
-      socketIdToUserId[socket.id] = data.userId;
-    }
+  socket.on("get-custom-game-rooms", () => {
     socket.emit("update-custom-rooms", room.getCustomRooms());
   });
 

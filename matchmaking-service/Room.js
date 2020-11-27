@@ -21,25 +21,8 @@ class Room {
   constructor(socket) {
     this.socket = socket;
     this.rankedQueue = [];
-    this.onlinePlayers = [];
     this.customRooms = {};
     this.userIdToCurrentSocket = {};
-  }
-
-  addOnlinePlayers(userId, socketId) {
-    if (this.onlinePlayers.findIndex((id) => userId === id) !== -1) {
-      console.log("duplicate user");
-      this.socket.to(socketId).emit("duplicate-user", {});
-      return false;
-    }
-    this.onlinePlayers.push(userId);
-    console.log("online: ", this.onlinePlayers);
-    return true;
-  }
-
-  removeOnlinePlayers(userId) {
-    this.onlinePlayers = this.onlinePlayers.filter((user) => user != userId);
-    console.log("online: ", this.onlinePlayers);
   }
 
   getCustomRooms() {
@@ -51,7 +34,11 @@ class Room {
   }
 
   searchRanked(userId) {
-    if(this.rankedQueue.indexOf(userId) !== -1) return;
+    if (this.rankedQueue.indexOf(userId) !== -1) {
+      return this.socket
+        .to(this.getSocketByUserId(userId))
+        .emit("duplicate-user", { isRanked: true });
+    }
     this.rankedQueue.push(userId);
     if (this.rankedQueue.length === 5) {
       this.startRankedGame();
@@ -170,9 +157,10 @@ class Room {
       return;
     }
     if (room.players.indexOf(userId) !== -1) {
-      this.socket
-        .to(socketId)
-        .emit("join-custom-error", { msg: "This user already joined this room" });
+      this.socket.to(socketId).emit("join-custom-error", {
+        msg: "This user already joined this room",
+      });
+      this.socket.to(socketId).emit("duplicate-user", { isRanked: false });
       return;
     }
     room.players.push(userId);
