@@ -21,12 +21,14 @@ io.on("connection", (socket) => {
   console.log("a user connected");
 
   socket.on("search-ranked", (data) => {
-    console.log("search-ranked");
-    console.log(data);
-    socketIdToUserId[socket.id] = data.userId;
-    userIdToCurrentSocket[data.userId] = socket;
-    room.searchRanked(data.userId);
-    room.setUserMapSocket(userIdToCurrentSocket);
+    // console.log("search-ranked");
+    // console.log(data);
+    if (room.searchRanked(data.userId, socket.id)) {
+      console.log("search-ranked", data);
+      socketIdToUserId[socket.id] = data.userId;
+      userIdToCurrentSocket[data.userId] = socket;
+      room.setUserMapSocket(userIdToCurrentSocket);
+    }
   });
 
   socket.on("quit-search-ranked", (data) => {

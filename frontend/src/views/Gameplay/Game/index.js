@@ -575,6 +575,7 @@ function Game(props) {
             countDownComponent={countDownComponent}
             canNope={canNope}
             cardSelectorId={cardSelectorId}
+            topDiscardPile={topDiscardPile}
           />
         </div>
       </div>

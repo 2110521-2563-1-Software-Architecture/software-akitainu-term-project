@@ -33,17 +33,20 @@ class Room {
     return this.userIdToCurrentSocket[userId];
   }
 
-  searchRanked(userId) {
+  searchRanked(userId, socketId) {
     if (this.rankedQueue.indexOf(userId) !== -1) {
-      return this.socket
-        .to(this.getSocketByUserId(userId))
+      this.socket
+        .to(socketId)
         .emit("duplicate-user", { isRanked: true });
+      return false;
     }
     this.rankedQueue.push(userId);
     if (this.rankedQueue.length === 5) {
       this.startRankedGame();
+      return true;
     }
     console.log("updated rank queue:", this.rankedQueue);
+    return true;
   }
 
   quitSearchRanked(userId) {

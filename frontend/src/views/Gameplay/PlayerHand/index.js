@@ -62,6 +62,7 @@ export default function PlayerHand(props) {
     countDownComponent,
     canNope,
     cardSelectorId,
+    topDiscardPile,
   } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
@@ -102,6 +103,7 @@ export default function PlayerHand(props) {
     ) {
       return true;
     } else if (selectedCards.length === 5) {
+      if (!topDiscardPile) return false;
       const selectingCard = selectedCards.map((cardIdx) => cards[cardIdx]);
       selectingCard.sort();
       for (let i = 0; i < 4; i++) {

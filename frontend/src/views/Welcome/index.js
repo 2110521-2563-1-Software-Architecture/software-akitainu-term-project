@@ -93,6 +93,7 @@ class Welcome extends React.Component {
           data.isRanked ? "the queue" : "this room"
         }!`
       );
+      this.setState({ openRankDialog: false });
     });
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
@@ -111,7 +112,7 @@ class Welcome extends React.Component {
     matchmakingSocket.on("join-custom-error", (data) => {
       this.setState({
         isLoadingCustomRoom: false,
-        joinCustomErrorText: data.msg,
+        joinCustomErrorText: this.state.openCustomDialog ? data.msg : null,
       });
     });
   }
