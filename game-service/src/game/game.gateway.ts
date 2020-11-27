@@ -246,6 +246,7 @@ export class GameGateway implements OnGatewayInterface {
     const result = await this.customGameRoomService.resultGame(roomId);
     if (result) {
       this.server.to(roomId).emit('new-win', { result });
+      await this.customGameRoomService.deleteGameRoom(roomId);
     }
   }
 

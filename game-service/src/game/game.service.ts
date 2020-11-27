@@ -397,31 +397,8 @@ export class GameService {
     console.log('user win', usersId);
     console.log('users in room', usersId);
   }
-  // async onPlayerExit(roomId: string, userId: string) {
-  //   const { nextUserIndex, aliveUsersId, result, deck } = this.rooms[roomId];
-  //   const explodeIndex = deck.indexOf(Card.explodingPuppy);
-  //   const userIndex = aliveUsersId.indexOf(userId);
-  //   result.push(aliveUsersId[userIndex]);
-  //   if (userIndex > -1) {
-  //     aliveUsersId.splice(userIndex, 1);
-  //   }
 
-  //   if (aliveUsersId.length === 1) {
-  //     result.push(aliveUsersId[0]);
-  //     aliveUsersId.splice(0, 1);
-  //   }
-
-  //   if (explodeIndex > -1) {
-  //     deck.splice(explodeIndex, 1);
-  //   }
-
-  //   const nextUserIndexTmp = (nextUserIndex + 1) % aliveUsersId.length;
-
-  //   this.setRoomByRoomId(roomId, {
-  //     nextUserIndex: nextUserIndexTmp,
-  //     lastUserIndex: nextUserIndexTmp,
-  //     aliveUsersId,
-  //   });
-
-  // }
+  async deleteGameRoom(roomId: string) {
+    return delete this.rooms[roomId];
+  }
 }
