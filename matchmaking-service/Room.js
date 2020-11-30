@@ -1,4 +1,6 @@
 var axios = require("axios");
+require('dotenv').config();
+var ENDPOINT = process.env.GAME_API_ENDPOINT;
 
 class Room {
   constructor(socket) {
@@ -43,7 +45,7 @@ class Room {
       players.push(this.rankedQueue.shift());
     }
     axios
-      .post("http://localhost:10002/games/create", {
+      .post(ENDPOINT+"/games/create", {
         mode: "rank",
         usersId: players,
       })
@@ -180,7 +182,7 @@ class Room {
     const options = this.customRooms[inviteId].options;
     delete this.customRooms[inviteId];
     axios
-      .post("http://localhost:10002/games/create", {
+      .post(ENDPOINT+"/games/create", {
         mode: "custom",
         usersId: players,
         options,
