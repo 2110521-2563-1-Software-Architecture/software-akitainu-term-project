@@ -159,10 +159,10 @@ class Gameplay extends React.Component {
       } = data;
       if (this.state.roomId !== roomId) return;
       if (card === Card.explodingPuppy) {
-        this.drawExplodingPuppy(userId, roomId);
         this.setState({
           leftCardNumber,
         });
+        this.drawExplodingPuppy(userId, roomId);
         return;
       }
 
@@ -451,7 +451,7 @@ class Gameplay extends React.Component {
     this.state.socket.on("finish-exploding-puppy", (data) => {
       console.log("finish-exploding-puppy", data);
 
-      const { userId, roomId, nextUserId } = data;
+      const { userId, roomId, nextUserId, leftCardNumber } = data;
       if (this.state.roomId !== roomId) return;
 
       const userIdx = this.findUserIdx(userId);
@@ -469,6 +469,7 @@ class Gameplay extends React.Component {
         hasDefuse: false,
         nextUserId,
         discardPile,
+        leftCardNumber,
       });
     });
     this.state.socket.on("new-lose", (data) => {
