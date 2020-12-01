@@ -21,7 +21,7 @@ class Gameplay extends React.Component {
 
     const roomId = props.match.params.roomId;
     const userId = window.sessionStorage.getItem("userId");
-    props.socket.emit("set-socket", {userId, roomId});
+    props.socket.emit("set-socket", { userId, roomId });
     this.state = {
       socket: props.socket,
       roomId, // room Id
@@ -1180,6 +1180,7 @@ class Gameplay extends React.Component {
       userProgress,
       timePerTurn,
       mode,
+      nextTurnLeft,
     } = this.state;
     const userId = window.sessionStorage.getItem("userId"); // todo:
     const userIdx = this.findUserIdx(userId);
@@ -1243,6 +1244,7 @@ class Gameplay extends React.Component {
           userProgress={userProgress}
           timePerTurn={timePerTurn}
           mode={mode}
+          nextTurnLeft={nextTurnLeft}
         />
       </div>
     );

@@ -242,6 +242,7 @@ function Game(props) {
     userProgress,
     timePerTurn,
     mode,
+    nextTurnLeft,
   } = props;
   const classes = useStyles();
 
@@ -575,6 +576,7 @@ function Game(props) {
             canNope={canNope}
             cardSelectorId={cardSelectorId}
             topDiscardPile={topDiscardPile}
+            nextTurnLeft={nextTurnLeft}
           />
         </div>
       </div>
