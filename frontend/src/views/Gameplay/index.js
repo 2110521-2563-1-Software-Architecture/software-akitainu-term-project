@@ -19,9 +19,12 @@ class Gameplay extends React.Component {
   constructor(props) {
     super(props);
 
+    const roomId = props.match.params.roomId;
+    const userId = window.sessionStorage.getItem("userId");
+    props.socket.emit("set-socket", {userId, roomId});
     this.state = {
       socket: props.socket,
-      roomId: props.match.params.roomId, // room Id
+      roomId, // room Id
       usersData: [], // {userId, userName, userCards, isDead, profileImgUrl}
       createdTime: new Date(),
       leftCardNumber: -1, // left card number in the card pile
@@ -35,7 +38,7 @@ class Gameplay extends React.Component {
       cardSelectorId: -1,
       targetId: -1,
       cardSelectorCards: [],
-      userId: window.sessionStorage.getItem("userId"),
+      userId,
       usingEffectCard: Card.backCard, // Card.common2 for 2 of a kind, Card.common3 for 3 of a kind, Card.common5 for 5 diffrent kind of cards
       showCardSelectorBackCard: false,
       time: new Date(),
