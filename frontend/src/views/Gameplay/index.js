@@ -300,7 +300,7 @@ class Gameplay extends React.Component {
     this.state.socket.on("receive-common-2", (data) => {
       console.log("receive-common-2", data);
 
-      const { userId, roomId, targetId, targetCard } = data;
+      const { userId, roomId, targetId, targetCard, targetCardIdx } = data;
       const { usersData } = this.state;
       if (this.state.roomId !== roomId) return;
 
@@ -315,7 +315,7 @@ class Gameplay extends React.Component {
       */
       usersData[userIdx].userCards.push(targetCard);
       usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
-      usersData[targetIdx].userCards.splice(randomCardIdx, 1);
+      usersData[targetIdx].userCards.splice(targetCardIdx, 1);
       usersData[targetIdx].numberOfCards =
         usersData[targetIdx].userCards.length;
 
