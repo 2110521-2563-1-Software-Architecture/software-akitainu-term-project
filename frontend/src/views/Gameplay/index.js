@@ -53,9 +53,9 @@ class Gameplay extends React.Component {
       result: [],
       hasDefuse: false,
       userProgress: {
-        rank: 0,
-        exp: -1,
-        level: 0,
+        rank: 1,
+        exp: 0,
+        level: 1,
       },
       timePerTurn: 30,
       mode: GameMode.custom,

@@ -108,7 +108,7 @@ export default function GameResultDialog(props) {
 
   const getRankText = (rank) => {
     if (!plusRank) return null;
-    const nextRank = rank + plusRank;
+    const nextRank = Math.max(1, rank + plusRank);
     if (rank === nextRank) return <span className="rankText">{rank}</span>;
     if (rank < nextRank)
       return (
@@ -176,7 +176,7 @@ export default function GameResultDialog(props) {
                 {Math.floor((curExp / getMaxExp(curLevel)) * 100)} %
               </span>
             </div>
-            {plusRank && <span>Rank</span>}
+            {(plusRank || plusRank===0) && <span>Rank</span>}
             {rankText}
             <div className="dummyDiv" />
           </div>
