@@ -86,10 +86,16 @@ function SettingDialog({
 
   useEffect(()=>{
     // console.log(originNumberofCard)
-    if (originNumberofCard && !isLeader) {
+    if (originNumberofCard && open) {
       setNumberofCard(originNumberofCard)
     }
-  },[open,originNumberofCard])
+  },[open])
+
+  useEffect(()=>{
+    if (!isLeader) {
+      setNumberofCard(originNumberofCard)
+    }
+  },[originNumberofCard])
 
   const handleChangeCardNumber = (cardIndex,value) => {
     let tmpNumberofCard = NumberofCard
@@ -105,7 +111,7 @@ function SettingDialog({
   // },[NumberofCard])
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+    <Dialog open={open} onClose={()=>{handleClose(NumberofCard)}} fullWidth maxWidth="lg">
       <Grid item className={classes.root}>
         <CloseIcon
           style={{
