@@ -306,13 +306,6 @@ class Gameplay extends React.Component {
 
       const userIdx = this.findUserIdx(userId);
       const targetIdx = this.findUserIdx(targetId);
-      // todo?: find another way that better than random
-      /*
-      const randomCardIdx = Math.floor(
-        Math.random() * usersData[targetIdx].userCards.length
-      );
-      const targetCard = usersData[targetIdx].userCards[randomCardIdx];
-      */
       usersData[userIdx].userCards.push(targetCard);
       usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
       usersData[targetIdx].userCards.splice(targetCardIdx, 1);
@@ -822,19 +815,6 @@ class Gameplay extends React.Component {
     return 0; // todo:
   };
 
-  selectCommon2 = (userId, targetId, targetCardIdx) => {
-    const { usersData, roomId } = this.state;
-    const targetCard = usersData[targetId].userCards[targetCardIdx];
-    const data = {
-      userId,
-      roomId,
-      targetId,
-      targetCard,
-      targetCardIdx,
-    };
-    this.state.socket.emit("select-common-2", data);
-  };
-
   useCommon3 = (userId, cardsIdx) => {
     const { usersData, roomId } = this.state;
 
@@ -853,18 +833,6 @@ class Gameplay extends React.Component {
       cardsIdx,
     };
     this.state.socket.emit("use-common-3", data);
-  };
-
-  selectCommon3 = (userId, targetId, targetCardIdx) => {
-    const { usersData, roomId } = this.state;
-    const targetCard = usersData[targetId].userCards[targetCardIdx];
-    const data = {
-      userId,
-      roomId,
-      targetId,
-      targetCardIdx,
-    };
-    this.state.socket.emit("select-common-3", data);
   };
 
   useCommon5 = (userId, cardsIdx) => {
@@ -983,7 +951,7 @@ class Gameplay extends React.Component {
   };
 
   setSelectedCardIdx = (userId, selectedCardIdx) => {
-    const { usingEffectCard, targetId, roomId } = this.state;
+    const { usingEffectCard, targetId, roomId, usersData } = this.state;
     const data = {
       userId,
       roomId,
@@ -999,7 +967,13 @@ class Gameplay extends React.Component {
         this.state.socket.emit("use-effect", data);
         break;
       case Card.common2:
-        data.targetCardIdx = selectedCardIdx;
+        const targetIdx = this.findUserIdx(targetId);
+        const randomCardIdx = Math.floor(
+          Math.random() * usersData[targetIdx].userCards.length
+        );
+        const targetCard = usersData[targetIdx].userCards[randomCardIdx];
+        data.targetCardIdx = randomCardIdx;
+        data.targetCard = targetCard;
         this.state.socket.emit("select-common-2", data);
         break;
       case Card.common3:
