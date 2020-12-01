@@ -51,6 +51,25 @@ const useStyles = makeStyles((theme) => ({
   useCardButton: {
     width: "60%",
   },
+
+  turnsLeft: {
+    width: "100%",
+    fontSize: "20px",
+    color: "yellow",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+    marginTop: "12px",
+    textAlign: "center",
+  },
 }));
 
 export default function PlayerHand(props) {
@@ -63,6 +82,7 @@ export default function PlayerHand(props) {
     canNope,
     cardSelectorId,
     topDiscardPile,
+    nextTurnLeft,
   } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
@@ -175,6 +195,9 @@ export default function PlayerHand(props) {
           onClick={() => _handleUseCard(selectedCards)}
           className={classes.useCardButton}
         />
+        <span className={classes.turnsLeft}>{`Turn${
+          nextTurnLeft >= 1 ? "s" : ""
+        } left: ${nextTurnLeft}`}</span>
       </div>
     </div>
   );
