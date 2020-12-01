@@ -379,7 +379,7 @@ function Game(props) {
             clickable={isSelectingPlayer}
             nextUserId={nextUserId}
             onClick={
-              isSelectingPlayer
+              isSelectingPlayer && user.numberOfCards > 0
                 ? () => {
                     selectPlayer(userId, user.userId);
                   }
