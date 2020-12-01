@@ -225,7 +225,6 @@ function Waitingroom(props) {
 
   const checkNumberOfCards = () => {
     const numberOfCards =
-      defuse +
       nope +
       attack +
       skip +
@@ -243,7 +242,7 @@ function Waitingroom(props) {
 
   const handleCloseSetting = () => {
     if (!checkNumberOfCards()) {
-      alert(`Please select more than or equal ${players.length * 7} cards`);
+      alert(`Please select more than or equal ${players.length * 7} cards (excluded defuse)`);
       return false;
     }
     const { matchmakingSocket } = props;
@@ -333,7 +332,7 @@ function Waitingroom(props) {
 
   const handleStart = () => {
     if (!checkNumberOfCards()) {
-      alert(`Please select more than or equal ${players.length * 7} cards`);
+      alert(`Please select more than or equal ${players.length * 7} cards (excluded defuse)`);
       return false;
     }
 

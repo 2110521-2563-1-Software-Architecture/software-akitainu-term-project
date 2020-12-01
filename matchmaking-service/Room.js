@@ -58,7 +58,9 @@ class Room {
           roomId: res.data.roomId,
         };
         players.forEach((player) => {
-          this.getSocketByUserId(player).emit("ranked-found", data);
+          const socket = this.getSocketByUserId(player);
+          if(!socket) continue;
+          socket.emit("ranked-found", data);
         });
       });
   }
@@ -161,7 +163,9 @@ class Room {
     if (room.leader === userId) {
       // this.customRooms[inviteId];
       room.players.forEach((player) => {
-        this.getSocketByUserId(player).emit("leave-custom-room", {
+        const socket = this.getSocketByUserId(player);
+        if(!socket) continue;
+        socket.emit("leave-custom-room", {
           roomId: inviteId,
         });
       });
@@ -195,7 +199,9 @@ class Room {
         };
         console.log(data, res.data);
         players.forEach((player) => {
-          this.getSocketByUserId(player).emit("started-custom-room", data);
+          const socket = this.getSocketByUserId(player);
+          if(!socket) continue;
+          socket.emit("started-custom-room", data);
         });
       });
   }
@@ -205,13 +211,16 @@ class Room {
       ? this.customRooms[inviteId].players
       : [];
     usersId.map((userId) => {
-      this.getSocketByUserId(userId).emit(
+      const socket = this.getSocketByUserId(userId);
+      if(!socket) continue;
+      socket.emit(
         "custom-room-info",
         this.customRooms[inviteId]
       );
     });
     if (userId && usersId.indexOf(userId) === -1) {
-      this.getSocketByUserId(userId).emit("custom-room-info-error");
+      const socket = this.getSocketByUserId(userId);
+      if(socket) socket.emit("custom-room-info-error");
     }
   }
   // more
