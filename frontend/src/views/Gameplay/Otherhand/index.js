@@ -173,10 +173,10 @@ function Otherhand(props) {
       direction="row"
       className={classNames(
         classes.root,
-        { [classes.rootClickable]: clickable },
+        { [classes.rootClickable]: !isDead && clickable },
         { [classes.rootCurrentTurn]: currentTurn }
       )}
-      onClick={onClick}
+      onClick={!isDead && onClick}
     >
       <Grid container item xs="12" className={classes.nameAndAvatar}>
         <Avatar alt={name} src={profileImgUrl}>

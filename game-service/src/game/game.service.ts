@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto, Card, CreateGameRoomDto, GameMode } from './game.dto';
+import {
+  NewUserJoinCustomRoomDto,
+  Card,
+  CreateGameRoomDto,
+  GameMode,
+} from './game.dto';
 
 @Injectable()
 export class GameService {
@@ -98,17 +103,17 @@ export class GameService {
 
     if (mode === GameMode.rank) {
       allCards = {
-        nope: 5,
-        attack: 4,
-        skip: 4,
-        favor: 4,
-        shuffle: 4,
-        seeTheFuture: 5,
-        common1: 4,
-        common2: 4,
-        common3: 4,
-        common4: 4,
-        common5: 4,
+        nope: 6,
+        attack: 5,
+        skip: 5,
+        favor: 5,
+        shuffle: 5,
+        seeTheFuture: 6,
+        common1: 5,
+        common2: 5,
+        common3: 5,
+        common4: 5,
+        common5: 5,
       };
       defuseNumber = 1;
     } else if (mode === GameMode.custom) {
