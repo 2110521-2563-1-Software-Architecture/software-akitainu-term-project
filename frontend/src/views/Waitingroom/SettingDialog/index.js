@@ -20,6 +20,7 @@ import { useHistory } from "react-router-dom";
 import CloseIcon from "@material-ui/icons/Close";
 import { Card, getCardImage } from "../../../components/type";
 import { Cards } from "./mock";
+import { SignalCellularNullRounded } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -143,7 +144,7 @@ function SettingDialog({
             >
               <img src={getCardImage(card)} className={classes.card} />
               {NumberofCard&&<div className={classes.sliderWrapper}>
-                <Slider
+                {isLeader&&<Slider
                   // defaultValue={NumberofCard[index].Numbercard}
                   defaultValue={NumberofCard[index].Numbercard}
                   valueLabelFormat={(n) => `${n}`}
@@ -164,7 +165,29 @@ function SettingDialog({
                     }
                   }
                   disabled={!isLeader}
-                />
+                />}
+                {!isLeader&&<Slider
+                  // defaultValue={NumberofCard[index].Numbercard}
+                  value={NumberofCard[index].Numbercard}
+                  valueLabelFormat={(n) => `${n}`}
+                  valueLabelDisplay="auto"
+                  step={1}
+                  min={0}
+                  max={8}
+                  style={{
+                    margin: "10px auto 20px",
+                    width: "80%",
+                    color: "#B6C5E0",
+                  }}
+                  onChangeCommitted={(e, idx) =>
+                    {
+                      // console.log("numof",index,"is",idx)
+                      handleChangeCardNumber(index,idx)
+                      NumberofCard[index].setcard(idx)
+                    }
+                  }
+                  disabled={!isLeader}
+                />}
                 <div className={classes.number}>
                   {NumberofCard[index].Numbercard}
                 </div>
