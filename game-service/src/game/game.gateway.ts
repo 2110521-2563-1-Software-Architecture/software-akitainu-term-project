@@ -14,7 +14,7 @@ type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 const socket_port = parseInt(process.env.SOCKET_SERVER) || 10001;
-@WebSocketGateway(socket_port, {path: '/game', namespace: '/game'})
+@WebSocketGateway(socket_port, { path: '/game', namespace: '/game' })
 export class GameGateway implements OnGatewayInterface {
   constructor(private readonly customGameRoomService: GameService) {}
 
@@ -29,8 +29,8 @@ export class GameGateway implements OnGatewayInterface {
 
   async handleDisconnect(socket: Socket) {
     const userId = this.socketIdMapToUserId[socket.id];
-    const roomId= this.userMapToRoomId[userId];
-    this.onPlayerExit(socket, {roomId, userId});
+    const roomId = this.userMapToRoomId[userId];
+    this.onPlayerExit(socket, { roomId, userId });
     console.log('[User disconnected]: \t', socket.id);
   }
 
@@ -163,13 +163,13 @@ export class GameGateway implements OnGatewayInterface {
   @SubscribeMessage('insert-exploding-puppy')
   async onInsertExplodingPuppy(socket: Socket, data: any) {
     const { roomId, userId, idx } = data;
-    const nextUserId = await this.customGameRoomService.insertExplodingPuppy(
+    const explodeInsert = await this.customGameRoomService.insertExplodingPuppy(
       roomId,
       idx,
     );
     this.server
       .to(roomId)
-      .emit('finish-exploding-puppy', { roomId, userId, nextUserId });
+      .emit('finish-exploding-puppy', { roomId, userId, ...explodeInsert });
   }
 
   @SubscribeMessage('game-lose')
@@ -281,7 +281,7 @@ export class GameGateway implements OnGatewayInterface {
 
   @SubscribeMessage('set-socket')
   async setSocket(socket: Socket, data: any) {
-    const {userId, roomId} = data;
+    const { userId, roomId } = data;
     this.userMapToRoomId[userId] = roomId;
     this.socketIdMapToUserId[socket.id] = userId;
   }

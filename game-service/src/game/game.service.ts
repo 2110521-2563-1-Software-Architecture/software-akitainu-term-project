@@ -257,7 +257,10 @@ export class GameService {
     ];
     this.setRoomByRoomId(roomId, { deck: deckTmp });
 
-    return aliveUsersId[nextUserIndex];
+    return {
+      nextUserId: aliveUsersId[nextUserIndex],
+      leftCardNumber: deckTmp.length,
+    };
   }
 
   async useEffectCard(roomId: string, card: string) {
