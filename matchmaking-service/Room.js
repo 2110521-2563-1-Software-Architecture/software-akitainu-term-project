@@ -1,5 +1,5 @@
 var axios = require("axios");
-require('dotenv').config();
+require("dotenv").config();
 var ENDPOINT = process.env.GAME_API_ENDPOINT;
 
 class Room {
@@ -20,9 +20,7 @@ class Room {
 
   searchRanked(userId, socketId) {
     if (this.rankedQueue.indexOf(userId) !== -1) {
-      this.socket
-        .to(socketId)
-        .emit("duplicate-user", { isRanked: true });
+      this.socket.to(socketId).emit("duplicate-user", { isRanked: true });
       return false;
     }
     this.rankedQueue.push(userId);
@@ -45,7 +43,7 @@ class Room {
       players.push(this.rankedQueue.shift());
     }
     axios
-      .post(ENDPOINT+"/games/create", {
+      .post(ENDPOINT + "/games/create", {
         mode: "rank",
         usersId: players,
       })
@@ -103,19 +101,19 @@ class Room {
       players: [userId],
       leader: userId,
       options: {
-        defuse: 4,
-        nope: 8,
-        attack: 7,
-        skip: 7,
-        favor: 7,
-        shuffle: 7,
-        seeTheFuture: 8,
-        common1: 7,
-        common2: 7,
-        common3: 7,
-        common4: 7,
-        common5: 7,
-        maxPlayer: 8,
+        defuse: 1,
+        nope: 6,
+        attack: 5,
+        skip: 5,
+        favor: 5,
+        shuffle: 5,
+        seeTheFuture: 6,
+        common1: 5,
+        common2: 5,
+        common3: 5,
+        common4: 5,
+        common5: 5,
+        maxPlayer: 5,
         isPublic: false,
         timePerTurn: 30,
       },
@@ -182,7 +180,7 @@ class Room {
     const options = this.customRooms[inviteId].options;
     delete this.customRooms[inviteId];
     axios
-      .post(ENDPOINT+"/games/create", {
+      .post(ENDPOINT + "/games/create", {
         mode: "custom",
         usersId: players,
         options,
@@ -197,6 +195,8 @@ class Room {
         players.forEach((player) => {
           this.getSocketByUserId(player).emit("started-custom-room", data);
         });
+        delete this.customRooms[inviteId];
+        this.socket.emit("update-custom-rooms", this.customRooms);
       });
   }
 
@@ -214,7 +214,7 @@ class Room {
       this.getSocketByUserId(userId).emit("custom-room-info-error");
     }
   }
-  // more
+
   setUserMapSocket(userIdToCurrentSocket) {
     this.userIdToCurrentSocket = userIdToCurrentSocket;
   }
@@ -230,7 +230,12 @@ class Room {
   setMaxPlayer(inviteId, maxPlayer) {
     const room = this.customRooms[inviteId];
     if (!room) return;
-    room.options.maxPlayer = maxPlayer;
+    if (room.players.length > maxPlayer) {
+      room.options.maxPlayer = room.players.length;
+    } else {
+      room.options.maxPlayer = maxPlayer;
+    }
+    // this.updateDefaultCards(room.options.maxPlayer, inviteId);
     this.getCustomRoomData(inviteId);
     this.socket.emit("update-custom-rooms", this.customRooms);
   }
@@ -273,6 +278,22 @@ class Room {
     room.options.common5 = common5;
     this.getCustomRoomData(inviteId);
   }
+
+  // updateDefaultCards(maxPlayer, inviteId) {
+  //   const room = this.customRooms[inviteId];
+  //   room.options.defuse = maxPlayer <= 5 ? 1 : 2;
+  //   room.options.nope = maxPlayer + 1;
+  //   room.options.attack = maxPlayer;
+  //   room.options.skip = maxPlayer;
+  //   room.options.favor = maxPlayer;
+  //   room.options.shuffle = maxPlayer;
+  //   room.options.seeTheFuture = maxPlayer + 1;
+  //   room.options.common1 = maxPlayer;
+  //   room.options.common2 = maxPlayer;
+  //   room.options.common3 = maxPlayer;
+  //   room.options.common4 = maxPlayer;
+  //   room.options.common5 = maxPlayer;
+  // }
 }
 
 module.exports = { Room };
