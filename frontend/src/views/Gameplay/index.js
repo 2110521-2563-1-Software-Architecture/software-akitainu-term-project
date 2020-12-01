@@ -658,7 +658,7 @@ class Gameplay extends React.Component {
       console.log("new-exit", data);
 
       if (data.roomId != this.state.roomId) return;
-      const { userId, roomId, nextUserId } = data;
+      const { userId, roomId, nextUserId, leftCardNumber } = data;
       const { usersData } = this.state;
       const userIdx = this.findUserIdx(userId);
       if (roomId != this.state.roomId) return;
@@ -668,7 +668,7 @@ class Gameplay extends React.Component {
         userName + " exited from this room; Removed 1 exploding puppy"
       );
       usersData[userIdx].isDead = true;
-      this.setState({ usersData, nextUserId, nextTurnLeft: 1 });
+      this.setState({ usersData, nextUserId, nextTurnLeft: 1, leftCardNumber });
     });
     this.state.socket.on("new-win", (data) => {
       console.log("new-win", data);

@@ -374,6 +374,7 @@ export class GameService {
     const gameLose = {
       nextUserId: aliveUsersId[nextUserIndexTmp],
       nextTurnLeft,
+      leftCardNumber: deck.length,
     };
     console.log('nextUserIndexTmp: ', nextUserIndexTmp);
     console.log('aliveUsersId: ', aliveUsersId);
