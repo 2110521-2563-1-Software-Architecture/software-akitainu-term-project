@@ -328,6 +328,7 @@ export class GameService {
   }
 
   async loseGame(roomId: string, userId: string, isExit: boolean) {
+    if (!this.rooms[roomId]) return;
     const {
       nextUserIndex,
       aliveUsersId,
