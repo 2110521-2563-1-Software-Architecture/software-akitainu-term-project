@@ -300,17 +300,19 @@ class Gameplay extends React.Component {
     this.state.socket.on("receive-common-2", (data) => {
       console.log("receive-common-2", data);
 
-      const { userId, roomId, targetId, targetCardIdx } = data;
+      const { userId, roomId, targetId, targetCard } = data;
       const { usersData } = this.state;
       if (this.state.roomId !== roomId) return;
 
       const userIdx = this.findUserIdx(userId);
       const targetIdx = this.findUserIdx(targetId);
       // todo?: find another way that better than random
+      /*
       const randomCardIdx = Math.floor(
         Math.random() * usersData[targetIdx].userCards.length
       );
       const targetCard = usersData[targetIdx].userCards[randomCardIdx];
+      */
       usersData[userIdx].userCards.push(targetCard);
       usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
       usersData[targetIdx].userCards.splice(randomCardIdx, 1);
