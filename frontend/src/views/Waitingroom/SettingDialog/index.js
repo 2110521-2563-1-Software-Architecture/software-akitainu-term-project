@@ -79,9 +79,31 @@ function SettingDialog({
   isLeader,
   maxPlayer,
   handleClose,
-  NumberofCard,
+  NumberofCard:originNumberofCard,
 }) {
   const classes = useStyles();
+  const [NumberofCard,setNumberofCard] = useState();
+
+  useEffect(()=>{
+    // console.log(originNumberofCard)
+    if (originNumberofCard && !isLeader) {
+      setNumberofCard(originNumberofCard)
+    }
+  },[open,originNumberofCard])
+
+  const handleChangeCardNumber = (cardIndex,value) => {
+    let tmpNumberofCard = NumberofCard
+    const edittedNumberofCard = {
+      ...tmpNumberofCard,
+      [cardIndex]:{Numbercard:value,setcard:tmpNumberofCard[cardIndex].setcard}
+    }
+    setNumberofCard(edittedNumberofCard)
+  }
+
+  // useEffect(()=>{
+  //   console.log(NumberofCard)
+  // },[NumberofCard])
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
       <Grid item className={classes.root}>
@@ -114,8 +136,9 @@ function SettingDialog({
               }}
             >
               <img src={getCardImage(card)} className={classes.card} />
-              <div className={classes.sliderWrapper}>
+              {NumberofCard&&<div className={classes.sliderWrapper}>
                 <Slider
+                  // defaultValue={NumberofCard[index].Numbercard}
                   defaultValue={NumberofCard[index].Numbercard}
                   valueLabelFormat={(n) => `${n}`}
                   valueLabelDisplay="auto"
@@ -128,14 +151,18 @@ function SettingDialog({
                     color: "#B6C5E0",
                   }}
                   onChangeCommitted={(e, idx) =>
-                    NumberofCard[index].setcard(idx)
+                    {
+                      // console.log("numof",index,"is",idx)
+                      handleChangeCardNumber(index,idx)
+                      NumberofCard[index].setcard(idx)
+                    }
                   }
                   disabled={!isLeader}
                 />
                 <div className={classes.number}>
                   {NumberofCard[index].Numbercard}
                 </div>
-              </div>
+              </div>}
             </Grid>
           ))}
         </Grid>
