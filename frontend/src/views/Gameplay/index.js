@@ -463,7 +463,7 @@ class Gameplay extends React.Component {
       discardPile.push(Card.defuse);
 
       const userName = this.getUserNameByUserId(userId);
-      this.addLogs(userName + " use defuse");
+      this.addLogs(userName + " use Defuse");
       this.setState({
         explodeId: -1,
         hasDefuse: false,
@@ -598,7 +598,7 @@ class Gameplay extends React.Component {
       usersData[userIdx].numberOfCards = usersData[userIdx].userCards.length;
 
       const userName = this.getUserNameByUserId(userId);
-      this.addLogs(userName + " use nope");
+      this.addLogs(userName + " use Nope");
       this.setState({ usersData, canNope: true, isNoped: !this.state.isNoped });
       this.newCountDown(timeForNope);
     });
