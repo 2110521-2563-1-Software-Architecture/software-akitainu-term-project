@@ -251,6 +251,12 @@ function Game(props) {
   const isSelectingPlayer = isSelectingPlayerId === userId;
 
   let users = usersData;
+  let isDead = false;
+  usersData.forEach((userData) => {
+    if (userData.userId === userId) {
+      isDead = userData.isDead;
+    }
+  });
 
   for (let i = 0; i < users.length; i++) {
     const firstUser = users[0];
@@ -577,6 +583,7 @@ function Game(props) {
             cardSelectorId={cardSelectorId}
             topDiscardPile={topDiscardPile}
             nextTurnLeft={nextTurnLeft}
+            isDead={isDead}
           />
         </div>
       </div>
