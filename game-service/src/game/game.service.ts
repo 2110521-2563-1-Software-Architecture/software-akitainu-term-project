@@ -388,6 +388,7 @@ export class GameService {
   }
 
   async resultGame(roomId: string) {
+    if (!this.rooms[roomId]) return;
     const { result, aliveUsersId } = this.rooms[roomId];
     if (aliveUsersId.length !== 0) {
       return false;
