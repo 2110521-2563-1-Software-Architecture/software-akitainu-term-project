@@ -83,11 +83,13 @@ export default function PlayerHand(props) {
     cardSelectorId,
     topDiscardPile,
     nextTurnLeft,
+    isDead,
   } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
 
   const canUseSelectedCards = () => {
+    if (isDead) return false;
     if (nextUserId !== userId && !canNope) return false;
     if (cardSelectorId !== -1) return false;
     if (canNope) {
@@ -184,17 +186,19 @@ export default function PlayerHand(props) {
           className="scroll-container"
           style={{ paddingBottom: "16px" }}
         >
-          <ul className={classes.list}>{getCardsToRender(cards)}</ul>
+          <ul className={classes.list}>{!isDead && getCardsToRender(cards)}</ul>
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
-        {countDownComponent}
-        <Button
-          disabled={!canUseSelectedCards()}
-          text={selectedCards.length <= 1 ? "Use card" : "Use cards"}
-          onClick={() => _handleUseCard(selectedCards)}
-          className={classes.useCardButton}
-        />
+        {!isDead && countDownComponent}
+        {!isDead && (
+          <Button
+            disabled={!canUseSelectedCards()}
+            text={selectedCards.length <= 1 ? "Use card" : "Use cards"}
+            onClick={() => _handleUseCard(selectedCards)}
+            className={classes.useCardButton}
+          />
+        )}
         <span className={classes.turnsLeft}>{`Turn${
           nextTurnLeft >= 1 ? "s" : ""
         } left: ${nextTurnLeft}`}</span>
