@@ -173,7 +173,7 @@ function Otherhand(props) {
       direction="row"
       className={classNames(
         classes.root,
-        { [classes.rootClickable]: !isDead && clickable },
+        { [classes.rootClickable]: !isDead && clickable && onClick },
         { [classes.rootCurrentTurn]: currentTurn }
       )}
       onClick={!isDead && onClick}

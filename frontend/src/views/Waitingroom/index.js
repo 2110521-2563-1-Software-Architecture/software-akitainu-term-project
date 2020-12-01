@@ -240,7 +240,7 @@ function Waitingroom(props) {
     return true;
   };
 
-  const handleCloseSetting = () => {
+  const handleCloseSetting = (NumberofCard) => {
     if (!checkNumberOfCards()) {
       alert(
         `Please select more than or equal ${
@@ -256,18 +256,18 @@ function Waitingroom(props) {
       matchmakingSocket.emit("set-cards", {
         inviteId: roomId,
         cards: {
-          defuse,
-          nope,
-          attack,
-          skip,
-          favor,
-          shuffle,
-          seeTheFuture,
-          common1,
-          common2,
-          common3,
-          common4,
-          common5,
+          defuse : NumberofCard[0].Numbercard,
+          nope : NumberofCard[1].Numbercard,
+          attack : NumberofCard[2].Numbercard,
+          skip : NumberofCard[3].Numbercard,
+          favor : NumberofCard[4].Numbercard,
+          shuffle : NumberofCard[6].Numbercard,
+          seeTheFuture : NumberofCard[5].Numbercard,
+          common1 : NumberofCard[7].Numbercard,
+          common2 : NumberofCard[8].Numbercard,
+          common3 : NumberofCard[9].Numbercard,
+          common4 : NumberofCard[10].Numbercard,
+          common5 : NumberofCard[11].Numbercard,
         },
       });
     }
