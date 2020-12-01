@@ -338,7 +338,7 @@ function Auth() {
           onFailure={onSignIn}
           cookiePolicy={"single_host_origin"}
         />
-        {isDevEnv && (
+        {false && (
           <Button
             className={clsx(classes.loginButton)}
             onClick={() => onDevSignIn()}
