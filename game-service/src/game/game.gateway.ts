@@ -20,12 +20,17 @@ export class GameGateway implements OnGatewayInterface {
 
   @WebSocketServer() server;
   users = 0;
+  userMapToRoomId = {}; // { user1:roomId1}, user2:roomId2}
+  socketIdMapToUserId = {}; // { socketId1: userId1, socketId2: userId2 }
 
   async handleConnection(socket: Socket) {
     console.log('[New User] :\t', socket.id);
   }
 
   async handleDisconnect(socket: Socket) {
+    const userId = this.socketIdMapToUserId[socket.id];
+    const roomId= this.userMapToRoomId[userId];
+    this.onPlayerExit(socket, {roomId, userId});
     console.log('[User disconnected]: \t', socket.id);
   }
 
@@ -272,5 +277,12 @@ export class GameGateway implements OnGatewayInterface {
   @SubscribeMessage('message-send-private')
   async onSendMessagePrivate(socket: Socket, data: any) {
     this.server.emit('message-get-private', data);
+  }
+
+  @SubscribeMessage('set-socket')
+  async setSocket(socket: Socket, data: any) {
+    const {userId, roomId} = data;
+    this.userMapToRoomId[userId] = roomId;
+    this.socketIdMapToUserId[socket.id] = userId;
   }
 }
