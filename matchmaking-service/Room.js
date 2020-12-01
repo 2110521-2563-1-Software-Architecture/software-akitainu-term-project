@@ -1,5 +1,5 @@
 var axios = require("axios");
-require('dotenv').config();
+require("dotenv").config();
 var ENDPOINT = process.env.GAME_API_ENDPOINT;
 
 class Room {
@@ -43,7 +43,7 @@ class Room {
       players.push(this.rankedQueue.shift());
     }
     axios
-      .post(ENDPOINT+"/games/create", {
+      .post(ENDPOINT + "/games/create", {
         mode: "rank",
         usersId: players,
       })
@@ -180,7 +180,7 @@ class Room {
     const options = this.customRooms[inviteId].options;
     delete this.customRooms[inviteId];
     axios
-      .post(ENDPOINT+"/games/create", {
+      .post(ENDPOINT + "/games/create", {
         mode: "custom",
         usersId: players,
         options,
@@ -235,7 +235,7 @@ class Room {
     } else {
       room.options.maxPlayer = maxPlayer;
     }
-    this.updateDefaultCards(room.options.maxPlayer);
+    // this.updateDefaultCards(room.options.maxPlayer, inviteId);
     this.getCustomRoomData(inviteId);
     this.socket.emit("update-custom-rooms", this.customRooms);
   }
@@ -279,20 +279,21 @@ class Room {
     this.getCustomRoomData(inviteId);
   }
 
-  updateDefaultCards(maxPlayer) {
-    room.options.defuse = maxPlayer <= 5 ? 1 : 2;
-    room.options.nope = maxPlayer + 1;
-    room.options.attack = maxPlayer;
-    room.options.skip = maxPlayer;
-    room.options.favor = maxPlayer;
-    room.options.shuffle = maxPlayer;
-    room.options.seeTheFuture = maxPlayer + 1;
-    room.options.common1 = maxPlayer;
-    room.options.common2 = maxPlayer;
-    room.options.common3 = maxPlayer;
-    room.options.common4 = maxPlayer;
-    room.options.common5 = maxPlayer5;
-  }
+  // updateDefaultCards(maxPlayer, inviteId) {
+  //   const room = this.customRooms[inviteId];
+  //   room.options.defuse = maxPlayer <= 5 ? 1 : 2;
+  //   room.options.nope = maxPlayer + 1;
+  //   room.options.attack = maxPlayer;
+  //   room.options.skip = maxPlayer;
+  //   room.options.favor = maxPlayer;
+  //   room.options.shuffle = maxPlayer;
+  //   room.options.seeTheFuture = maxPlayer + 1;
+  //   room.options.common1 = maxPlayer;
+  //   room.options.common2 = maxPlayer;
+  //   room.options.common3 = maxPlayer;
+  //   room.options.common4 = maxPlayer;
+  //   room.options.common5 = maxPlayer;
+  // }
 }
 
 module.exports = { Room };
