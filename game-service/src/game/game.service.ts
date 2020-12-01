@@ -194,7 +194,7 @@ export class GameService {
     const { deck, aliveUsersId, nextUserIndex, nextTurnLeft } = this.rooms[
       roomId
     ];
-    if (deck.length <= 0) {
+    if (deck.length <= 0 || aliveUsersId[nextUserIndex] !== userId) {
       return false;
     }
 
