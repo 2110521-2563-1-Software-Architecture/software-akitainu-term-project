@@ -14,7 +14,7 @@ type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 const socket_port = parseInt(process.env.SOCKET_SERVER) || 10001;
-@WebSocketGateway(socket_port, {path: '/game'})
+@WebSocketGateway(socket_port, {path: '/game', namespace: '/game'})
 export class GameGateway implements OnGatewayInterface {
   constructor(private readonly customGameRoomService: GameService) {}
 

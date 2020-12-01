@@ -7,13 +7,13 @@ const { Room } = require("./Room");
 var socketIdToUserId = {};
 var userIdToCurrentSocket = {};
 
-const room = new Room(io);
+const room = new Room(io.of("/matchmaking"));
 
 app.get("/", (req, res) => {
   res.send("Hello from matchmaking service");
 });
 
-io.on("connection", (socket) => {
+io.of("/matchmaking").on("connection", (socket) => {
   console.log("a user connected");
 
   socket.on("search-ranked", (data) => {

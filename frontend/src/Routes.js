@@ -16,8 +16,8 @@ const SOCKET_ENDPOINT =
   process.env.REACT_APP_BACKEND_SOCKET || "http://localhost:10001";
 const MATCHMAKING_SOCKET_ENDPOINT =
   process.env.REACT_APP_MATCHMAKING_SOCKET || "http://localhost:3030";
-const socket = socketIOClient(SOCKET_ENDPOINT, {path: '/game'});
-const matchmakingSocket = socketIOClient(MATCHMAKING_SOCKET_ENDPOINT, {path: '/matchmaking'});
+const socket = socketIOClient(SOCKET_ENDPOINT, {path: '/game', forceNew: true});
+const matchmakingSocket = socketIOClient(MATCHMAKING_SOCKET_ENDPOINT, {path: '/matchmaking', forceNew:true});
 
 const routesConfig = [
   {

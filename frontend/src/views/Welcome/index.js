@@ -100,10 +100,12 @@ class Welcome extends React.Component {
       this.setRankFound();
     });
     matchmakingSocket.on("custom-room-id", (data) => {
+      console.log("custom-room-id", data);
       window.location = `/waiting/${data.roomId}`;
       // redirect to waiting room for that room id
     });
     matchmakingSocket.on("update-custom-rooms", (data) => {
+      console.log("update-custom-rooms", data);
       this.setState({ publicCustomRooms: data });
     });
     matchmakingSocket.on("join-custom-error", (data) => {
