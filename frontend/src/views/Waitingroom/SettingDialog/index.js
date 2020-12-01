@@ -124,7 +124,7 @@ function SettingDialog({
             color: "#FFF",
             cursor: "pointer",
           }}
-          onClick={handleClose}
+          onClick={()=>{handleClose(NumberofCard)}}
         ></CloseIcon>
         <Typography className={classes.title} style={{ textAlign: "center" }}>
           Card setting
