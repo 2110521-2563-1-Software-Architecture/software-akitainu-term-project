@@ -212,12 +212,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Game(props) {
   const {
-    socket,
     drawCard,
-    createCustomRoom,
-    joinCustomRoom,
-    startGame,
-    getPropsFromUserId,
     hasDefuse,
     explodeId,
     insertExplodingPuppy,
@@ -238,7 +233,6 @@ function Game(props) {
     showCardSelectorBackCard,
     userCards,
     canNope,
-    handleUseNope,
     countDownTime,
     newCountDown,
     handleCompleteNopeCountdown,
@@ -246,18 +240,23 @@ function Game(props) {
     result,
     handleExit,
     userProgress,
+    timePerTurn,
+    mode,
+    nextTurnLeft,
   } = props;
   const classes = useStyles();
 
-  const userId = window.sessionStorage.getItem("userId"); // todo:
-  const roomId = "100001"; // todo:
-  // console.log(props)
-  // const roomId = this.props.match.params.roomId
-  const timePerTurn = 30; // seconds
+  const userId = window.sessionStorage.getItem("userId");
   const [isMyTurn, setIsMyTurn] = useState(false);
   const isSelectingPlayer = isSelectingPlayerId === userId;
 
   let users = usersData;
+  let isDead = false;
+  usersData.forEach((userData) => {
+    if (userData.userId === userId) {
+      isDead = userData.isDead;
+    }
+  });
 
   for (let i = 0; i < users.length; i++) {
     const firstUser = users[0];
@@ -380,7 +379,7 @@ function Game(props) {
             clickable={isSelectingPlayer}
             nextUserId={nextUserId}
             onClick={
-              isSelectingPlayer
+              isSelectingPlayer && user.numberOfCards > 0
                 ? () => {
                     selectPlayer(userId, user.userId);
                   }
@@ -414,8 +413,16 @@ function Game(props) {
   };
 
   const handleDrawCard = () => {
-    if (nextUserId !== userId || cardSelectorId !== -1 || canNope) return;
-    drawCard(userId, roomId);
+    if (
+      nextUserId !== userId ||
+      cardSelectorId !== -1 ||
+      canNope ||
+      explodeId === userId ||
+      cardSelectorId === userId ||
+      seeTheFutureId === userId
+    )
+      return;
+    drawCard(userId);
     newCountDown(timePerTurn);
   };
 
@@ -481,10 +488,6 @@ function Game(props) {
     setIsMyTurn(false);
     newCountDown(0);
   }
-
-  const _handleUseNope = () => {
-    handleUseNope(userId);
-  };
 
   const logItems = logs.map((item, idx) => (
     <li
@@ -578,19 +581,26 @@ function Game(props) {
             countDownComponent={countDownComponent}
             canNope={canNope}
             cardSelectorId={cardSelectorId}
+            topDiscardPile={topDiscardPile}
+            nextTurnLeft={nextTurnLeft}
+            isDead={isDead}
           />
         </div>
       </div>
       <SeeTheFutureDialog
         open={seeTheFutureId === userId}
-        handleClose={() => closeSeeTheFutureDialog()}
+        handleClose={() => {
+          closeSeeTheFutureDialog();
+          newCountDown(timePerTurn);
+        }}
         seeTheFutureCards={seeTheFutureCards}
       />
       <CardSelectorDialog
         open={cardSelectorId === userId}
-        handleClose={(selelctedCardIdx) =>
-          _handleCloseCardSelectorDialog(selelctedCardIdx)
-        }
+        handleClose={(selelctedCardIdx) => {
+          _handleCloseCardSelectorDialog(selelctedCardIdx);
+          newCountDown(timePerTurn);
+        }}
         cardSelectorCards={cardSelectorCards}
         showBackCard={showCardSelectorBackCard}
       />
@@ -609,10 +619,9 @@ function Game(props) {
         result={result}
         userId={userId}
         exp={exp}
-        plusExp={250} // todo: Rank will give 500 exp, custom will give 250
         level={level}
         rank={rank}
-        // plusRank={2} // todo: pass this if rank mode; 2 for 1st, 1 for 2nd, 0 for 3rd, -1 for 4th, -2 for 5th
+        mode={mode}
       />
       {isSelectingPlayer && <div className={classes.backdrop} />}
       <Button
@@ -623,19 +632,6 @@ function Game(props) {
         onClick={_handleExit}
         className={classes.exitButton}
       />
-      <div>
-        <button onClick={() => createCustomRoom(userId)}>
-          createCustomRoom
-        </button>
-        <button onClick={() => joinCustomRoom(userId, roomId)}>
-          joinCustomRoom
-        </button>
-        <button onClick={() => startGame(roomId)}>startGame</button>
-        <button onClick={() => console.log(getPropsFromUserId(userId))}>
-          getProps
-        </button>
-        <button onClick={() => _handleUseNope()}>use nope</button>
-      </div>
     </>
   );
 }

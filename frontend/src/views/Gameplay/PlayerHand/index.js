@@ -51,6 +51,25 @@ const useStyles = makeStyles((theme) => ({
   useCardButton: {
     width: "60%",
   },
+
+  turnsLeft: {
+    width: "100%",
+    fontSize: "20px",
+    color: "yellow",
+    fontFamily: "Roboto",
+    textShadow:
+      "2px 0 0 black, \
+      -2px 0 0 black, \
+      0 2px 0 black, \
+      0 -2px 0 black, \
+      1px 1px 0 black, \
+      -1px -1px 0 black, \
+      1px -1px 0 black, \
+      -1px 1px 0 black, \
+      1px 1px 5px black;",
+    marginTop: "12px",
+    textAlign: "center",
+  },
 }));
 
 export default function PlayerHand(props) {
@@ -62,11 +81,15 @@ export default function PlayerHand(props) {
     countDownComponent,
     canNope,
     cardSelectorId,
+    topDiscardPile,
+    nextTurnLeft,
+    isDead,
   } = props;
   const [selectedCards, setSelectedCards] = useState([]);
   const userId = window.sessionStorage.getItem("userId");
 
   const canUseSelectedCards = () => {
+    if (isDead) return false;
     if (nextUserId !== userId && !canNope) return false;
     if (cardSelectorId !== -1) return false;
     if (canNope) {
@@ -102,6 +125,7 @@ export default function PlayerHand(props) {
     ) {
       return true;
     } else if (selectedCards.length === 5) {
+      if (!topDiscardPile) return false;
       const selectingCard = selectedCards.map((cardIdx) => cards[cardIdx]);
       selectingCard.sort();
       for (let i = 0; i < 4; i++) {
@@ -162,17 +186,22 @@ export default function PlayerHand(props) {
           className="scroll-container"
           style={{ paddingBottom: "16px" }}
         >
-          <ul className={classes.list}>{getCardsToRender(cards)}</ul>
+          <ul className={classes.list}>{!isDead && getCardsToRender(cards)}</ul>
         </ScrollContainer>
       </div>
       <div className={classes.menuWrapper}>
-        {countDownComponent}
-        <Button
-          disabled={!canUseSelectedCards()}
-          text={selectedCards.length <= 1 ? "Use card" : "Use cards"}
-          onClick={() => _handleUseCard(selectedCards)}
-          className={classes.useCardButton}
-        />
+        {!isDead && countDownComponent}
+        {!isDead && (
+          <Button
+            disabled={!canUseSelectedCards()}
+            text={selectedCards.length <= 1 ? "Use card" : "Use cards"}
+            onClick={() => _handleUseCard(selectedCards)}
+            className={classes.useCardButton}
+          />
+        )}
+        <span className={classes.turnsLeft}>{`Turn${
+          nextTurnLeft >= 1 ? "s" : ""
+        } left: ${nextTurnLeft}`}</span>
       </div>
     </div>
   );

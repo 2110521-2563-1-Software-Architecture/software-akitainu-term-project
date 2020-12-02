@@ -241,30 +241,8 @@ function Chat({
   const [thisUsername, setUsername] = useState("");
   const [isUserJoined, setIsUserJoined] = useState(false);
 
-  // const thisUsername = "bump";
-  // const thisRoomId = 101;
-
-  // useEffect(() => {
-  //   setMessageGroup({
-  //     room: {
-  //       messages: roomMessages,
-  //     },
-  //     private: {
-  //       messages: privateMessages,
-  //     },
-  //   });
-  // }, []);
-
-  // useEffect(()=>{
-  // var tf = document.getElementById(`room-${thisRoomId}-chat-box`)
-  // tf.scrollTop = tf.offsetHeight;
-  // console.log(tf)
-  //   console.log(messageGroup)
-  // },[messageGroup])
-
   const pushRoomMessage = (data) => {
     let roomMes = messageGroup.room.messages;
-    // console.log(roomMes)
     roomMes.push({
       fromRoomId: thisRoomId,
       fromUsername: data.fromUsername,
@@ -398,15 +376,6 @@ function Chat({
     setTyping(e.target.value);
   };
 
-  const testApi = () => {
-    let data = {
-      roomId: thisRoomId,
-      userId: "456",
-    };
-    console.log("testApis", data);
-    socket.emit("game-rank-win", data);
-  };
-
   const handleEnter = () => {
     if (typing) {
       if (currentShowMessage === "room") {
@@ -483,9 +452,6 @@ function Chat({
               messageGroup[getMsgKey(currentShowMessage)].messages.map(
                 (data) =>
                   filterMsg(data) && (
-                    // console.log("checkid",data.fromRoomId === thisUserId),
-                    // console.log("checkid",data.fromRoomId, thisUserId),
-                    // console.log("checkid",typeof(data.fromRoomId) ,typeof(thisUserId)),
                     <div
                       style={{
                         margin:
@@ -575,24 +541,6 @@ function Chat({
           </Avatar>
         </Tooltip>
       </IconButton>
-      <div className={classes.divider}></div>
-      {peopleBubbles &&
-        peopleBubbles.map((people, index) => (
-          <IconButton
-            className={classes.ripple}
-            onClick={() => handleshowMessage(people.name)}
-          >
-            <Tooltip title={people.name} placement="bottom" arrow interactive>
-              <Avatar
-                key={`${people.name}-${index}`}
-                className={classes.chatBubble}
-                style={{ background: Palette.green400 }}
-              >
-                {people.name[0]}
-              </Avatar>
-            </Tooltip>
-          </IconButton>
-        ))}
     </div>
   );
 
@@ -609,8 +557,6 @@ function Chat({
     >
       {chatBox()}
       {chatBubbles()}
-      {/* {getMessage()} */}
-      <button onClick={() => testApi()}>test api</button>
     </div>
   );
 }

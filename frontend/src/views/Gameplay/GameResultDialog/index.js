@@ -6,6 +6,7 @@ import { Avatar } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { useHistory } from "react-router-dom";
+import { GameMode } from "../../../components/type";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -20,12 +21,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function GameResultDialog(props) {
-  const { result, userId } = props;
+  const { result, userId, exp, level, rank, mode } = props;
+
   const open = result.length > 0;
   let userRank = 0;
   result.map((user, idx) => {
     if (userId === user.userId) userRank = idx + 1;
   });
+  const plusExp = mode === GameMode.custom ? 250 : 500;
+  const plusRank = mode === GameMode.custom ? null : 3 - userRank;
 
   const userRankText =
     userRank === 1
@@ -66,15 +70,6 @@ export default function GameResultDialog(props) {
     },
   }))(LinearProgress);
 
-  const mockData = {
-    exp: 0,
-    plusExp: 500,
-    level: 20,
-    rank: 41,
-    plusRank: 2,
-  };
-
-  const { exp, plusExp, level, rank, plusRank } = props;
   const [curExp, setCurExp] = useState(exp);
   const [curPlusExp, setCurPlusExp] = useState(plusExp);
   const updateTimes = 100;
@@ -85,7 +80,10 @@ export default function GameResultDialog(props) {
   const getMaxExp = (level) => 100 + level * level * 5;
 
   useEffect(() => {
-    if (!showEXPResultModal) return;
+    if (!showEXPResultModal) {
+      setCurPlusExp(plusExp);
+      return;
+    }
     const timer = setInterval(() => {
       if (curPlusExp <= 0) return; // done
       if (curExp + plusExpPerTime < getMaxExp(curLevel)) {
@@ -110,7 +108,7 @@ export default function GameResultDialog(props) {
 
   const getRankText = (rank) => {
     if (!plusRank) return null;
-    const nextRank = rank + plusRank;
+    const nextRank = Math.max(1, rank + plusRank);
     if (rank === nextRank) return <span className="rankText">{rank}</span>;
     if (rank < nextRank)
       return (
@@ -178,7 +176,7 @@ export default function GameResultDialog(props) {
                 {Math.floor((curExp / getMaxExp(curLevel)) * 100)} %
               </span>
             </div>
-            {plusRank && <span>Rank</span>}
+            {(plusRank || plusRank===0) && <span>Rank</span>}
             {rankText}
             <div className="dummyDiv" />
           </div>

@@ -45,7 +45,6 @@ const usestyle = makeStyles((theme) => ({
 
 function ModeDialog({ open, onClose, customButton, rankButton }) {
   const classes = usestyle();
-  // console.log("open",openDialog)
 
   const handleClose = () => {
     onClose();

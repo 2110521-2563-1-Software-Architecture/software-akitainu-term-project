@@ -235,7 +235,6 @@ function Auth() {
             resolve(res.data);
           })
           .catch((err) => {
-            // console.log(err.response.data);
             axios
               .post(`${ENDPOINT}/users`, user)
               .then((res) => {
@@ -249,15 +248,8 @@ function Auth() {
   };
 
   async function onSignIn(googleUser) {
-    // console.log("success");
     if (googleUser.error) return;
     var profile = googleUser.getBasicProfile();
-    // console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    // console.log("Name: " + profile.getName());
-    // console.log("Image URL: " + profile.getImageUrl());
-    // console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
-    // console.log(googleUser);
-    // console.log(googleUser)
     if (googleUser.accessToken) {
       // mockUserId()
       const userData = await googleAuthen(profile, "google");
@@ -266,7 +258,6 @@ function Auth() {
   }
 
   const responseFacebook = async (response) => {
-    // console.log(response);
     let profile = {
       id: response.id,
       name: response.name,
@@ -347,7 +338,7 @@ function Auth() {
           onFailure={onSignIn}
           cookiePolicy={"single_host_origin"}
         />
-        {isDevEnv && (
+        {false && (
           <Button
             className={clsx(classes.loginButton)}
             onClick={() => onDevSignIn()}

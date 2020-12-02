@@ -75,7 +75,6 @@ const usestyle = makeStyles((theme) => ({
 
 function CustomDialog(props) {
   const classes = usestyle();
-  // console.log("open",openDialog)
   const {
     open,
     onClose,

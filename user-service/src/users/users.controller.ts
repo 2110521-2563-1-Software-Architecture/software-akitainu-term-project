@@ -42,6 +42,11 @@ export class UsersController {
     return this.userService.getServerLeaderBoard();
   }
 
+  @Get('/userName/:userId')
+  async getUserNameByUserId(@Param('userId') userId: string) {
+    return this.userService.getUserName(userId);
+  }
+
   @Get(':userId')
   async getUserByUserId(@Param('userId') userId: string) {
     return this.userService.getUserByUserId(userId);

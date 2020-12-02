@@ -6,7 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { Card, CreatedIdCustomGameRoomDto } from './game.dto';
+import { Card } from './game.dto';
 import { GameService } from './game.service';
 
 type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
@@ -14,69 +14,50 @@ type OnGatewayInterface = OnGatewayConnection & OnGatewayDisconnect;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 const socket_port = parseInt(process.env.SOCKET_SERVER) || 10001;
-@WebSocketGateway(socket_port)
+@WebSocketGateway(socket_port, { path: '/game', namespace: '/game' })
 export class GameGateway implements OnGatewayInterface {
   constructor(private readonly customGameRoomService: GameService) {}
 
   @WebSocketServer() server;
   users = 0;
+  userMapToRoomId = {}; // { user1:roomId1}, user2:roomId2}
+  socketIdMapToUserId = {}; // { socketId1: userId1, socketId2: userId2 }
 
   async handleConnection(socket: Socket) {
     console.log('[New User] :\t', socket.id);
   }
 
   async handleDisconnect(socket: Socket) {
+    const userId = this.socketIdMapToUserId[socket.id];
+    const roomId = this.userMapToRoomId[userId];
+    this.onPlayerExit(socket, { roomId, userId });
     console.log('[User disconnected]: \t', socket.id);
   }
 
-  @SubscribeMessage('create-custom-room')
-  async onCreateCustomRoom(socket: Socket, data: any) {
-    const userId = data.userId;
-    console.log('[userId] :\t', userId, 'sent from', socket.id);
+  // @SubscribeMessage('create-custom-room')
+  // async onCreateCustomRoom(socket: Socket, data: any) {
+  //   const userId = data.userId;
+  //   console.log('[userId] :\t', userId, 'sent from', socket.id);
 
-    const roomId = await this.customGameRoomService.createCustomRoom(userId);
-    socket.join(roomId);
+  //   const roomId = await this.customGameRoomService.createCustomRoom(userId);
+  //   socket.join(roomId);
 
-    const newCustomGameRoom: CreatedIdCustomGameRoomDto = {
-      roomId,
-      userId,
-    };
+  //   const newCustomGameRoom: CreatedIdCustomGameRoomDto = {
+  //     roomId,
+  //     userId,
+  //   };
 
-    console.log('[CustomGameRoomCreated] :\t', roomId);
-    this.server.emit('new-custom-room', newCustomGameRoom);
-  }
+  //   console.log('[CustomGameRoomCreated] :\t', roomId);
+  //   this.server.emit('new-custom-room', newCustomGameRoom);
+  // }
 
-  @SubscribeMessage('join-custom-room')
+  @SubscribeMessage('join-room')
   async onJoinCustomRoom(socket: Socket, data: any) {
     const userId = data.userId;
     const roomId = data.roomId;
+
     console.log('[userId] :\t', userId, ' [roomId] :', roomId);
-    const isAlreadyJoin = await this.customGameRoomService.isAlreadyJoin(
-      userId,
-      roomId,
-    );
-    if (isAlreadyJoin) return;
-
     socket.join(roomId);
-    const allUsersInRoom = await this.customGameRoomService.joinCustomRoom({
-      userId,
-      roomId,
-    });
-    if (!allUsersInRoom) return; // cant join started room
-    console.log('allUsersInRoom', allUsersInRoom);
-
-    // Todo: add userName in request
-    const newJoinedUserName = '';
-
-    const newJoinedUser = {
-      userId,
-      userName: newJoinedUserName,
-      roomId,
-    };
-
-    this.server.emit('new-join-custom-other', newJoinedUser);
-
-    this.server.emit('new-join-custom-joiner', allUsersInRoom);
   }
 
   async onStartGame(data: any) {
@@ -99,7 +80,7 @@ export class GameGateway implements OnGatewayInterface {
     const newCard = await this.customGameRoomService.drawCard(userId, roomId);
     console.log('newCard: ', newCard);
     if (newCard !== false) {
-      this.server.emit('new-card', newCard);
+      this.server.to(roomId).emit('new-card', newCard);
     }
   }
 
@@ -112,7 +93,7 @@ export class GameGateway implements OnGatewayInterface {
       card,
       cardIdx,
     );
-    this.server.emit('new-card-use', newCardUse);
+    this.server.to(roomId).emit('new-card-use', newCardUse);
   }
 
   // @SubscribeMessage('use-favor')
@@ -124,7 +105,7 @@ export class GameGateway implements OnGatewayInterface {
   @SubscribeMessage('select-player')
   async onSelectPlayer(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('new-select', data);
+    this.server.to(roomId).emit('new-select', data);
   }
 
   // @SubscribeMessage('use-see-the-future')
@@ -134,59 +115,61 @@ export class GameGateway implements OnGatewayInterface {
   //     userId,
   //     roomId,
   //   );
-  //   this.server.emit('new-see-the-future', newSeeTheFuture);
+  //   this.server.to(roomId).emit('new-see-the-future', newSeeTheFuture);
   // }
 
   @SubscribeMessage('use-common-2')
   async onUseCommon2(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('new-common-2', data);
+    this.server.to(roomId).emit('new-common-2', data);
   }
 
   @SubscribeMessage('select-common-2')
   async onSelectCommon2(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('receive-common-2', data);
+    this.server.to(roomId).emit('receive-common-2', data);
   }
 
   @SubscribeMessage('use-common-3')
   async onUseCommon3(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('new-common-3', data);
+    this.server.to(roomId).emit('new-common-3', data);
   }
 
   @SubscribeMessage('select-common-3')
   async onSelectCommon3(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('receive-common-3', data);
+    this.server.to(roomId).emit('receive-common-3', data);
   }
 
   @SubscribeMessage('use-common-5')
   async onUseCommon5(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('new-common-5', data);
+    this.server.to(roomId).emit('new-common-5', data);
   }
 
   @SubscribeMessage('select-common-5')
   async onSelectCommon5(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('receive-common-5', data);
+    this.server.to(roomId).emit('receive-common-5', data);
   }
 
   @SubscribeMessage('draw-exploding-puppy')
   async onDrawExplodingPuppy(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('new-exploding-puppy', data);
+    this.server.to(roomId).emit('new-exploding-puppy', data);
   }
 
   @SubscribeMessage('insert-exploding-puppy')
   async onInsertExplodingPuppy(socket: Socket, data: any) {
     const { roomId, userId, idx } = data;
-    const nextUserId = await this.customGameRoomService.insertExplodingPuppy(
+    const explodeInsert = await this.customGameRoomService.insertExplodingPuppy(
       roomId,
       idx,
     );
-    this.server.emit('finish-exploding-puppy', { roomId, userId, nextUserId });
+    this.server
+      .to(roomId)
+      .emit('finish-exploding-puppy', { roomId, userId, ...explodeInsert });
   }
 
   @SubscribeMessage('game-lose')
@@ -198,11 +181,11 @@ export class GameGateway implements OnGatewayInterface {
       false,
     );
     if (!loseResult) return; // Error : player already die
-    this.server.emit('new-lose', { ...data, ...loseResult });
+    this.server.to(roomId).emit('new-lose', { ...data, ...loseResult });
 
     const result = await this.customGameRoomService.resultGame(roomId);
     if (result) {
-      this.server.emit('new-win', { result });
+      this.server.to(roomId).emit('new-win', { result });
     }
   }
 
@@ -240,19 +223,19 @@ export class GameGateway implements OnGatewayInterface {
       ...data,
       [effectCard]: result,
     };
-    this.server.emit('new-effect', newEffect);
+    this.server.to(roomId).emit('new-effect', newEffect);
   }
 
   @SubscribeMessage('use-nope')
   async onUseNope(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('new-nope', data);
+    this.server.to(roomId).emit('new-nope', data);
   }
 
   @SubscribeMessage('no-one-nope')
   async onNoOneNope(socket: Socket, data: any) {
     const { roomId } = data;
-    this.server.emit('no-new-nope', data);
+    this.server.to(roomId).emit('no-new-nope', data);
   }
 
   @SubscribeMessage('player-exit')
@@ -263,20 +246,21 @@ export class GameGateway implements OnGatewayInterface {
       userId,
       true,
     );
-    this.server.emit('new-exit', { ...data, ...exitResult });
+    this.server.to(roomId).emit('new-exit', { ...data, ...exitResult });
 
     const result = await this.customGameRoomService.resultGame(roomId);
     if (result) {
-      this.server.emit('new-win', { result });
+      this.server.to(roomId).emit('new-win', { result });
+      await this.customGameRoomService.deleteGameRoom(roomId);
     }
   }
 
   @SubscribeMessage('game-rank-win')
   async onRankWin(socket: Socket, data: any) {
     const { roomId, userId } = data;
-    // this.server.emit('no-new-nope', data);
+    // this.server.to(roomId).emit('no-new-nope', data);
     console.log('game-rank-win', data);
-    this.server.emit('debug', 'got it');
+    this.server.to(roomId).emit('debug', 'got it');
     await this.customGameRoomService.onRankWin(userId, roomId);
   }
 
@@ -293,5 +277,12 @@ export class GameGateway implements OnGatewayInterface {
   @SubscribeMessage('message-send-private')
   async onSendMessagePrivate(socket: Socket, data: any) {
     this.server.emit('message-get-private', data);
+  }
+
+  @SubscribeMessage('set-socket')
+  async setSocket(socket: Socket, data: any) {
+    const { userId, roomId } = data;
+    this.userMapToRoomId[userId] = roomId;
+    this.socketIdMapToUserId[socket.id] = userId;
   }
 }

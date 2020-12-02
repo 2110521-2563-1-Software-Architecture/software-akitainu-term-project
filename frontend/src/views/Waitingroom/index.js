@@ -144,7 +144,7 @@ const ENDPOINT = process.env.REACT_APP_BACKEND_API || "http://localhost:10000";
 
 function Waitingroom(props) {
   const classes = useStyles();
-  const [maxPlayer, setMaxplayer] = useState(3);
+  const [maxPlayer, setMaxplayer] = useState(8);
   const [timeDelay, setTimeDelay] = useState(30);
   const [defuse, setDefuse] = useState(5);
   const [nope, setNope] = useState(5);
@@ -159,10 +159,14 @@ function Waitingroom(props) {
   const [common4, setCommon4] = useState(5);
   const [common5, setCommon5] = useState(5);
   const [settingOpen, setSettingOpen] = useState(false);
-  const [leader, setLeader] = useState('');
+  const [leader, setLeader] = useState("");
+  const [isPublic, setPublic] = useState(false);
   const [players, setPlayers] = useState([]);
   const [playersName, setPlayersName] = useState([]);
   const { roomId } = useParams();
+
+  const userId = sessionStorage.getItem("userId");
+  const isLeader = userId === leader;
 
   const NumberofCard = [
     {
@@ -219,19 +223,80 @@ function Waitingroom(props) {
     setSettingOpen(true);
   };
 
-  const handleCloseSeting = () => {
+  const checkNumberOfCards = () => {
+    const numberOfCards =
+      nope +
+      attack +
+      skip +
+      favor +
+      shuffle +
+      seeTheFuture +
+      common1 +
+      common2 +
+      common3 +
+      common4 +
+      common5;
+    if (numberOfCards < players.length * 7) return false;
+    return true;
+  };
+
+  const handleCloseSetting = (NumberofCard) => {
+    if (!checkNumberOfCards()) {
+      alert(
+        `Please select more than or equal ${
+          players.length * 7
+        } cards (excluded defuse)`
+      );
+      return false;
+    }
+    const { matchmakingSocket } = props;
+
     setSettingOpen(false);
+    if (isLeader) {
+      matchmakingSocket.emit("set-cards", {
+        inviteId: roomId,
+        cards: {
+          defuse : NumberofCard[0].Numbercard,
+          nope : NumberofCard[1].Numbercard,
+          attack : NumberofCard[2].Numbercard,
+          skip : NumberofCard[3].Numbercard,
+          favor : NumberofCard[4].Numbercard,
+          shuffle : NumberofCard[6].Numbercard,
+          seeTheFuture : NumberofCard[5].Numbercard,
+          common1 : NumberofCard[7].Numbercard,
+          common2 : NumberofCard[8].Numbercard,
+          common3 : NumberofCard[9].Numbercard,
+          common4 : NumberofCard[10].Numbercard,
+          common5 : NumberofCard[11].Numbercard,
+        },
+      });
+    }
   };
 
   useEffect(() => {
     const { matchmakingSocket } = props;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("joined-custom-room", { inviteId: roomId, userId });
-    matchmakingSocket.on("custom-room-info", (data) => {
-      console.log("custom-room-info", data);
-      const {leader, players, options} = data;
-      const {deck, maxPlayer, isPublic, turn} = options;
-      const {defuse, nope, attack, skip, favor, shuffle, seeTheFuture, common1, common2, common3, common4, common5} = deck;
+    matchmakingSocket.on("custom-room-info", async (data) => {
+      const { leader, players, options } = data;
+      const {
+        defuse,
+        nope,
+        attack,
+        skip,
+        favor,
+        shuffle,
+        seeTheFuture,
+        common1,
+        common2,
+        common3,
+        common4,
+        common5,
+        maxPlayer,
+        isPublic,
+        timePerTurn,
+      } = options;
+
       setDefuse(defuse);
       setNope(nope);
       setAttack(attack);
@@ -244,26 +309,67 @@ function Waitingroom(props) {
       setCommon3(common3);
       setCommon4(common4);
       setCommon5(common5);
-      // setSettingOpen(isPublic);
+      setPublic(isPublic);
       setMaxplayer(maxPlayer);
-      setTimeDelay(turn);
+      setTimeDelay(timePerTurn);
       setLeader(leader);
       setPlayers(players);
 
-      const usersName = [];
-
-      players.map(async player =>
-        usersName.push(await axios.get(`${ENDPOINT}/users/${player}`).then((res) => res.body.usersName))
-      );
-      
-      setPlayersName(usersName);
-      
+      const newUserName = await players.map(async (player) => {
+        const resp = await axios.get(`${ENDPOINT}/users/username/${player}`);
+        return resp.data;
+      });
+      Promise.all(newUserName).then((usersName) => {
+        setPlayersName(usersName);
+      });
+    });
+    matchmakingSocket.on("custom-room-info-error", () => {
+      window.location = `/home`;
+    });
+    matchmakingSocket.on("leave-custom-room", (data) => {
+      window.location = `/home`;
+    });
+    matchmakingSocket.on("started-custom-room", (data) => {
+      window.location = `/gameplay/${data.roomId}`;
     });
   }, []);
 
   const handleStart = () => {
+    if (!checkNumberOfCards()) {
+      alert(
+        `Please select more than or equal ${
+          players.length * 7
+        } cards (excluded defuse)`
+      );
+      return false;
+    }
+
     const { matchmakingSocket } = props;
     matchmakingSocket.emit("start-custom-room", { inviteId: roomId });
+  };
+
+  const handleSwitchChange = () => {
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("set-visible", {
+      inviteId: roomId,
+      visible: !isPublic,
+    });
+  };
+
+  const handleMaxPlayerChange = (idx) => {
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("set-max-player", {
+      inviteId: roomId,
+      maxPlayer: idx,
+    });
+  };
+
+  const handleTimePerTurnChange = (idx) => {
+    const { matchmakingSocket } = props;
+    matchmakingSocket.emit("set-time-per-turn", {
+      inviteId: roomId,
+      timePerTurn: idx,
+    });
   };
 
   const history = useHistory();
@@ -279,7 +385,7 @@ function Waitingroom(props) {
     </Grid>
   );
 
-  const playersUser = playersName.map(playerName => (
+  const playersUser = playersName.map((playerName) => (
     <Grid container item xs={6}>
       {/* <img className={classes.profilePic}></img> */}
       <Typography className={classes.playnametext}>{playerName}</Typography>
@@ -293,57 +399,85 @@ function Waitingroom(props) {
           <Grid item xs={12} className={classes.settingsection}>
             <Typography
               className={classes.title}
-              style={{ textAlign: "center", marginBottom: "10px" }}
+              style={{
+                textAlign: "center",
+                marginTop: "10px",
+                fontSize: "28px",
+              }}
             >
-              Custom Setting
+              Custom settings
             </Typography>
             <FormControlLabel
               control={
                 <Switch
-                  // checked={state.checkedB}
-                  // onChange={handleChange}
+                  checked={isPublic}
+                  onChange={handleSwitchChange}
                   name="checkedB"
                   color="primary"
+                  disabled={!isLeader}
                 />
               }
-              label={<Typography className={classes.title}>Public</Typography>}
-              style={{ marginBottom: "10px" }}
+              label={
+                <Typography
+                  className={classes.title}
+                  style={{ fontSize: "24px" }}
+                >
+                  {isPublic ? "Public" : "Private"}
+                </Typography>
+              }
+              style={{ margin: "16px auto" }}
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "left", marginBottom: "10px" }}
+              style={{
+                textAlign: "left",
+                marginBottom: "10px",
+                fontSize: "24px",
+              }}
             >
-              Max Player
+              {`Max player: ${maxPlayer}`}
             </Typography>
             <Slider
               defaultValue={maxPlayer}
+              value={maxPlayer}
               valueLabelFormat={(n) => `${n}`}
               valueLabelDisplay="auto"
               step={1}
-              min={3}
+              min={2}
               max={8}
               style={{ marginBottom: "10px" }}
-              onChangeCommitted={(e, idx) => setMaxplayer(idx)}
+              onChangeCommitted={(e, idx) => handleMaxPlayerChange(idx)}
+              disabled={!isLeader}
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "left", marginBottom: "10px" }}
+              style={{
+                textAlign: "left",
+                marginBottom: "10px",
+                fontSize: "24px",
+              }}
             >
-              เวลาต่อ turn:
+              {`Time per turn: ${timeDelay}`}
             </Typography>
             <Slider
               defaultValue={timeDelay}
+              value={timeDelay}
               valueLabelFormat={(n) => `${n}`}
               valueLabelDisplay="auto"
               step={5}
               min={5}
               max={60}
               style={{ marginBottom: "30px" }}
-              onChangeCommitted={(e, idx) => setTimeDelay(idx)}
+              onChangeCommitted={(e, idx) => handleTimePerTurnChange(idx)}
+              disabled={!isLeader}
             />
             <Typography
               className={classes.title}
-              style={{ textAlign: "center", cursor: "pointer" }}
+              style={{
+                textAlign: "center",
+                cursor: "pointer",
+                fontSize: "24px",
+              }}
               onClick={handleClickSetting}
             >
               Card Setting
@@ -367,15 +501,17 @@ function Waitingroom(props) {
             </Grid>
           </Grid>
           <Grid container item xs={12} className={classes.playersection}>
-            {leaderUser}
             {playersUser}
           </Grid>
         </Grid>
-        <Button
-          text="Play"
-          className={classes.startButton}
-          onClick={handleStart}
-        />
+        {leader === userId && (
+          <Button
+            text="Play"
+            className={classes.startButton}
+            onClick={handleStart}
+            disabled={players.length <= 1}
+          />
+        )}
         <Button
           text={"Exit"}
           icon={exit}
@@ -387,7 +523,9 @@ function Waitingroom(props) {
       </Grid>
       <SettingDialog
         open={settingOpen}
-        handleClose={handleCloseSeting}
+        isLeader={isLeader}
+        maxPlayer={maxPlayer}
+        handleClose={handleCloseSetting}
         NumberofCard={NumberofCard}
       />
     </>

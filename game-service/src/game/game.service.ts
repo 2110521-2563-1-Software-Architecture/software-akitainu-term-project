@@ -1,27 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { NewUserJoinCustomRoomDto, Card, CreateGameRoomDto } from './game.dto';
+import {
+  NewUserJoinCustomRoomDto,
+  Card,
+  CreateGameRoomDto,
+  GameMode,
+} from './game.dto';
 
 @Injectable()
 export class GameService {
   rooms = {};
-
-  allCards = {
-    explodingPuppy: 4,
-    defuse: 6,
-    nope: 5,
-    attack: 4,
-    skip: 4,
-    favor: 4,
-    shuffle: 4,
-    seeTheFuture: 5,
-    common1: 4,
-    common2: 4,
-    common3: 4,
-    common4: 4,
-    common5: 4,
-  };
-
-  deck = [];
 
   setRoomByRoomId(roomId: string, features: any) {
     this.rooms[roomId] = { ...this.rooms[roomId], ...features };
@@ -36,6 +23,7 @@ export class GameService {
     this.rooms[roomId] = {};
     this.rooms[roomId]['usersId'] = usersId;
     this.rooms[roomId]['mode'] = mode;
+    this.rooms[roomId]['options'] = options;
     return roomId;
   }
 
@@ -104,27 +92,66 @@ export class GameService {
   }
 
   async initializeDeck(roomId: string) {
-    const { usersId } = this.rooms[roomId];
+    const { usersId, mode, options } = this.rooms[roomId];
     const userNumber = usersId.length;
 
-    this.allCards = {
-      explodingPuppy: 0,
-      defuse: 0,
-      nope: 5,
-      attack: 4,
-      skip: 4,
-      favor: 4,
-      shuffle: 4,
-      seeTheFuture: 5,
-      common1: 4,
-      common2: 4,
-      common3: 4,
-      common4: 4,
-      common5: 4,
-    };
+    console.log('options: ', options);
+
+    let allCards = {};
+    let defuseNumber = 0;
+    let time = 30; // default
+
+    if (mode === GameMode.rank) {
+      allCards = {
+        nope: 6,
+        attack: 5,
+        skip: 5,
+        favor: 5,
+        shuffle: 5,
+        seeTheFuture: 6,
+        common1: 5,
+        common2: 5,
+        common3: 5,
+        common4: 5,
+        common5: 5,
+      };
+      defuseNumber = 1;
+    } else if (mode === GameMode.custom) {
+      const {
+        defuse,
+        nope,
+        attack,
+        skip,
+        favor,
+        shuffle,
+        seeTheFuture,
+        common1,
+        common2,
+        common3,
+        common4,
+        common5,
+        timePerTurn,
+      } = options;
+      allCards = {
+        nope,
+        attack,
+        skip,
+        favor,
+        shuffle,
+        seeTheFuture,
+        common1,
+        common2,
+        common3,
+        common4,
+        common5,
+      };
+      defuseNumber = defuse;
+      time = timePerTurn;
+    }
+
     let deck = [];
-    for (const cardType in this.allCards) {
-      deck.push(...Array(this.allCards[cardType]).fill(Card[cardType]));
+    for (const cardType in allCards) {
+      deck.push(...Array(allCards[cardType]).fill(Card[cardType]));
     }
 
     deck = await this.shuffle(deck);
@@ -141,7 +168,8 @@ export class GameService {
 
     deck = deck.slice(userNumber * 7);
 
-    deck.push(...Array(userNumber === 5 ? 1 : 2).fill(Card.defuse));
+    // add defuse and exploding puppy
+    deck.push(...Array(defuseNumber).fill(Card.defuse));
     deck.push(...Array(userNumber - 1).fill(Card.explodingPuppy));
     deck = await this.shuffle(deck);
     this.setRoomByRoomId(roomId, { deck });
@@ -153,6 +181,8 @@ export class GameService {
       usersCard: usersCard,
       nextUserId: usersId[0],
       nextTurnLeft: 1,
+      timePerTurn: time,
+      mode,
     };
 
     console.log('newGame: ', newGame);
@@ -164,7 +194,7 @@ export class GameService {
     const { deck, aliveUsersId, nextUserIndex, nextTurnLeft } = this.rooms[
       roomId
     ];
-    if (deck.length <= 0) {
+    if (deck.length <= 0 || aliveUsersId[nextUserIndex] !== userId) {
       return false;
     }
 
@@ -227,7 +257,10 @@ export class GameService {
     ];
     this.setRoomByRoomId(roomId, { deck: deckTmp });
 
-    return aliveUsersId[nextUserIndex];
+    return {
+      nextUserId: aliveUsersId[nextUserIndex],
+      leftCardNumber: deckTmp.length,
+    };
   }
 
   async useEffectCard(roomId: string, card: string) {
@@ -295,6 +328,7 @@ export class GameService {
   }
 
   async loseGame(roomId: string, userId: string, isExit: boolean) {
+    if (!this.rooms[roomId]) return;
     const {
       nextUserIndex,
       aliveUsersId,
@@ -344,6 +378,7 @@ export class GameService {
     const gameLose = {
       nextUserId: aliveUsersId[nextUserIndexTmp],
       nextTurnLeft,
+      leftCardNumber: deck.length,
     };
     console.log('nextUserIndexTmp: ', nextUserIndexTmp);
     console.log('aliveUsersId: ', aliveUsersId);
@@ -353,6 +388,7 @@ export class GameService {
   }
 
   async resultGame(roomId: string) {
+    if (!this.rooms[roomId]) return;
     const { result, aliveUsersId } = this.rooms[roomId];
     if (aliveUsersId.length !== 0) {
       return false;
@@ -372,31 +408,8 @@ export class GameService {
     console.log('user win', usersId);
     console.log('users in room', usersId);
   }
-  // async onPlayerExit(roomId: string, userId: string) {
-  //   const { nextUserIndex, aliveUsersId, result, deck } = this.rooms[roomId];
-  //   const explodeIndex = deck.indexOf(Card.explodingPuppy);
-  //   const userIndex = aliveUsersId.indexOf(userId);
-  //   result.push(aliveUsersId[userIndex]);
-  //   if (userIndex > -1) {
-  //     aliveUsersId.splice(userIndex, 1);
-  //   }
 
-  //   if (aliveUsersId.length === 1) {
-  //     result.push(aliveUsersId[0]);
-  //     aliveUsersId.splice(0, 1);
-  //   }
-
-  //   if (explodeIndex > -1) {
-  //     deck.splice(explodeIndex, 1);
-  //   }
-
-  //   const nextUserIndexTmp = (nextUserIndex + 1) % aliveUsersId.length;
-
-  //   this.setRoomByRoomId(roomId, {
-  //     nextUserIndex: nextUserIndexTmp,
-  //     lastUserIndex: nextUserIndexTmp,
-  //     aliveUsersId,
-  //   });
-
-  // }
+  async deleteGameRoom(roomId: string) {
+    return delete this.rooms[roomId];
+  }
 }

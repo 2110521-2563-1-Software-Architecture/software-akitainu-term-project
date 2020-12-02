@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, makeStyles, Avatar } from "@material-ui/core";
 import card_back from "../../../image/card_back.png";
 import classNames from "classnames";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,6 +98,7 @@ function Otherhand(props) {
   const classes = useStyles();
   const { user, clickable, nextUserId, onClick } = props;
   const name = user.userName ? user.userName : `Player ${user.userId}`;
+  const [username, setUsername] = useState("");
   const numberOfCards = user.numberOfCards;
   const profileImgUrl = user.profileImgUrl;
   const isDead = user.isDead;
@@ -140,26 +142,53 @@ function Otherhand(props) {
     return tmp;
   }
 
+  const getUserName = () =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_API}/users/${user.userId}`
+        );
+        resolve(res);
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+  useEffect(async () => {
+    if (user) {
+      try {
+        const res = await getUserName();
+        if (res.data.userName) {
+          setUsername(res.data.userName);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [user]);
+
   return (
     <Grid
       container
       direction="row"
       className={classNames(
         classes.root,
-        { [classes.rootClickable]: clickable },
+        { [classes.rootClickable]: !isDead && clickable && onClick },
         { [classes.rootCurrentTurn]: currentTurn }
       )}
-      onClick={onClick}
+      onClick={!isDead && onClick}
     >
       <Grid container item xs="12" className={classes.nameAndAvatar}>
-        <Avatar alt={name} src={profileImgUrl}></Avatar>
+        <Avatar alt={name} src={profileImgUrl}>
+          {username ? username[0] : name[0]}
+        </Avatar>
         <Grid
           item
           className={classNames(classes.playerName, {
             [classes.playerNameCurrentTurn]: currentTurn,
           })}
         >
-          {name}
+          {`${username || name}`}
         </Grid>
       </Grid>
       {isDead ? (

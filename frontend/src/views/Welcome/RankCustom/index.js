@@ -48,7 +48,6 @@ const usestyle = makeStyles((theme) => ({
 
 function RankDialog({ open, onClose, time, settime, isFound }) {
   const classes = usestyle();
-  // console.log("open",open)
 
   React.useEffect(() => {
     if (open && !isFound) {
@@ -87,14 +86,21 @@ function RankDialog({ open, onClose, time, settime, isFound }) {
                         color: "#DADADA",
                     }}
                 ></PetsIcon> */}
+        <Grid item container style={{ justifyContent: "center" }}>
+          <Typography
+            className={classes.text}
+            style={{
+              fontSize: "48px",
+            }}
+          >
+            Waiting Time
+          </Typography>
+        </Grid>
         <Grid
           container
           style={{
-            position: "absolute",
-            top: "56%",
-            left: "45%",
-            textAlign: "center",
-            width: "200px",
+            width: "100%",
+            justifyContent: "center",
             // backgroundImage:`url(${Pet})`
           }}
         >
@@ -106,16 +112,6 @@ function RankDialog({ open, onClose, time, settime, isFound }) {
             }}
           >
             {isFound ? "welcome" : time}
-          </Typography>
-        </Grid>
-        <Grid item container style={{ justifyContent: "center" }}>
-          <Typography
-            className={classes.text}
-            style={{
-              fontSize: "48px",
-            }}
-          >
-            Waiting Time
           </Typography>
         </Grid>
       </Grid>

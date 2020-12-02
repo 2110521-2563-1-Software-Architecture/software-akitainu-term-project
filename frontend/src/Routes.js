@@ -12,14 +12,18 @@ import AuthGaurd from "components/AuthGaurd";
 import Authen from "views/Auth";
 import Waitingroom from "views/Waitingroom";
 
-// const ENDPOINT = "18.141.138.13:10001";
 const SOCKET_ENDPOINT =
-  // process.env.REACT_APP_BACKEND_SOCKET || "http://18.141.138.13:10001";
   process.env.REACT_APP_BACKEND_SOCKET || "http://localhost:10001";
 const MATCHMAKING_SOCKET_ENDPOINT =
-  process.env.MATCHMAKING_SOCKET || "localhost:3030";
-const socket = socketIOClient(SOCKET_ENDPOINT);
-const matchmakingSocket = socketIOClient(MATCHMAKING_SOCKET_ENDPOINT);
+  process.env.REACT_APP_MATCHMAKING_SOCKET || "http://localhost:3030";
+const socket = socketIOClient(SOCKET_ENDPOINT, {
+  path: "/game",
+  forceNew: true,
+});
+const matchmakingSocket = socketIOClient(MATCHMAKING_SOCKET_ENDPOINT, {
+  path: "/matchmaking",
+  forceNew: true,
+});
 
 const routesConfig = [
   {
@@ -122,14 +126,11 @@ const renderRoutes = (routes) =>
               render={(props) => (
                 <Guard>
                   <Layout>
-                    {
-                      route.routes ? (
-                        renderRoutes(route.routes)
-                      ) : (
-                        <Component {...props} />
-                      )
-                      // console.log("route",props)
-                    }
+                    {route.routes ? (
+                      renderRoutes(route.routes)
+                    ) : (
+                      <Component {...props} />
+                    )}
                   </Layout>
                 </Guard>
               )}

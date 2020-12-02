@@ -86,7 +86,6 @@ function Leadership() {
   useEffect(() => {
     axios.get(`${ENDPOINT}/users/leaderboard`).then((response) => {
       setUsers(response.data);
-      console.log(response.data);
     });
   }, []);
 

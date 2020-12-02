@@ -30,6 +30,11 @@ const usestyle = (theme) => ({
     // backgroundColor: "#B6C5E0",
     marginLeft: "50px",
   },
+  leaderboardBtn: {
+    top: "30px",
+    right: "30px",
+    position: "absolute",
+  },
   playButton: {
     width: "128px",
     alignSelf: "center",
@@ -70,55 +75,61 @@ class Welcome extends React.Component {
   // data = ['123','456']
   setRankFound = () => {
     this.setState({ isRankFound: true });
-    console.log("setState");
   };
 
   componentDidMount() {
-    const { matchmakingSocket } = this.state;
+    const { matchmakingSocket, openCustomDialog } = this.state;
+    matchmakingSocket.emit("get-custom-game-rooms", {
+      userId: sessionStorage.getItem("userId"),
+    });
+    matchmakingSocket.on("duplicate-user", (data) => {
+      console.log("duplicate-user");
+      if (openCustomDialog) {
+        return;
+      }
+      alert(
+        `Error: This user is already in ${
+          data.isRanked ? "the queue" : "this room"
+        }!`
+      );
+      this.setState({ openRankDialog: false });
+    });
     matchmakingSocket.on("ranked-found", (data) => {
       console.log("ranked-found");
-      // console.log(data);
       window.location = `/gameplay/${data.roomId}`;
       this.setRankFound();
     });
-    matchmakingSocket.on("join-custom-room", (data) => {
-      console.log("join-custom-room");
-      console.log(data);
+    matchmakingSocket.on("custom-room-id", (data) => {
+      console.log("custom-room-id", data);
       window.location = `/waiting/${data.roomId}`;
       // redirect to waiting room for that room id
     });
     matchmakingSocket.on("update-custom-rooms", (data) => {
+      console.log("update-custom-rooms", data);
       this.setState({ publicCustomRooms: data });
     });
     matchmakingSocket.on("join-custom-error", (data) => {
       this.setState({
         isLoadingCustomRoom: false,
-        joinCustomErrorText: data.msg,
+        joinCustomErrorText: this.state.openCustomDialog ? data.msg : null,
       });
     });
   }
 
-  joinRoom100001 = () => {
-    // todo:
-    // var userIdPlaceholder = Math.floor(100000 + Math.random() * 900000);
-    // const userId = prompt("Please enter your user Id", userIdPlaceholder);
-    // window.sessionStorage.setItem("userId", userId);
-  };
-
   onLogout = () => {
     const history = useHistory();
     sessionStorage.setItem("userId", null);
+    sessionStorage.setItem("userName", null);
+    sessionStorage.setItem("profileImgUrl", null);
     history.push("/home");
     history.go(0);
   };
 
   handleClickPlayButton = () => {
-    console.log("click");
     this.setState({ openModeDialog: true });
   };
 
   handleClickCustomButton = () => {
-    // console.log("click");
     this.setState({ openCustomDialog: true });
   };
 
@@ -140,7 +151,6 @@ class Welcome extends React.Component {
   };
 
   handleClickRankButton = () => {
-    // console.log("click");
     const { matchmakingSocket } = this.state;
     const userId = sessionStorage.getItem("userId");
     matchmakingSocket.emit("search-ranked", { userId });
@@ -235,9 +245,9 @@ class Welcome extends React.Component {
             ></Button>
           </Grid>
         </Grid>
-        <Grid item xs="3" className={classes.mainSection}>
+        <div className={classes.leaderboardBtn}>
           <Button onClick={this.toLeaderboard} text="Leader Board" />
-        </Grid>
+        </div>
         <ModeDialog
           open={openModeDialog}
           onClose={this.closeModeDialog}
